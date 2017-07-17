@@ -1,0 +1,29 @@
+{
+    "name": "wonail/wocenter",
+    "description": "基于php Yii2框架开发的一款优秀的高度模块化的框架，在此框架上可方便搭建后台管理系统，CMS系统等",
+    "keywords": [
+        "yii2",
+        "extension",
+        "bootstrap 3",
+        "wonail"
+    ],
+    "authors": [
+        {
+            "name": "E-Kevin",
+            "email": "e-kevin@qq.com"
+        }
+    ],
+    "type": "yii2-extension",
+    "license": "BSD-3-Clause",
+    "require": {
+        "wonail/yii2-adminlte": "dev-master",
+        "wonail/yii2-widget-nestable": "dev-master",
+        "diiimonn/yii2-asset-slimscroll": "dev-master",
+        "kartik-v/yii2-widgets": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "wocenter\\": ""
+        }
+    }
+}
