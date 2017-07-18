@@ -5,6 +5,7 @@ use wocenter\behaviors\ModifyTimestampBehavior;
 use wocenter\core\ActiveRecord;
 use wocenter\Wc;
 use wocenter\helpers\DateTimeHelper;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%action_limit}}".
@@ -20,7 +21,7 @@ use wocenter\helpers\DateTimeHelper;
  * @property string $warning_message
  * @property string $remind_message
  * @property string $send_message
- * @property string $disable_message
+ * @property string $finish_message
  * @property integer $status
  * @property integer $updated_at
  * @property integer $check_ip
@@ -41,7 +42,6 @@ use wocenter\helpers\DateTimeHelper;
 class ActionLimit extends ActiveRecord
 {
 
-    const CF_WARNING = 'warning';
     const CF_LOGOUT = 'logout';
     const CF_LOCK_ACCOUNT = 'lockAccount';
     const CF_LOCK_IP = 'lockIp';
@@ -74,10 +74,11 @@ class ActionLimit extends ActiveRecord
     public function rules()
     {
         $rules = [
-            [['name', 'title', 'frequency', 'timestamp', 'time_unit', 'punish', 'updated_at', 'action'], 'required'],
+            [['name', 'title', 'frequency', 'timestamp', 'time_unit', 'updated_at', 'action'], 'required'],
             [['frequency', 'timestamp', 'time_unit', 'send_notification', 'status', 'updated_at', 'check_ip'], 'integer'],
-            [['punish', 'warning_message', 'remind_message', 'send_message', 'disable_message'], 'string'],
+            [['punish', 'warning_message', 'remind_message', 'send_message', 'finish_message'], 'string'],
             [['name'], 'string', 'max' => 50],
+            ['name', 'unique'],
             [['title'], 'string', 'max' => 100],
             [['action'], 'string', 'max' => 80],
         ];
@@ -111,8 +112,8 @@ class ActionLimit extends ActiveRecord
             'send_notification' => '发送系统通知',
             'warning_message' => '警告提示语',
             'remind_message' => '提醒提示语',
+            'finish_message' => '结束提示语',
             'send_message' => '通知内容',
-            'disable_message' => '禁用后提示语',
             'status' => '状态',
             'updated_at' => '更新时间',
             'check_ip' => '检测IP',
@@ -136,11 +137,13 @@ class ActionLimit extends ActiveRecord
 ');
 
         return [
-            'punish' => '频次结束后立即执行。【锁定账户】仅在系统开启账号锁定功能后生效',
+            'punish' => '频次结束后立刻执行。系统默认先执行【警告并禁止】处罚，接着再执行此处所选处罚。
+</br>【警告并禁止】在频次结束后显示警告提示语并禁止执行处罚
+</br>【锁定账户】仅在系统开启账号锁定功能后生效',
             'check_ip' => '开启检测IP，则会判断当前操作者IP是否通过当前行为限制',
             'warning_message' => '频次结束后的提示语</br>' . $variable,
             'remind_message' => '频次未结束时的提示语</br>' . $variable,
-            'disable_message' => '禁用行为限制后的提示语</br>如果返回给客户端的消息并非从行为限制里获取，则可以留空',
+            'finish_message' => '频次结束时的提示语。仅在返回给客户端的信息是从行为限制里获取时才显示</br>' . $variable,
             'frequency' => '可以执行的次数',
             'timestamp' => '多久一个执行周期',
             'action' => '执行行为限制时需要检测的行为日志数据',
@@ -172,7 +175,6 @@ class ActionLimit extends ActiveRecord
      * @var array 惩罚列表，ActionService调用时会按此顺序执行
      */
     public static $punishList = [
-        self::CF_WARNING => '警告并禁止',
         self::CF_LOCK_ACCOUNT => '锁定账户',
         self::CF_LOCK_IP => '封锁IP',
         self::CF_LOGOUT => '强制登出',
@@ -187,7 +189,10 @@ class ActionLimit extends ActiveRecord
     {
         $tmp = [];
         foreach ($this->punish as $punish) {
-            $tmp[] = self::$punishList[$punish];
+            $tmp[] = '警告并禁止';
+            if (isset(self::$punishList[$punish])) {
+                $tmp[] = ArrayHelper::getValue(self::$punishList, $punish);
+            }
         }
 
         return implode('，', $tmp);

@@ -42,6 +42,7 @@ class BackendUser extends ActiveRecord
             [['user_id', 'status'], 'integer'],
             [['user_id'], 'unique'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+            ['status', 'validateStatus', 'on' => self::SCENARIO_UPDATE],
         ];
     }
 
@@ -76,6 +77,23 @@ class BackendUser extends ActiveRecord
             'user_id' => '请输入需要添加的用户ID',
             'status' => '是否允许管理员登录后台管理系统',
         ];
+    }
+
+    /**
+     * 验证管理员状态合法性
+     *
+     * @param string $attribute
+     */
+    public function validateStatus($attribute)
+    {
+        if ($this->getOldAttribute('status') != $this->status) {
+            if ($this->user_id == 1) {
+                $this->addError($attribute, '无法更改系统默认管理员状态');
+            }
+            if ($this->user_id == Yii::$app->getUser()->getId()) {
+                $this->addError($attribute, '无法更改自己的状态');
+            }
+        }
     }
 
     /**

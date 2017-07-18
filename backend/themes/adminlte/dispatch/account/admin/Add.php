@@ -28,6 +28,7 @@ class Add extends Dispatch
 
         return $this->assign([
             'model' => $model,
+            'showStatus' => true,
         ])->display();
     }
 

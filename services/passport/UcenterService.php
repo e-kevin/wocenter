@@ -266,11 +266,7 @@ class UcenterService extends Service
             if ($userModel->save(false)) {
                 // todo 发送系统通知
                 Wc::$service->getLog()->create('init_password', $class::tableName(), $userModel->id, 1);
-                // 自定义提醒信息
-                $data = $actionService->getData();
-                $this->_info = $data['surplus_number'] == 0
-                    ? Yii::t('wocenter/app', 'Reset password successfully.', ['password' => '123456'])
-                    : $actionService->getInfo();
+                $this->_info = $actionService->getInfo();
                 $this->_status = true;
             } else {
                 $this->_info = Yii::t('wocenter/app', 'Password reset failed, please try again.');

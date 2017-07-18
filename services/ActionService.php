@@ -58,15 +58,10 @@ class ActionService extends Service
      */
     public function checkLimit($action, $modelClassName, $actionUserId = 1, $recordId = null)
     {
-        // 禁用行为限制功能，则默认通过
-        if ($this->disabled) {
-            return $this->_status;
-        }
-
         // 查询行为限制，判断是否执行
         $this->_limitInfo = ActionLimit::find()
             ->select('name, time_unit, timestamp, frequency, punish, send_notification,
-             action, warning_message, remind_message, disable_message, status, check_ip')
+             action, warning_message, remind_message, finish_message, status, check_ip')
             ->where(['name' => $action])
             ->asArray()->one();
         if (!$this->_limitInfo) {
@@ -75,44 +70,11 @@ class ActionService extends Service
             ]));
         }
 
+        // 设置参数
+        $this->setParams($modelClassName, $actionUserId, $recordId);
+
         // 排序惩罚
         $this->_sortPunish();
-
-        // 获取行为限制所绑定的行为日志在有效周期内的记录总数
-        $action_log = ActionLog::find()->select('created_at')->where([
-            'action_id' => Action::find()->select('id')->where(['name' => $this->_limitInfo['action']])->scalar(),
-            'model' => $modelClassName,
-        ])->andWhere('created_at >= :ago', [
-            ':ago' => DateTimeHelper::getTimeAgo($this->_limitInfo['timestamp'], $this->_limitInfo['time_unit']),
-        ])->andFilterWhere([
-            'user_id' => $actionUserId,
-            'record_id' => $recordId,
-            'action_ip' => $this->_limitInfo['check_ip'] ? Utils::getClientIp(1) : null,
-        ])->orderBy('created_at ASC')->asArray()->all();
-        $count_action_log = count($action_log);
-        // 如果行为限制被禁用，则更改频次为总是比当前行为日志数大，确保后续操作继续运行
-        if ($this->_limitInfo['status'] != 1) {
-            $this->_limitInfo['frequency'] = $count_action_log + 10;
-        }
-        // 获取该行为在有效周期内最早执行的记录时间，如果不存在，则默认为当前时间
-        $begin_log_time = $count_action_log > 0 ? $action_log[0]['created_at'] : time();
-        // 设置参数
-        $this->_params = [
-            // 触发行为的用户ID
-            'user_id' => $actionUserId,
-//            // 触发行为的记录id
-//            'record_id' => $recordId,
-            // 记录总数
-            'count_action_log' => $count_action_log,
-            // 剩余次数
-            'surplus_number' => $this->_limitInfo['frequency'] - $count_action_log - 1,
-            // 最开始的记录时间
-            'begin_log_time' => $begin_log_time,
-            // 最后结束的记录时间
-            'end_log_time' => $count_action_log > 0 ? $action_log[$count_action_log - 1]['created_at'] : null,
-            // 下次操作时间
-            'next_action_time' => DateTimeHelper::getAfterTime($this->_limitInfo['timestamp'], $this->_limitInfo['time_unit'], $begin_log_time),
-        ];
 
         // 解析提示语模板
         $this->_parseContent();
@@ -127,16 +89,72 @@ class ActionService extends Service
     }
 
     /**
+     * 设置参数
+     *
+     * @param string $modelClassName 触发行为的模型名
+     * @param integer $actionUserId 触发行为的用户id，默认为系统触发
+     * - null:不检索触发用户数据
+     * - 1:系统触发
+     * @param integer $recordId 触发行为的记录，默认不检索触发行为的记录id数据
+     */
+    protected function setParams($modelClassName, $actionUserId, $recordId)
+    {
+        // 禁用行为限制后则不检索行为日志数据
+        if ($this->disabled || $this->_limitInfo['status'] != 1) {
+            // 行为限制被禁用则日志总数总为最后一次，确保正确触发提醒信息`finish_message`
+            $count_action_log = $this->_limitInfo['frequency'] - 1;
+            $begin_log_time = time(); // 行为限制被禁用则最早执行的记录时间为当前时间
+            $end_log_time = time(); // 行为限制被禁用则最后执行的记录时间为当前时间
+        } // 激活行为限制后则检索行为日志数据
+        else {
+            // 获取行为限制所绑定的行为日志在有效周期内的记录总数
+            $action_log = ActionLog::find()->select('created_at')->where([
+                'action_id' => Action::find()->select('id')->where(['name' => $this->_limitInfo['action']])->scalar(),
+                'model' => $modelClassName,
+            ])->andWhere('created_at >= :ago', [
+                ':ago' => DateTimeHelper::getTimeAgo($this->_limitInfo['timestamp'], $this->_limitInfo['time_unit']),
+            ])->andFilterWhere([
+                'user_id' => $actionUserId,
+                'record_id' => $recordId,
+                'action_ip' => $this->_limitInfo['check_ip'] ? Utils::getClientIp(1) : null,
+            ])->orderBy('created_at ASC')->asArray()->all();
+            $count_action_log = count($action_log);
+            // 获取该行为在有效周期内最早执行的记录时间，如果不存在，则默认为当前时间
+            $begin_log_time = $count_action_log > 0 ? $action_log[0]['created_at'] : time();
+            // 获取该行为在有效周期内最后一条日志的记录时间，如果不存在，表示该日志为生成
+            $end_log_time = $count_action_log > 0 ? $action_log[$count_action_log - 1]['created_at'] : null;
+        }
+
+        // 设置参数
+        $this->_params = [
+            // 触发行为的用户ID
+            'user_id' => $actionUserId,
+//            // 触发行为的记录id
+//            'record_id' => $recordId,
+            // 记录总数
+            'count_action_log' => $count_action_log,
+            // 剩余次数
+            'surplus_number' => $this->_limitInfo['frequency'] - $count_action_log - 1,
+            // 最开始的记录时间
+            'begin_log_time' => $begin_log_time,
+            // 最后结束的记录时间
+            'end_log_time' => $end_log_time,
+            // 下次操作时间
+            'next_action_time' => DateTimeHelper::getAfterTime($this->_limitInfo['timestamp'], $this->_limitInfo['time_unit'], $begin_log_time),
+        ];
+    }
+
+    /**
      * 初始化提醒消息
      */
     protected function _initRemindMessage()
     {
         switch (true) {
-            // 存在剩余次数则仅作提醒
             case $this->_params['surplus_number'] > 0:
-                $this->_info = $this->_limitInfo['status']
-                    ? $this->_limitInfo['remind_message'] // 行为限制被激活，则显示提醒信息
-                    : $this->_limitInfo['disable_message']; // 行为限制被禁用，则显示禁用提醒信息
+                $this->_info = $this->_limitInfo['remind_message'];
+                break;
+            case $this->_params['surplus_number'] == 0:
+                $this->_info = $this->_limitInfo['finish_message'];
                 break;
             default:
                 $this->warning();
@@ -145,13 +163,13 @@ class ActionService extends Service
     }
 
     /**
-     * 警告并禁止
+     * 频次结束后的提示语
      */
     protected function warning()
     {
         $this->_info = $this->_limitInfo['warning_message'];
-        // 频次超过后仅作提醒，不执行处罚，频次刚结束则提醒并执行处罚
-        $this->_status = $this->_params['surplus_number'] < 0 ? false : true;
+        // 频次结束后标识行为限制不通过，直接终止后续操作
+        $this->_status = false;
     }
 
     /**
@@ -182,8 +200,6 @@ class ActionService extends Service
                 'lock_formatted_time' => DateTimeHelper::timeFormat($this->_params['lock_expire_time'], 'H时i分'),
             ]);
         }
-        // 锁定操作结束后则终止行为限制
-        $this->_status = false;
     }
 
     /**
@@ -192,6 +208,14 @@ class ActionService extends Service
     protected function logout()
     {
         Wc::$service->getPassport()->getUcenter()->logout();
+    }
+
+    /**
+     * 封锁IP
+     */
+    protected function lockIp()
+    {
+
     }
 
     /**
@@ -204,12 +228,15 @@ class ActionService extends Service
             case $this->_params['surplus_number'] > 0:
                 $messageType = 'remind_message';
                 break;
+            case $this->_params['surplus_number'] == 0:
+                $messageType = 'finish_message';
+                break;
             default:
                 $messageType = 'warning_message';
                 break;
         }
         // 提示语列表
-        $message_list = ['warning_message', 'remind_message'];
+        $message_list = ['warning_message', 'remind_message', 'finish_message'];
         // 生成模板变量
         $content_data = $this->_generateTemplateData();
 
@@ -319,7 +346,7 @@ class ActionService extends Service
      */
     private function _executePunish()
     {
-        if ($this->_params['surplus_number'] == 0) {
+        if ($this->_params['surplus_number'] == 0 && !($this->disabled || $this->_limitInfo['status'] != 1)) {
             foreach ($this->_limitInfo['punish'] as $punish) {
                 if (method_exists($this, $punish)) {
                     $this->$punish();
@@ -335,7 +362,7 @@ class ActionService extends Service
     {
         $operation = $this->getOperation();
 
-        return $this->_info . ($operation && $this->_params['surplus_number'] > 0 && $this->_limitInfo['status']
+        return $this->_info . ($operation && $this->_params['surplus_number'] > 0
             ? Yii::t('wocenter/app', 'After the number of times will automatically run the following: {operations}', [
                 'operations' => $operation,
             ])

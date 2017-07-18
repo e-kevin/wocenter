@@ -5,6 +5,7 @@ use wonail\adminlte\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model \wocenter\models\BackendUser */
 /* @var $form ActiveForm */
+/* @var $showStatus boolean */
 ?>
 
 <?php $form = ActiveForm::begin(); ?>
@@ -15,7 +16,11 @@ if ($model->getScenario() !== $model::SCENARIO_UPDATE) {
 }
 ?>
 
-<?= $form->field($model, 'status')->radioList(Constants::getStatusList()) ?>
+<?php
+if ($showStatus) {
+    echo $form->field($model, 'status')->radioList(Constants::getStatusList());
+}
+?>
 
 <?= $form->defaultButtons() ?>
 

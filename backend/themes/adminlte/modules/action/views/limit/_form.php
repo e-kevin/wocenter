@@ -83,17 +83,17 @@ $inline_input_group = function ($form, $model, $attribute, $list) {
 //])
 ?>
 
-<?= $form->field($model, 'warning_message')->textarea([
-    'rows' => 8,
-    'placeholder' => Yii::t('wocenter/app', 'Frequent operation: Please do this after {next_action_time}.'),
-]) ?>
-
 <?= $form->field($model, 'remind_message')->textarea([
     'rows' => 8,
     'placeholder' => Yii::t('wocenter/app', 'In {next_action_time} you can also perform the operation {surplus_number} times!'),
 ]) ?>
 
-<?= $form->field($model, 'disable_message')->textarea(['rows' => 8]) ?>
+<?= $form->field($model, 'warning_message')->textarea([
+    'rows' => 8,
+    'placeholder' => Yii::t('wocenter/app', 'Frequent operation: Please do this after {next_action_time}.'),
+]) ?>
+
+<?= $form->field($model, 'finish_message')->textarea(['rows' => 8]) ?>
 
 <?php
 if ($model->modifyUpdatedAt) {

@@ -18,6 +18,7 @@ class Update extends Dispatch
 
     public function run()
     {
+        /** @var BackendUser $model */
         $model = $this->loadModel(BackendUser::className(), $this->_params['id'], true, [
             'scenario' => BackendUser::SCENARIO_UPDATE
         ]);
@@ -32,6 +33,7 @@ class Update extends Dispatch
 
         return $this->assign([
             'model' => $model,
+            'showStatus' => !($model->user_id == 1 || $model->user_id == Yii::$app->getUser()->getId()),
         ])->display();
     }
 

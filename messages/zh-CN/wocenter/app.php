@@ -225,7 +225,6 @@ return [
     'The user in the locked state cannot perform this operation.' => '锁定状态的用户无法执行该操作',
     'Validate email' => '邮箱验证',
     'Validate mobile' => '手机验证',
-    'Reset password successfully.' => '密码重置成功，新密码为 {password}',
     'The new password is {password}' => '重置密码后新密码为 {password}',
     // account/profile
     'Birthday' => '生日',
