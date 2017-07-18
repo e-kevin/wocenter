@@ -61,6 +61,7 @@ class ExtendProfile extends ActiveRecord
     {
         $rules = [
             [['profile_name', 'created_at'], 'required'],
+            ['profile_name', 'unique'],
             [['status', 'visible', 'sort_order', 'created_at'], 'integer'],
             [['profile_name'], 'string', 'max' => 25],
         ];

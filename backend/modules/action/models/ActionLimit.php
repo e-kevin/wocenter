@@ -78,7 +78,7 @@ class ActionLimit extends ActiveRecord
             [['frequency', 'timestamp', 'time_unit', 'send_notification', 'status', 'updated_at', 'check_ip'], 'integer'],
             [['punish', 'warning_message', 'remind_message', 'send_message', 'finish_message'], 'string'],
             [['name'], 'string', 'max' => 50],
-            ['name', 'unique'],
+            ['name', 'unique', 'targetClass' => self::className()],
             [['title'], 'string', 'max' => 100],
             [['action'], 'string', 'max' => 80],
         ];

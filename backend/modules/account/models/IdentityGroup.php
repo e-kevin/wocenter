@@ -55,6 +55,7 @@ class IdentityGroup extends ActiveRecord
     {
         $rules = [
             [['title', 'updated_at'], 'required'],
+            ['title', 'unique'],
             [['updated_at'], 'integer'],
             [['title'], 'string', 'max' => 25],
         ];

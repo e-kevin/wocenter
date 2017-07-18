@@ -47,7 +47,8 @@ class UserScoreType extends ActiveRecord
         return [
             [['name', 'status', 'unit'], 'required'],
             [['status'], 'integer'],
-            [['name'], 'string', 'max' => 50],
+            [['name'], 'string', 'max' => 10],
+            ['name', 'unique'],
             [['unit'], 'string', 'max' => 20],
         ];
     }

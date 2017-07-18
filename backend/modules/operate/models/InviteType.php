@@ -90,6 +90,7 @@ class InviteType extends ActiveRecord
                 'integer',
             ],
             ['length', 'integer', 'max' => 25], // 限制邀请码最大长度，该值取决于[[Invite::$code]]值
+            ['title', 'unique'],
             [['title'], 'string', 'max' => 25],
             [['auth_groups'], 'string', 'max' => 50],
             ['identities', 'safe'],

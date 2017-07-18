@@ -30,7 +30,6 @@ class MenuCategory extends ActiveRecord
             [['id', 'name'], 'required'],
             [['id', 'name'], 'string', 'max' => 64],
             [['description'], 'string', 'max' => 512],
-            [['id'], 'unique'],
         ];
     }
 
@@ -54,11 +53,14 @@ class MenuCategory extends ActiveRecord
         if (parent::beforeDelete()) {
             if (Menu::findOne(['category_id' => $this->id])) {
                 $this->message = '删除该数据前请删除或转移其下的子类数据';
+
                 return false;
             }
 
             return true;
         }
+
+        return false;
     }
 
 }

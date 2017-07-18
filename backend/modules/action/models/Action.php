@@ -68,6 +68,7 @@ class Action extends ActiveRecord
     {
         $rules = [
             [['name', 'title', 'updated_at'], 'required'],
+            ['name', 'unique', 'targetClass' => self::className()],
             [['rule'], 'string'],
             [['type', 'status', 'updated_at'], 'integer'],
             [['name'], 'string', 'max' => 30],

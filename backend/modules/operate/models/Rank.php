@@ -50,6 +50,7 @@ class Rank extends ActiveRecord
     {
         return [
             [['name', 'label'], 'required'],
+            ['name', 'unique'],
             [['logo', 'created_at', 'allow_user_apply'], 'integer'],
             [['name'], 'string', 'max' => 50],
             [['label', 'label_color', 'label_bg'], 'string', 'max' => 10],
