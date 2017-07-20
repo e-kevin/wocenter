@@ -137,9 +137,7 @@ class ActionLimit extends ActiveRecord
 ');
 
         return [
-            'punish' => '频次结束后立刻执行。系统默认先执行【警告并禁止】处罚，接着再执行此处所选处罚。
-</br>【警告并禁止】在频次结束后显示警告提示语并禁止执行处罚
-</br>【锁定账户】仅在系统开启账号锁定功能后生效',
+            'punish' => '频次结束时执行',
             'check_ip' => '开启检测IP，则会判断当前操作者IP是否通过当前行为限制',
             'warning_message' => '频次结束后的提示语</br>' . $variable,
             'remind_message' => '频次未结束时的提示语</br>' . $variable,
@@ -189,7 +187,6 @@ class ActionLimit extends ActiveRecord
     {
         $tmp = [];
         foreach ($this->punish as $punish) {
-            $tmp[] = '警告并禁止';
             if (isset(self::$punishList[$punish])) {
                 $tmp[] = ArrayHelper::getValue(self::$punishList, $punish);
             }

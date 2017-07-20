@@ -32,9 +32,6 @@ return [
             ],
         ],
         'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => true,
-//            'suffix' => '.html',
             'rules' => [
                 '/' => 'site/index',
             ],
@@ -79,5 +76,8 @@ return [
         'definitions' => [
             'Wc' => 'wocenter\Wc',
         ],
+    ],
+    'aliases' => [
+        '@wocenter' => '@vendor/wonail/wocenter',
     ],
 ];

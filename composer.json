@@ -1,6 +1,6 @@
 {
     "name": "wonail/wocenter",
-    "description": "基于php Yii2框架开发的一款优秀的高度模块化的框架，在此框架上可方便搭建后台管理系统，CMS系统等",
+    "description": "基于php Yii2框架开发的一款集成人事管理、安全管理、扩展中心、系统管理、运营管理等多个模块的后台管理系统",
     "keywords": [
         "yii2",
         "extension",
@@ -15,11 +15,13 @@
     ],
     "type": "yii2-extension",
     "license": "BSD-3-Clause",
+    "homepage": "https://github.com/Wonail/wocenter",
     "require": {
-        "wonail/yii2-adminlte": "dev-master",
-        "wonail/yii2-widget-nestable": "dev-master",
-        "diiimonn/yii2-asset-slimscroll": "dev-master",
-        "kartik-v/yii2-widgets": "@dev"
+        "php": ">=5.4.0",
+        "yiisoft/yii2": "~2.0.12",
+        "kartik-v/yii2-widgets": "@dev",
+        "wonail/yii2-adminlte": "~0.0.1",
+        "wonail/yii2-widget-nestable": "~1.0"
     },
     "autoload": {
         "psr-4": {
