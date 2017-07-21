@@ -20,6 +20,7 @@
         "php": ">=5.4.0",
         "yiisoft/yii2": "~2.0.12",
         "kartik-v/yii2-widgets": "@dev",
+        "kartik-v/yii2-datecontrol": "~1.9.6",
         "wonail/yii2-adminlte": "~0.0.1",
         "wonail/yii2-widget-nestable": "~1.0"
     },
