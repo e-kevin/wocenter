@@ -2,7 +2,7 @@
 use wocenter\backend\modules\system\models\Config;
 use wocenter\helpers\DateTimeHelper;
 use wocenter\helpers\StringHelper;
-use wocenter\widgets\DateTimePicker;
+use wocenter\widgets\DateControl;
 use wocenter\backend\modules\passport\models\FlowProfileForm;
 use wonail\adminlte\widgets\ActiveForm;
 use wonail\adminlte\widgets\Select2;
@@ -68,10 +68,25 @@ foreach ($model->profiles as $profile) {
                 ])->dropDownList(StringHelper::parseString($field['form_data']));
                 break;
             case Config::TYPE_DATE:
-                echo $form->field($model, $k)->widget(DateTimePicker::className(), [
-                    'format' => 'Y-m-d',
-                    'minView' => 2,
-                    'endDate' => DateTimeHelper::timeFormat(time()),
+                echo $form->field($model, $k)->widget(DateControl::className(), [
+                    'type' => DateControl::FORMAT_DATE,
+                    'saveFormat' => 'php:Y-m-d',
+                    'widgetOptions' => [
+                        'pluginOptions' => [
+                            'todayHighlight' => true,
+                            'endDate' => DateTimeHelper::timeFormat(time()),
+                        ]
+                    ]
+                ]);
+                break;
+            case Config::TYPE_DATETIME:
+                echo $form->field($model, $k)->widget(DateControl::className(), [
+                    'type' => DateControl::FORMAT_DATETIME,
+                ]);
+                break;
+            case Config::TYPE_TIME:
+                echo $form->field($model, $k)->widget(DateControl::className(), [
+                    'type' => DateControl::FORMAT_TIME,
                 ]);
                 break;
         }
