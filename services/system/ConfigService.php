@@ -4,7 +4,6 @@ namespace wocenter\services\system;
 use wocenter\backend\modules\system\models\Config;
 use wocenter\core\Service;
 use Yii;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
 /**
@@ -69,7 +68,7 @@ class ConfigService extends Service
             }
         }
 
-        return ArrayHelper::getColumn($res, 'id');
+        return $res;
     }
 
 }

@@ -24,7 +24,7 @@ class PassportForm extends Model
     /**
      * @var string 邀请注册场景
      */
-    const SCENARIO_SIGNUP_BY_INVITE = 'inviteSignup';
+    const SCENARIO_SIGNUP_BY_INVITE = 'invite-signup';
 
     /**
      * @var integer 密码最小长度
@@ -111,13 +111,18 @@ class PassportForm extends Model
      */
     public function rules()
     {
+        $showVerify = Utils::showVerify();
+
         return [
             // 通用场景
             [['identity', 'username', 'email', 'mobile'], 'trim'],
             ['password', 'string', 'length' => [self::PWD_LENGTH_MIN, self::PWD_LENGTH_MAX]],
-            ['captcha', 'captcha', 'when' => function () {
-                return $this->getUseCaptcha();
-            }, 'whenClient' => "function (attribute, value) {return {$this->getUseCaptcha()};}", 'captchaAction' => self::CAPTCHA_ACTION],
+            ['captcha', 'captcha',
+                'when' => function () use ($showVerify) {
+                    return $showVerify;
+                },
+                'whenClient' => "function (attribute, value) {return {$showVerify};}",
+                'captchaAction' => self::CAPTCHA_ACTION],
             // [邮箱、手机]验证码
             [['emailVerifyCode', 'mobileVerifyCode'], 'required'],
             // 验证密码
@@ -126,16 +131,6 @@ class PassportForm extends Model
                 'message' => Yii::t('wocenter/app', 'Please confirm your password again.'),
             ],
         ];
-    }
-
-    /**
-     * 是否使用验证码。根据后台设置，对不同场景进行验证
-     *
-     * @return boolean 是否使用验证码
-     */
-    public static function getUseCaptcha()
-    {
-        return Utils::showVerify(Yii::$app->controller->action->id);
     }
 
     /**

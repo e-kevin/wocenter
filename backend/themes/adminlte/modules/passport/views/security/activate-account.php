@@ -1,5 +1,6 @@
 <?php
 
+use wocenter\libs\Utils;
 use yii\bootstrap\ActiveForm;
 use yii\captcha\Captcha;
 use yii\helpers\Html;
@@ -25,7 +26,7 @@ $form = ActiveForm::begin([
 <?= $form->field($model, 'email')->textInput(['placeholder' => Yii::t('wocenter/app', 'Register Email')])->label(false) ?>
 
 <?php
-if (PassportForm::getUseCaptcha()) {
+if (Utils::showVerify()) {
     echo $form->field($model, 'captcha')->widget(Captcha::className(), [
         'captchaAction' => PassportForm::CAPTCHA_ACTION,
         'template' => '<div class="input-group">{input}<div class="input-group-addon">{image}</div></div>',

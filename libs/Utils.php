@@ -1,8 +1,6 @@
 <?php
 namespace wocenter\libs;
 
-use wocenter\backend\modules\passport\models\PassportForm;
-use wocenter\backend\modules\passport\models\SecurityForm;
 use wocenter\Wc;
 use Yii;
 use yii\data\Pagination;
@@ -151,27 +149,20 @@ class Utils
     /**
      * 根据场景动态显示验证码
      *
-     * @param string $scenario 场景 ['signup', 'login', 'find-password', 'reset-password', 'resend-active-email']
+     * @param string $scenario 场景 ['signup', 'login', 'find-password', 'reset-password']
      *
      * @return boolean
      */
     public static function showVerify($scenario = '')
     {
         $openVerifyType = Wc::$service->getSystem()->getConfig()->get('VERIFY_OPEN');
-        switch ($scenario) {
-            case PassportForm::SCENARIO_SIGNUP:
-                return in_array($openVerifyType, [1, 2]);
-            case PassportForm::SCENARIO_LOGIN:
-                return in_array($openVerifyType, [1, 3]);
-            case PassportForm::SCENARIO_SIGNUP_BY_INVITE:
-            case SecurityForm::SCENARIO_FIND_PASSWORD:
-            case SecurityForm::SCENARIO_RESET_PASSWORD:
-            case SecurityForm::SCENARIO_ACTIVE_ACCOUNT:
-            case SecurityForm::SCENARIO_CHANGE_PASSWORD:
-                return $openVerifyType == 1;
-            default:
-                return $openVerifyType == 1;
+        if (empty($openVerifyType)) {
+            return false;
+        } else {
+            $openVerifyType = explode(',', $openVerifyType);
         }
+
+        return in_array($scenario ?: Yii::$app->controller->action->id, $openVerifyType);
     }
 
 }

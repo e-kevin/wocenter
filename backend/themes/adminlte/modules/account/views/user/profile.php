@@ -1,7 +1,9 @@
 <?php
 use wocenter\backend\modules\passport\models\SecurityForm;
+use wocenter\libs\Utils;
 use wonail\adminlte\widgets\ActiveForm;
 use wocenter\Wc;
+use yii\captcha\Captcha;
 use yii\helpers\Url;
 
 $this->title = '个人资料';
@@ -92,7 +94,7 @@ $userInfo = Wc::$service->getAccount()->queryUser(['username', 'nickname', 'real
                 <li><a href="#activity" data-toggle="tab">Activity</a></li>
                 <li><a href="#timeline" data-toggle="tab">Timeline</a></li>
                 <li><a href="#settings" data-toggle="tab">Settings</a></li>
-                <li class="active"><a href="#change-passport" data-toggle="tab">更改密码</a></li>
+                <li class="active"><a href="#change-password" data-toggle="tab">更改密码</a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane" id="activity">
@@ -360,7 +362,7 @@ $userInfo = Wc::$service->getAccount()->queryUser(['username', 'nickname', 'real
                 </div>
                 <!-- /.tab-pane -->
 
-                <div class="active tab-pane" id="change-passport">
+                <div class="active tab-pane" id="change-password">
                     <?php
                         $model = new SecurityForm([
                             'scenario' => SecurityForm::SCENARIO_CHANGE_PASSWORD,
@@ -376,6 +378,25 @@ $userInfo = Wc::$service->getAccount()->queryUser(['username', 'nickname', 'real
                     <?= $form->field($model, 'password')->passwordInput()->label('新密码'); ?>
 
                     <?= $form->field($model, 'passwordRepeat')->passwordInput(); ?>
+
+                    <?php
+                    if (Utils::showVerify($model->getScenario())) {
+                        echo $form->field($model, 'captcha')->widget(Captcha::className(), [
+                            'options' => [
+                                'class' => 'form-control',
+                                'placeholder' => $model->getAttributeLabel('captcha')
+                            ],
+                            'imageOptions' => [
+                                'id' => 'verifycode-image',
+                                'title' => Yii::t('wocenter/app', 'Change another one'),
+                                'height' => '20px',
+                                'width' => '100px',
+                                'alt' => $model->getAttributeLabel('captcha'),
+                                'style' => 'cursor:pointer',
+                            ]
+                        ]);
+                    }
+                    ?>
 
                     <?= $form->defaultButtons() ?>
 

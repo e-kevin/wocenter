@@ -1,6 +1,6 @@
 <?php
 
-use wocenter\backend\modules\passport\models\PassportForm;
+use wocenter\libs\Utils;
 use yii\bootstrap\ActiveForm;
 use yii\captcha\Captcha;
 use yii\helpers\Html;
@@ -22,10 +22,8 @@ $this->title = Yii::t('wocenter/app', 'Reset Password');
 <?= $form->field($model, 'passwordRepeat')->passwordInput(['placeholder' => Yii::t('wocenter/app', 'Please enter a new password again')])->label(false) ?>
 
 <?php
-if (PassportForm::getUseCaptcha()) {
+if (Utils::showVerify()) {
     echo $form->field($model, 'captcha')->widget(Captcha::className(), [
-        'captchaAction' => PassportForm::CAPTCHA_ACTION,
-        'template' => '<div class="input-group">{input}<div class="input-group-addon">{image}</div></div>',
         'options' => [
             'class' => 'form-control',
             'placeholder' => $model->getAttributeLabel('captcha'),

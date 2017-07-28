@@ -427,9 +427,11 @@ class UserIdentity extends ActiveRecord
             return self::STEP_FINISHED;
         }
         $step = Wc::$service->getSystem()->getConfig()->kanban('REGISTER_STEP');
-        // 系统没有开启注册步骤流程则结束流程
+        // 系统没有开启注册步骤流程则结束流程，否则获取步骤流程数据
         if (empty($step)) {
             return self::STEP_FINISHED;
+        } else {
+            $step = ArrayHelper::getColumn($step, 'id');
         }
         // 当前步骤为空时，如果存在步骤信息则执行步骤信息里的第一个步骤，否则结束执行步骤
         if (empty($nowStep)) {

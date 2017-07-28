@@ -1,4 +1,5 @@
 <?php
+use wocenter\libs\Utils;
 use yii\bootstrap\ActiveForm;
 use yii\captcha\Captcha;
 use yii\helpers\Html;
@@ -23,10 +24,8 @@ $form = ActiveForm::begin([
 <?= $form->field($model, 'code')->textInput(['placeholder' => $model->getAttributeLabel('code')])->label(false) ?>
 
 <?php
-if ($model::getUseCaptcha()) {
+if (Utils::showVerify()) {
     echo $form->field($model, 'captcha')->widget(Captcha::className(), [
-        'captchaAction' => $model::CAPTCHA_ACTION,
-        'template' => '<div class="input-group">{input}<div class="input-group-addon">{image}</div></div>',
         'options' => [
             'class' => 'form-control',
             'placeholder' => $model->getAttributeLabel('captcha')

@@ -1,4 +1,5 @@
 <?php
+use wocenter\libs\Utils;
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\ToggleButtonGroup;
 use yii\captcha\Captcha;
@@ -104,10 +105,8 @@ $retrieveText = Yii::t('wocenter/app', 'Retrieve');
         <?= $form->field($model, 'passwordRepeat')->passwordInput(['placeholder' => $model->getAttributeLabel('passwordRepeat')])->label(false) ?>
 
         <?php
-        if ($model->getUseCaptcha()) {
+        if (Utils::showVerify()) {
             echo $form->field($model, 'captcha')->widget(Captcha::className(), [
-                'captchaAction' => $model::CAPTCHA_ACTION,
-                'template' => '<div class="input-group">{input}<div class="input-group-addon">{image}</div></div>',
                 'options' => [
                     'class' => 'form-control',
                     'placeholder' => $model->getAttributeLabel('captcha')

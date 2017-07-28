@@ -2,6 +2,7 @@
 namespace wocenter\backend\modules\passport\models;
 
 use wocenter\backend\core\Model;
+use wocenter\libs\Utils;
 use wocenter\Wc;
 use wocenter\helpers\SecurityHelper;
 use wocenter\helpers\StringHelper;
@@ -21,7 +22,7 @@ class SecurityForm extends Model
 
     const SCENARIO_FIND_PASSWORD = 'find-password';
     const SCENARIO_RESET_PASSWORD = 'reset-password';
-    const SCENARIO_ACTIVE_ACCOUNT = 'active-account';
+    const SCENARIO_ACTIVE_ACCOUNT = 'activate-account';
     const SCENARIO_CHANGE_PASSWORD = 'change-password';
 
     public $email;
@@ -35,14 +36,16 @@ class SecurityForm extends Model
      */
     public function rules()
     {
+        $showVerify = Utils::showVerify($this->getScenario());
+
         return [
             // 通用场景
             ['email', 'trim'],
             ['captcha', 'captcha',
-                'when' => function () {
-                    return PassportForm::getUseCaptcha();
+                'when' => function () use ($showVerify) {
+                    return $showVerify;
                 },
-                'whenClient' => "function (attribute, value) {return " . PassportForm::getUseCaptcha() . ";}",
+                'whenClient' => "function (attribute, value) {return {$showVerify};}",
                 'captchaAction' => PassportForm::CAPTCHA_ACTION],
             // 找回密码场景|重新发送激活邮件
             ['email', 'required', 'on' => [self::SCENARIO_FIND_PASSWORD, self::SCENARIO_ACTIVE_ACCOUNT]],

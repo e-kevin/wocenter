@@ -75,6 +75,10 @@ return [
     'container' => [
         'definitions' => [
             'Wc' => 'wocenter\Wc',
+            'yii\captcha\Captcha' => [
+                'captchaAction' => \wocenter\backend\modules\passport\models\PassportForm::CAPTCHA_ACTION,
+                'template' => '<div class="input-group">{input}<div class="input-group-addon">{image}</div></div>',
+            ]
         ],
     ],
     'aliases' => [
