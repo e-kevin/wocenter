@@ -51,9 +51,9 @@ class Info extends ModularityInfo
                                     ['name' => '管理', 'url' => "/{$this->id}/detail/index", 'description' => '菜单明细管理'],
                                 ],
                             ],
-                        ]
+                        ],
                     ],
-                ]
+                ],
             ],
         ];
     }

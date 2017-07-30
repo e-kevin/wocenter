@@ -9,7 +9,7 @@ class Info extends ModularityInfo
     public function init()
     {
         parent::init();
-        
+
         $this->id = 'system';
         $this->name = '系统设置';
         $this->version = '1.0';
@@ -41,7 +41,7 @@ class Info extends ModularityInfo
                             ['name' => '注册配置', 'url' => "/{$this->id}/setting/register", 'show_on_menu' => true],
                             ['name' => '系统配置', 'url' => "/{$this->id}/setting/config", 'show_on_menu' => true],
                             ['name' => '安全配置', 'url' => "/{$this->id}/setting/security", 'show_on_menu' => true],
-                        ]
+                        ],
                     ],
                     [
                         'name' => '基础功能',
@@ -61,12 +61,12 @@ class Info extends ModularityInfo
                                     ['name' => '编辑', 'url' => "/{$this->id}/{$this->defaultRoute}/update"],
                                     ['name' => '删除', 'url' => "/{$this->id}/{$this->defaultRoute}/delete"],
                                     ['name' => '搜索', 'url' => "/{$this->id}/{$this->defaultRoute}/search"],
-                                ]
+                                ],
                             ],
                             ['name' => '清理缓存', 'url' => "/{$this->id}/cache/flushCache", 'show_on_menu' => true],
-                        ]
+                        ],
                     ],
-                ]
+                ],
             ],
         ];
     }

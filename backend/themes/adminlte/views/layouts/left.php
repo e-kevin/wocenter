@@ -2,9 +2,8 @@
 use wocenter\helpers\ArrayHelper;
 use wocenter\Wc;
 
-$uninstalledModuleId = Wc::$service->getModularity()->getUninstalledModuleId();
 $sidebarMenus = Wc::$service->getMenu()->getMenus('backend', [
-    ['modularity' => ['not in', $uninstalledModuleId]],
+    ['modularity' => ['not in', Wc::$service->getModularity()->getUninstalledModuleId()]],
     'show_on_menu' => 1,
     'status' => 1,
 ]);

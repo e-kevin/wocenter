@@ -47,12 +47,12 @@ class Info extends ModularityInfo
                                     ['name' => '卸载', 'url' => "/{$this->id}/{$this->defaultRoute}/uninstall", 'description' => '卸载模块'],
                                     ['name' => '安装', 'url' => "/{$this->id}/{$this->defaultRoute}/install", 'description' => '安装模块'],
                                     ['name' => '编辑', 'url' => "/{$this->id}/{$this->defaultRoute}/update", 'description' => '更新模块'],
-                                ]
+                                ],
                             ],
                             ['name' => '清理模块缓存', 'url' => "/{$this->id}/{$this->defaultRoute}/clear-cache", 'description' => '清理模块缓存', 'show_on_menu' => true],
-                        ]
+                        ],
                     ],
-                ]
+                ],
             ],
         ];
     }

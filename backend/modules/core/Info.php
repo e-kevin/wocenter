@@ -5,7 +5,7 @@ use wocenter\core\ModularityInfo;
 
 class Info extends ModularityInfo
 {
-    
+
     public function init()
     {
         parent::init();
@@ -59,7 +59,7 @@ class Info extends ModularityInfo
                 'icon_html' => 'line-chart',
                 'modularity' => 'core',
                 'show_on_menu' => true,
-            ]
+            ],
         ];
     }
 

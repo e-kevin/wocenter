@@ -73,7 +73,7 @@ class Info extends ModularityInfo
                                     ['name' => '搜索', 'url' => "/{$this->id}/invite-log/search"],
                                     ['name' => '删除', 'url' => "/{$this->id}/invite-log/delete"],
                                     ['name' => '批量删除', 'url' => "/{$this->id}/invite-log/batch-delete"],
-                                ]
+                                ],
                             ],
 //                            ['name' => '兑换记录', 'url' => "/{$this->id}/invite-buy-log", 'show_on_menu' => true],
 //                            ['name' => '邀请人列表', 'url' => "/{$this->id}/invite-user-info", 'show_on_menu' => true],

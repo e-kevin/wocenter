@@ -9,7 +9,7 @@ class Info extends ModularityInfo
     public function init()
     {
         parent::init();
-        
+
         $this->id = 'action';
         $this->name = '行为管理';
         $this->description = '管理系统所有行为操作';
@@ -42,7 +42,7 @@ class Info extends ModularityInfo
                             ['name' => '编辑', 'url' => "/{$this->id}/{$this->defaultRoute}/update"],
                             ['name' => '删除', 'url' => "/{$this->id}/{$this->defaultRoute}/delete"],
                             ['name' => '搜索', 'url' => "/{$this->id}/{$this->defaultRoute}/search", 'description' => '搜索行为'],
-                        ]
+                        ],
                     ],
                     [
                         'name' => '行为限制管理',
@@ -56,11 +56,11 @@ class Info extends ModularityInfo
                             ['name' => '编辑', 'url' => "/{$this->id}/limit/update"],
                             ['name' => '删除', 'url' => "/{$this->id}/limit/delete"],
                             ['name' => '搜索', 'url' => "/{$this->id}/limit/search", 'description' => '搜索行为限制'],
-                        ]
+                        ],
                     ],
-                ]
+                ],
             ],
         ];
     }
-    
+
 }
