@@ -28,8 +28,6 @@ $form = ActiveForm::begin([
 <?php
 if (Utils::showVerify()) {
     echo $form->field($model, 'captcha')->widget(Captcha::className(), [
-        'captchaAction' => PassportForm::CAPTCHA_ACTION,
-        'template' => '<div class="input-group">{input}<div class="input-group-addon">{image}</div></div>',
         'options' => [
             'class' => 'form-control',
             'placeholder' => $model->getAttributeLabel('captcha')

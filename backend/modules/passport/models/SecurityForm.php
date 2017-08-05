@@ -46,7 +46,8 @@ class SecurityForm extends Model
                     return $showVerify;
                 },
                 'whenClient' => "function (attribute, value) {return {$showVerify};}",
-                'captchaAction' => PassportForm::CAPTCHA_ACTION],
+                'captchaAction' => Yii::$app->params['captchaAction'],
+            ],
             // 找回密码场景|重新发送激活邮件
             ['email', 'required', 'on' => [self::SCENARIO_FIND_PASSWORD, self::SCENARIO_ACTIVE_ACCOUNT]],
             ['email', 'email', 'on' => [self::SCENARIO_FIND_PASSWORD, self::SCENARIO_ACTIVE_ACCOUNT]],

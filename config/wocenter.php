@@ -2,6 +2,8 @@
 foreach (require_once('classMap.php') as $old => $new) {
     Yii::$classMap[$old] = $new;
 }
+$captchaAction = '/passport/security/captcha'; // 验证码路由地址
+
 return [
     'components' => [
         'user' => [
@@ -70,13 +72,14 @@ return [
         ],
     ],
     'params' => [
-        'redirect' => 'redirect',
+        'redirect' => 'redirect', // url跳转地址参数
+        'captchaAction' => $captchaAction
     ],
     'container' => [
         'definitions' => [
             'Wc' => 'wocenter\Wc',
             'yii\captcha\Captcha' => [
-                'captchaAction' => \wocenter\backend\modules\passport\models\PassportForm::CAPTCHA_ACTION,
+                'captchaAction' => $captchaAction,
                 'template' => '<div class="input-group">{input}<div class="input-group-addon">{image}</div></div>',
             ]
         ],

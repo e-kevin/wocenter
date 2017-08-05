@@ -57,11 +57,6 @@ class PassportForm extends Model
     const EMAIL_LENGTH_MAX = 32;
 
     /**
-     * @var string 验证码操作链接
-     */
-    const CAPTCHA_ACTION = '/passport/security/captcha';
-
-    /**
      * @var string 登陆验证标志
      */
     public $identity;
@@ -122,7 +117,8 @@ class PassportForm extends Model
                     return $showVerify;
                 },
                 'whenClient' => "function (attribute, value) {return {$showVerify};}",
-                'captchaAction' => self::CAPTCHA_ACTION],
+                'captchaAction' => Yii::$app->params['captchaAction'],
+            ],
             // [邮箱、手机]验证码
             [['emailVerifyCode', 'mobileVerifyCode'], 'required'],
             // 验证密码
