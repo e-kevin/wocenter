@@ -84,10 +84,14 @@ class MenuService extends Service
      */
     public function syncMenus()
     {
+        /** @var Menu $menuModel */
+        $menuModel = $this->menuModel;
         // 获取已经安装的模块菜单配置信息
         $allInstalledMenuConfig = $this->_getMenuConfigs();
-        // 获取数据库里的所有菜单数据
-        $menuInDatabase = $this->getMenus('backend', [], false);
+        // 获取数据库里的所有模块菜单数据，不包括用户自建数据
+        $menuInDatabase = $this->getMenus('backend', [
+            'created_type' => $menuModel::CREATE_TYPE_BY_MODULE
+        ], false);
         $updateDbMenus = $this->_convertMenuData2Db($allInstalledMenuConfig, 0, $menuInDatabase);
         $this->_fixMenuData($menuInDatabase, $updateDbMenus);
 

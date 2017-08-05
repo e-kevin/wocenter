@@ -13,7 +13,20 @@ use Yii;
 class Constants
 {
 
+    /**
+     * @var integer 不限
+     */
     const UNLIMITED = 999;
+
+    /**
+     * @var integer 链接打开方式：当前窗口
+     */
+    const TARGET_SELF = 0;
+
+    /**
+     * @var integer 链接打开方式：新建窗口
+     */
+    const TARGET_BLANK = 1;
 
     /**
      * 获取`是`，`否`列表
@@ -66,7 +79,10 @@ class Constants
      */
     public static function getOpenTargetList()
     {
-        return [Yii::t('wocenter/app', 'Target self'), Yii::t('wocenter/app', 'Target blank')];
+        return [
+            self::TARGET_SELF => Yii::t('wocenter/app', 'Target self'),
+            self::TARGET_BLANK => Yii::t('wocenter/app', 'Target blank')
+        ];
     }
 
     /**

@@ -85,6 +85,9 @@ class Menu extends ActiveRecord
             [['name', 'url', 'full_url', 'target', 'category_id', 'parent_id'], 'required'],
             [['status', 'sort_order', 'is_dev', 'target', 'created_type', 'show_on_menu', 'parent_id'], 'integer'],
             [['name', 'category_id', 'alias_name'], 'string', 'max' => 64],
+            ['alias_name', 'default', 'value' => function ($model, $attribute) {
+                return empty($model->$attribute) ? $model->name : $model->$attribute;
+            }],
             [['url', 'full_url', 'description'], 'string', 'max' => 512],
             ['icon_html', 'string', 'max' => 30],
             ['params', 'string', 'max' => 200],
@@ -130,6 +133,19 @@ class Menu extends ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     */
+    public function attributeHints()
+    {
+        return [
+            'alias_name' => "为空时默认为`{$this->getAttributeLabel('name')}`的值",
+            'url' => '一般为简写路由地址',
+            'full_url' => '权限验证时以此路由做判断',
+            'target' => '建设中……',
+        ];
+    }
+
+    /**
      * 获取数据库所有菜单数据
      *
      * @param integer|boolean $duration 缓存周期，默认缓存`60`秒
@@ -152,7 +168,7 @@ class Menu extends ActiveRecord
     {
         return [
             self::CREATE_TYPE_BY_USER => '用户',
-            self::CREATE_TYPE_BY_MODULE => '模块'
+            self::CREATE_TYPE_BY_MODULE => '模块',
         ];
     }
 
