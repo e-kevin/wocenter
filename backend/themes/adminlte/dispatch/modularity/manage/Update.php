@@ -14,13 +14,15 @@ class Update extends Dispatch
 {
 
     /**
+     * @param integer $id
+     *
      * @return string|\yii\web\Response
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\web\NotFoundHttpException
      */
-    public function run()
+    public function run($id)
     {
-        $model = Wc::$service->getModularity()->getModuleInfo($this->_params['id']);
+        $model = Wc::$service->getModularity()->getModuleInfo($id);
         $request = Yii::$app->getRequest();
 
         if ($request->getIsPost()) {

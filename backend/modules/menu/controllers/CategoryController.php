@@ -42,49 +42,16 @@ class CategoryController extends Controller
     }
 
     /**
-     * Lists all MenuCategory models.
-     *
-     * @return string|\yii\web\Response
+     * @inheritdoc
      */
-    public function actionIndex()
+    public function dispatches()
     {
-        return $this->runDispatch();
-    }
-
-    /**
-     * Creates a new MenuCategory model.
-     *
-     * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function actionCreate()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * Updates an existing MenuCategory model.
-     *
-     * @param integer $id
-     *
-     * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\web\NotFoundHttpException
-     */
-    public function actionUpdate($id)
-    {
-        return $this->setParams('id', $id)->run();
-    }
-
-    /**
-     * 同步菜单
-     *
-     * @author E-Kevin <e-kevin@qq.com>
-     * @return mixed
-     */
-    public function actionSyncMenus()
-    {
-        return $this->runDispatch();
+        return [
+            'index',
+            'create',
+            'update',
+            'sync-menus',
+        ];
     }
 
 }

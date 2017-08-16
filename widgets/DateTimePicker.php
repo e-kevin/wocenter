@@ -5,9 +5,9 @@ use kartik\datetime\DateTimePicker as kvDateTimePicker;
 use yii\helpers\ArrayHelper;
 
 /**
- * Class DateTimePicker
+ * 主要是对[[\kartik\datetime\DateTimePicker]]组件的配置参数做说明
  *
- * 主要是对插件的配置参数做说明
+ * @author E-Kevin <e-kevin@qq.com>
  */
 class DateTimePicker extends kvDateTimePicker
 {

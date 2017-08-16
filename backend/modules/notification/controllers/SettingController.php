@@ -38,40 +38,16 @@ class SettingController extends Controller
     }
 
     /**
-     * @return string|\yii\web\Response
+     * @inheritdoc
      */
-    public function actionIndex()
+    public function dispatches()
     {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 搜索操作
-     *
-     * @return string|\yii\web\Response
-     */
-    public function actionSearch()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * @return string|\yii\web\Response
-     */
-    public function actionCreate()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * @param $id
-     * @return array|string
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\web\NotFoundHttpException
-     */
-    public function actionUpdate($id)
-    {
-        return $this->setParams('id', $id)->run();
+        return [
+            'index',
+            'search',
+            'create',
+            'update',
+        ];
     }
 
 }

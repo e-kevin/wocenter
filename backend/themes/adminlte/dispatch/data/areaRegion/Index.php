@@ -14,9 +14,11 @@ class Index extends Dispatch
 {
 
     /**
+     * @param integer $pid
+     *
      * @return string|\yii\web\Response
      */
-    public function run()
+    public function run($pid = 0)
     {
         $searchModel = new AreaRegionSearch();
         $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
@@ -25,7 +27,6 @@ class Index extends Dispatch
             $this->error($searchModel->message, '', 2);
         }
 
-        $pid = $this->_params[$searchModel->breadcrumbParentParam];
         $breadcrumbs = $searchModel->getBreadcrumbs($pid, '区域管理', '/data/area-region');
 
         return $this->assign([

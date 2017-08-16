@@ -6,6 +6,12 @@ use yii\helpers\Url;
 use yii\web\Request;
 use yii\web\Response;
 
+/**
+ * AdminLTE主题调度器的实现类
+ *
+ * @package wocenter\backend\themes\adminlte\components
+ * @author E-Kevin <e-kevin@qq.com>
+ */
 class Dispatch extends \wocenter\core\Dispatch
 {
 
@@ -17,15 +23,10 @@ class Dispatch extends \wocenter\core\Dispatch
      * @param mixed $data
      *  - 为整数，则代表页面跳转停留时间，默认为1妙，时间结束后自动跳转至指定的`$jumpUrl`页面
      *  - 为数组，则代表返回给客户端的数据
-     *
-     * 通常自建该方法时，建议在方法最后添加如下代码以防止不必要的输出显示
-     * \Yii::$app->end();
-     *
-     * @return string
      */
     public function success($message = '', $jumpUrl = '', $data = [])
     {
-        return $this->dispatchJump($message ?: Yii::t('wocenter/app', 'Successful operation.'), 1, $jumpUrl, $data);
+        $this->dispatchJump($message ?: Yii::t('wocenter/app', 'Successful operation.'), 1, $jumpUrl, $data);
     }
 
     /**
@@ -36,15 +37,10 @@ class Dispatch extends \wocenter\core\Dispatch
      * @param mixed $data
      *  - 为整数，则代表页面跳转停留时间，默认为3妙，时间结束后自动跳转至指定的`$jumpUrl`页面
      *  - 为数组，则代表返回给客户端的数据
-     *
-     * 通常自建该方法时，建议在方法最后添加如下代码以防止不必要的输出显示
-     * \Yii::$app->end();
-     *
-     * @return string
      */
     public function error($message = '', $jumpUrl = '', $data = [])
     {
-        return $this->dispatchJump($message ?: Yii::t('wocenter/app', 'Operation failure.'), 0, $jumpUrl, $data);
+        $this->dispatchJump($message ?: Yii::t('wocenter/app', 'Operation failure.'), 0, $jumpUrl, $data);
     }
 
     /**
@@ -55,8 +51,6 @@ class Dispatch extends \wocenter\core\Dispatch
      * @param integer $status 状态 1:success 0:error
      * @param string|array $jumpUrl 页面跳转地址
      * @param array|integer $data
-     *
-     * @return string
      */
     private function dispatchJump($message = '', $status = 1, $jumpUrl = '', $data = [])
     {
@@ -104,10 +98,11 @@ class Dispatch extends \wocenter\core\Dispatch
      */
     public function display($view = null, $assign = [])
     {
+        // 没有指定渲染的视图文件名，则默认渲染当前调度器ID的视图文件
+        $view = $view ?: $this->id;
+        $assign = array_merge($this->_assign, $assign);
         /** @var Request $request */
         $request = Yii::$app->getRequest();
-        $view = $view ?: $this->view;
-        $assign = array_merge($this->_assign, (array)$assign);
         if ($request->getIsAjax()) {
             if ($request->getIsPjax()) {
                 // 使用布局文件并加载资源

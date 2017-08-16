@@ -15,10 +15,8 @@ class Clear extends Dispatch
 
     public function run()
     {
-        if (Yii::$app->getRequest()->getIsPost()) {
-            (new Invite())->clearCode();
-            $this->success('', self::RELOAD_LIST);
-        }
+        (new Invite())->clearCode();
+        $this->success('', self::RELOAD_LIST);
     }
 
 }

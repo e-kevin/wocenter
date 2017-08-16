@@ -11,6 +11,7 @@ use yii\helpers\VarDumper;
  * Class Wc
  *
  * @package wocenter
+ * @author E-Kevin <e-kevin@qq.com>
  */
 class Wc extends Object
 {
@@ -179,7 +180,7 @@ class Wc extends Object
     }
 
     /**
-     * 抛出异常
+     * 设置是否允许抛出异常，默认为`true`(允许)
      *
      * @param boolean $throw
      */

@@ -5,7 +5,9 @@ use kartik\datecontrol\DateControl as baseDateControl;
 use wocenter\behaviors\ModifyTimestampBehavior;
 
 /**
- * Class DateControl
+ * 初始化[[\kartik\datecontrol\DateControl]]组件的一些基础配置信息
+ *
+ * @author E-Kevin <e-kevin@qq.com>
  */
 class DateControl extends baseDateControl
 {

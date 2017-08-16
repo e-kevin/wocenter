@@ -10,6 +10,8 @@ use yii\helpers\Html;
 /**
  * Class Menu
  * Theme menu widget.
+ *
+ * @author E-Kevin <e-kevin@qq.com>
  */
 class Menu extends \wonail\adminlte\widgets\Menu
 {

@@ -20,6 +20,8 @@ use yii\web\NotFoundHttpException;
 
 /**
  * 认证中心服务类
+ *
+ * @author E-Kevin <e-kevin@qq.com>
  */
 class UcenterService extends Service
 {

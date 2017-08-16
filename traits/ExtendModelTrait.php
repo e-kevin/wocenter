@@ -6,14 +6,13 @@ namespace wocenter\traits;
  * 拓展\wocenter\core\Model, \wocenter\core\ActiveRecord类
  *
  * @property boolean $throwException
- *
  * @author E-Kevin <e-kevin@qq.com>
  */
 trait ExtendModelTrait
 {
 
     /**
-     * @var string $message 提示消息
+     * @var string $message 反馈消息
      */
     public $message = '';
 
@@ -35,7 +34,7 @@ trait ExtendModelTrait
     }
 
     /**
-     * 抛出异常
+     * 设置是否允许抛出异常
      *
      * @param boolean $throw
      *

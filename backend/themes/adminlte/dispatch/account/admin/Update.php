@@ -16,10 +16,16 @@ class Update extends Dispatch
 
     use LoadModelTrait;
 
-    public function run()
+    /**
+     * @param integer $id
+     *
+     * @return string|\yii\web\Response
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\web\NotFoundHttpException
+     */public function run($id)
     {
         /** @var BackendUser $model */
-        $model = $this->loadModel(BackendUser::className(), $this->_params['id'], true, [
+        $model = $this->loadModel(BackendUser::className(), $id, true, [
             'scenario' => BackendUser::SCENARIO_UPDATE
         ]);
         $request = Yii::$app->getRequest();

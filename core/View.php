@@ -24,6 +24,9 @@ class View extends baseView
      */
     private $_basePath;
 
+    /**
+     * @inheritdoc
+     */
     public function renderFile($viewFile, $params = [], $context = null)
     {
         if ($this->theme == null) {
@@ -34,7 +37,7 @@ class View extends baseView
     }
 
     /**
-     * 设置主题，模块视图路径映射
+     * 设置视图路径映射
      */
     protected function setTheme()
     {
@@ -76,7 +79,7 @@ class View extends baseView
     }
 
     /**
-     * 获取指定主题目录内相关路径
+     * 获取当前主题目录内相关路径
      *
      * @param null $path 主题内路径
      *
@@ -84,7 +87,7 @@ class View extends baseView
      */
     public function getThemePath($path = null)
     {
-        return $this->getBasePath() . DIRECTORY_SEPARATOR . $this->themeName . DIRECTORY_SEPARATOR . ($path ?: '');
+        return $this->getBasePath() . DIRECTORY_SEPARATOR . $this->themeName . ($path ? DIRECTORY_SEPARATOR . $path : '');
     }
 
 }

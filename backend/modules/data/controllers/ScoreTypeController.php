@@ -41,39 +41,15 @@ class ScoreTypeController extends Controller
     }
 
     /**
-     * Lists all UserScoreType models.
-     *
-     * @return string|\yii\web\Response
+     * @inheritdoc
      */
-    public function actionIndex()
+    public function dispatches()
     {
-        return $this->runDispatch();
-    }
-
-    /**
-     * Creates a new UserScoreType model.
-     *
-     * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function actionCreate()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * Updates an existing UserScoreType model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     *
-     * @param $id
-     *
-     * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\web\NotFoundHttpException
-     */
-    public function actionUpdate($id)
-    {
-        return $this->setParams('id', $id)->run();
+        return [
+            'index',
+            'create',
+            'update',
+        ];
     }
 
 }

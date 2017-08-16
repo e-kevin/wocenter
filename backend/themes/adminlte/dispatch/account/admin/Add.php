@@ -13,6 +13,10 @@ use Yii;
 class Add extends Dispatch
 {
 
+    /**
+     * @return string|\yii\web\Response
+     * @throws \yii\base\InvalidConfigException
+     */
     public function run()
     {
         $model = new BackendUser();

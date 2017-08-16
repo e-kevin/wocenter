@@ -10,23 +10,14 @@ class ScoreController extends Controller
 {
 
     /**
-     * Lists all UserScoreLog models.
-     *
-     * @return mixed
+     * @inheritdoc
      */
-    public function actionIndex()
+    public function dispatches()
     {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 搜索操作
-     *
-     * @return mixed
-     */
-    public function actionSearch()
-    {
-        return $this->runDispatch();
+        return [
+            'index',
+            'search',
+        ];
     }
 
 }

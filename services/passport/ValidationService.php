@@ -9,6 +9,8 @@ use yii\validators\EmailValidator;
 
 /**
  * 规则验证服务类
+ *
+ * @author E-Kevin <e-kevin@qq.com>
  */
 class ValidationService extends Service
 {

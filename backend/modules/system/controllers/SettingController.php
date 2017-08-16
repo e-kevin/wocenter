@@ -7,6 +7,16 @@ class SettingController extends Controller
 {
 
     /**
+     * @inheritdoc
+     */
+    public function dispatches()
+    {
+        return [
+            'update',
+        ];
+    }
+
+    /**
      * 基本配置
      *
      * @return mixed
@@ -58,7 +68,7 @@ class SettingController extends Controller
 
     protected function _update($id)
     {
-        return $this->getDispatch('update')->setParams('id', $id)->run();
+        return $this->getDispatch('update')->run($id);
     }
 
 }

@@ -47,41 +47,16 @@ class TagController extends Controller
     }
 
     /**
-     * Lists all Tag models.
-     *
-     * @param $pid
-     *
-     * @return string|\yii\web\Response
+     * @inheritdoc
      */
-    public function actionIndex($pid = 0)
+    public function dispatches()
     {
-        return $this->setParams('pid', $pid)->run();
-    }
-
-    /**
-     * Creates a new Tag model.
-     *
-     * @param int $pid
-     *
-     * @return string|\yii\web\Response
-     */
-    public function actionCreate($pid = 0)
-    {
-        return $this->setParams('pid', $pid)->run();
-    }
-
-    /**
-     * Updates an existing Tag model.
-     *
-     * @param $id
-     *
-     * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\web\NotFoundHttpException
-     */
-    public function actionUpdate($id)
-    {
-        return $this->setParams('id', $id)->run();
+        return [
+            'index',
+            'search',
+            'create',
+            'update',
+        ];
     }
 
 }

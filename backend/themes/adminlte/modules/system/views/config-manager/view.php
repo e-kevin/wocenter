@@ -15,7 +15,7 @@ $this->params['navSelectPage'] = '/system';
 
 <?php \wonail\adminlte\widgets\Box::begin([
     'type' => \wonail\adminlte\AdminLTE::TYPE_PRIMARY,
-    'leftToolbar' => '{goback}'
+    'leftToolbar' => '{goback}',
 ]) ?>
 
 <?=
@@ -30,21 +30,21 @@ DetailView::widget([
         [
             'attribute' => 'remark',
             'format' => 'html',
-            'value' => nl2br($model->remark)
+            'value' => nl2br($model->remark),
         ],
         'value',
         [
             'attribute' => 'extra',
             'format' => 'html',
-            'value' => nl2br($model->extra)
+            'value' => nl2br($model->extra),
         ],
         [
             'attribute' => 'category_group',
-            'value' => $configGroupList[$model->category_group]
+            'value' => $configGroupList[$model->category_group],
         ],
         [
             'attribute' => 'type',
-            'value' => $configTypeList[$model->type]
+            'value' => $configTypeList[$model->type],
         ],
         'updated_at:datetime',
         'created_at:datetime',

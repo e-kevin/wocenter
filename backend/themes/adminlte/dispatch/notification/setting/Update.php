@@ -17,14 +17,16 @@ class Update extends Dispatch
     use LoadModelTrait;
 
     /**
+     * @param integer $id
+     *
      * @return string|\yii\web\Response
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\web\NotFoundHttpException
      */
-    public function run()
+    public function run($id)
     {
         /** @var Notify $model */
-        $model = $this->loadModel(Notify::className(), $this->_params['id']);
+        $model = $this->loadModel(Notify::className(), $id);
         $request = Yii::$app->getRequest();
 
         if ($request->getIsPost()) {

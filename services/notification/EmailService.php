@@ -6,6 +6,8 @@ use Yii;
 
 /**
  * 邮件服务类
+ *
+ * @author E-Kevin <e-kevin@qq.com>
  */
 class EmailService extends Service
 {

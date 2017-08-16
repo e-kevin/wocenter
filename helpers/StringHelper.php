@@ -1,5 +1,6 @@
 <?php
 namespace wocenter\helpers;
+
 use wocenter\libs\Constants;
 use Yii;
 use yii\helpers\Html;
@@ -51,7 +52,13 @@ class StringHelper
     }
 
     /**
-     * 解析[下拉框,单选框,多选框]类型额外配置值 格式 a:名称1,b:名称2
+     * 解析[下拉框,单选框,多选框]类型额外配置值
+     * 格式:
+     *  1. 以英文逗号分隔。a:名称1,b:名称2
+     *  2. 以英文分号分隔。a:名称1;b:名称2;
+     *  3. 以回车换行分隔。
+     *      a:名称1
+     *      b:名称2
      *
      * @param string $string 要解析的字符串
      *
@@ -183,9 +190,6 @@ class StringHelper
      */
     public static function isUtf8($str)
     {
-        $c = 0;
-        $b = 0;
-        $bits = 0;
         $len = strlen($str);
         for ($i = 0; $i < $len; $i++) {
             $c = ord($str[$i]);
@@ -314,7 +318,7 @@ class StringHelper
     }
 
     /**
-     *  带格式生成随机字符,支持批量生成,但可能存在重复
+     * 带格式生成随机字符,支持批量生成,但可能存在重复
      *
      * @param string $format 字符格式
      *  - #:表示数字

@@ -27,18 +27,14 @@ class IdentityUserController extends Controller
     }
 
     /**
-     * Lists all IdentityGroup models.
-     *
-     * @return string|\yii\web\Response
+     * @inheritdoc
      */
-    public function actionIndex()
+    public function dispatches()
     {
-        return $this->runDispatch();
-    }
-
-    public function actionSearch()
-    {
-        return $this->runDispatch();
+        return [
+            'index',
+            'search',
+        ];
     }
 
 }

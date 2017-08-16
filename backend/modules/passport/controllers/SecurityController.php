@@ -71,73 +71,19 @@ class SecurityController extends Controller
     }
 
     /**
-     * 找回密码
-     *
-     * @return mixed
+     * @inheritdoc
      */
-    public function actionFindPassword()
+    public function dispatches()
     {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 找回密码成功
-     *
-     * @return mixed
-     */
-    public function actionFindPasswordSuccessful()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 重置密码
-     *
-     * @return mixed
-     */
-    public function actionResetPassword()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 激活用户
-     *
-     * @return mixed
-     */
-    public function actionActivateUser()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 激活账户
-     *
-     * @return mixed
-     */
-    public function actionActivateAccount()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 发送验证码
-     *
-     * @return mixed
-     */
-    public function actionSendVerify()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 更改用户密码
-     *
-     * @return mixed
-     */
-    public function actionChangePassword()
-    {
-        return $this->runDispatch();
+        return [
+            'find-password',
+            'find-password-successful',
+            'reset-password',
+            'activate-user',
+            'activate-account',
+            'send-verify',
+            'change-password',
+        ];
     }
 
 }

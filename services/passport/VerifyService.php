@@ -9,6 +9,8 @@ use Yii;
 
 /**
  * 验证中心服务类
+ *
+ * @author E-Kevin <e-kevin@qq.com>
  */
 class VerifyService extends Service
 {

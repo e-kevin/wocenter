@@ -16,14 +16,15 @@ class Create extends Dispatch
 {
 
     /**
+     * @param string $category
+     * @param integer $pid
+     *
      * @return string|\yii\web\Response
      * @throws \yii\base\InvalidConfigException
      */
-    public function run()
+    public function run($category = '', $pid = 0)
     {
         $model = new Menu();
-        $category = $this->_params['category'];
-        $pid = $this->_params[$model->breadcrumbParentParam];
         $request = Yii::$app->getRequest();
 
         // 所选分类是否存在

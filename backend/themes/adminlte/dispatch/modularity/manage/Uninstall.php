@@ -14,13 +14,11 @@ class Uninstall extends Dispatch
 {
 
     /**
-     * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\web\NotFoundHttpException
+     * @param string $id
      */
-    public function run()
+    public function run($id)
     {
-        $model = Wc::$service->getModularity()->getModuleInfo($this->_params['id']);
+        $model = Wc::$service->getModularity()->getModuleInfo($id);
         if ($model->infoInstance->canUninstall) {
             if ($model->delete()) {
                 // 调用模块内置卸载方法
@@ -30,7 +28,7 @@ class Uninstall extends Dispatch
                 $this->error('卸载失败');
             }
         } else {
-            $this->error($this->_params['id'] . ' 模块属于系统模块，暂不支持卸载');
+            $this->error($id . ' 模块属于系统模块，暂不支持卸载');
         }
     }
 

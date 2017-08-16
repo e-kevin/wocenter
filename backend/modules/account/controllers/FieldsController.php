@@ -41,42 +41,15 @@ class FieldsController extends Controller
     }
 
     /**
-     * Lists all FieldSetting models.
-     *
-     * @param integer $profile_id
-     *
-     * @return string|\yii\web\Response
+     * @inheritdoc
      */
-    public function actionIndex($profile_id = 0)
+    public function dispatches()
     {
-        return $this->setParams('profile_id', $profile_id)->run();
-    }
-
-    /**
-     * Creates a new FieldSetting model.
-     *
-     * @param integer $profile_id 扩展档案ID
-     *
-     * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function actionCreate($profile_id)
-    {
-        return $this->setParams('profile_id', $profile_id)->run();
-    }
-
-    /**
-     * Updates an existing FieldSetting model.
-     *
-     * @param integer $id
-     *
-     * @return array|string
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\web\NotFoundHttpException
-     */
-    public function actionUpdate($id)
-    {
-        return $this->setParams('id', $id)->run();
+        return [
+            'index',
+            'create',
+            'update'
+        ];
     }
 
 }

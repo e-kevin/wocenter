@@ -14,13 +14,13 @@ class Create extends Dispatch
 {
 
     /**
+     * @param integer $pid
+     *
      * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
      */
-    public function run()
+    public function run($pid = 0)
     {
         $model = new AreaRegion();
-        $pid = $this->_params[$model->breadcrumbParentParam];
         $request = Yii::$app->getRequest();
 
         $model->loadDefaultValues();

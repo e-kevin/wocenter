@@ -19,21 +19,23 @@ class Update extends Dispatch
     use LoadModelTrait;
 
     /**
+     * @param integer $id
+     *
      * @return string|\yii\web\Response
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\web\NotFoundHttpException
      */
-    public function run()
+    public function run($id)
     {
         /** @var ExtendFieldSetting $model */
-        $model = $this->loadModel(ExtendFieldSetting::className(), $this->_params['id']);
+        $model = $this->loadModel(ExtendFieldSetting::className(), $id);
         $request = Yii::$app->getRequest();
 
         if ($request->getIsPost()) {
             if ($model->load($request->getBodyParams()) && $model->save()) {
                 $this->success($model->message, [
                     "/{$this->controller->getUniqueId()}",
-                    'profile_id' => $model->profile_id
+                    'profile_id' => $model->profile_id,
                 ]);
             } else {
                 $this->error($model->message);

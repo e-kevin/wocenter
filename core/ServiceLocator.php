@@ -11,7 +11,8 @@ use yii\helpers\Inflector;
 
 /**
  * 系统核心服务定位器，包含系统所有核心服务
- * 主要用于IDE支持，也可直接\Yii::$app->get('modularityService')方式调用，但显然建立该文件相当高效便捷
+ *
+ * 主要为IDE提供友好支持，也可直接\Yii::$app->get('modularityService')方式调用，但显然建立该文件相当高效便捷
  *
  * @property \wocenter\services\AccountService $account
  * @property \wocenter\services\ActionService $action
@@ -140,7 +141,7 @@ class ServiceLocator extends Object
                          * $serviceClass['passportService'] = [
                          *  'class' => 'wocenter\services\PassportService', // 父级服务
                          *  'subService' => [
-                         *      'passport/ucenter' => 'wocenter\services\passport\UcenterService', // 单层子服务
+                         *      'ucenter' => 'wocenter\services\passport\UcenterService', // 单层子服务
                          *  ]
                          * ]
                          */
@@ -148,7 +149,7 @@ class ServiceLocator extends Object
                         $config = [
                             'class' => $this->serviceNamespace . Inflector::camelize($parentServiceName),
                             'subService' => [
-                                $parent . '/' . strtolower($serviceName) => [
+                                strtolower($serviceName) => [
                                     'class' => $this->serviceNamespace . $parent . '\\' . $serviceName . 'Service',
                                 ],
                             ],

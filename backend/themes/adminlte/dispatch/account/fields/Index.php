@@ -16,9 +16,11 @@ class Index extends Dispatch
 {
 
     /**
+     * @param integer $profile_id
+     *
      * @return string|\yii\web\Response
      */
-    public function run()
+    public function run($profile_id = 0)
     {
         $searchModel = new ExtendFieldSettingSearch();
         $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
@@ -30,9 +32,9 @@ class Index extends Dispatch
         return $this->assign([
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'profileId' => $this->_params['profile_id'],
+            'profileId' => $profile_id,
             'profileName' => ExtendProfile::find()->where('id = :id', [
-                ':id' => $this->_params['profile_id'],
+                ':id' => $profile_id,
             ])->select('profile_name')->scalar(),
             'formTypeList' => Wc::$service->getSystem()->getConfig()->extra('CONFIG_TYPE_LIST'),
         ])->display();

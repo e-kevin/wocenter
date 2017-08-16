@@ -115,7 +115,7 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
             $this->afterUninstall();
         }
 
-        return false;
+        return true;
     }
 
     /**

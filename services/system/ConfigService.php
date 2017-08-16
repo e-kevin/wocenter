@@ -8,6 +8,8 @@ use yii\helpers\Json;
 
 /**
  * 系统配置服务类
+ *
+ * @author E-Kevin <e-kevin@qq.com>
  */
 class ConfigService extends Service
 {

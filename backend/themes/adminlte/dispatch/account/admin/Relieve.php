@@ -16,7 +16,7 @@ class Relieve extends Dispatch
     public function run()
     {
         $model = new BackendUser();
-        if ($model->relieve($this->_params['id'])) {
+        if ($model->relieve(Yii::$app->getRequest()->getBodyParam('selection'))) {
             $this->success('解除管理员成功', parent::RELOAD_LIST);
         } else {
             $this->error($model->message);

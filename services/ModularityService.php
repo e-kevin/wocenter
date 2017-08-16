@@ -47,7 +47,7 @@ class ModularityService extends Service
     /**
      * @var array 核心模块，必须安装
      */
-    public $coreModules = ['modularity', 'menu', 'rbac', 'system', 'core', 'data'];
+    public $coreModules = ['modularity', 'menu', 'system', 'core', 'data'];
 
     /**
      * @var string|array|callable|Module 模块类

@@ -41,41 +41,29 @@ class InviteController extends Controller
                 'modelClass' => Invite::className(),
                 'markAsDeleted' => true,
                 'deletedMarkAttribute' => 'status',
-                'deletedMarkValue' => Invite::CODE_DELETED
+                'deletedMarkValue' => Invite::CODE_DELETED,
             ],
             'delete' => [
                 'class' => DeleteOne::className(),
                 'modelClass' => Invite::className(),
                 'markAsDeleted' => true,
                 'deletedMarkAttribute' => 'status',
-                'deletedMarkValue' => Invite::CODE_DELETED
+                'deletedMarkValue' => Invite::CODE_DELETED,
             ],
         ];
     }
 
     /**
-     * Lists all Invite models.
-     *
-     * @return string|\yii\web\Response
+     * @inheritdoc
      */
-    public function actionIndex()
+    public function dispatches()
     {
-        return $this->runDispatch();
-    }
-
-    public function actionSearch()
-    {
-        return $this->runDispatch();
-    }
-
-    public function actionGenerate()
-    {
-        return $this->runDispatch();
-    }
-
-    public function actionClear()
-    {
-        return $this->runDispatch();
+        return [
+            'index',
+            'search',
+            'generate',
+            'clear',
+        ];
     }
 
 }

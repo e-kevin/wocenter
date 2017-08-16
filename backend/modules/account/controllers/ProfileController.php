@@ -41,48 +41,16 @@ class ProfileController extends Controller
     }
 
     /**
-     * Lists all FieldGroup models.
-     *
-     * @return string|\yii\web\Response
+     * @inheritdoc
      */
-    public function actionIndex()
+    public function dispatches()
     {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 搜索操作
-     *
-     * @return mixed
-     */
-    public function actionSearch()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * Creates a new FieldGroup model.
-     *
-     * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function actionCreate()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * Updates an existing FieldGroup model.
-     *
-     * @param $id
-     *
-     * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\web\NotFoundHttpException
-     */
-    public function actionUpdate($id)
-    {
-        return $this->setParams('id', $id)->run();
+        return [
+            'index',
+            'search',
+            'create',
+            'update',
+        ];
     }
 
 }

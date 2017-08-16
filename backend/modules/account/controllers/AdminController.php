@@ -24,45 +24,16 @@ class AdminController extends Controller
     }
 
     /**
-     * 管理员列表
-     *
-     * @return string|\yii\web\Response
+     * @inheritdoc
      */
-    public function actionIndex()
+    public function dispatches()
     {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 解除管理员
-     *
-     * @return mixed
-     */
-    public function actionRelieve()
-    {
-        return $this->setParams('id', Yii::$app->getRequest()->getBodyParam('selection'))->run();
-    }
-
-    /**
-     * 添加管理员
-     *
-     * @return mixed
-     */
-    public function actionAdd()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 更新管理员
-     *
-     * @param integer $id
-     *
-     * @return mixed
-     */
-    public function actionUpdate($id)
-    {
-        return $this->setParams('id', $id)->run();
+        return [
+            'index',
+            'relieve',
+            'add',
+            'update',
+        ];
     }
 
 }

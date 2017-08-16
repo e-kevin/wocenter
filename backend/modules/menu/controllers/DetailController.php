@@ -41,52 +41,15 @@ class DetailController extends Controller
     }
 
     /**
-     * Lists all Menu models.
-     *
-     * @param string|integer $category
-     * @param integer $pid
-     *
-     * @return string|\yii\web\Response
+     * @inheritdoc
      */
-    public function actionIndex($category = '', $pid = 0)
+    public function dispatches()
     {
-        return $this->setParams([
-            'category' => $category,
-            'pid' => $pid
-        ])->run();
-    }
-
-    /**
-     * Creates a new Menu model.
-     *
-     * @param $category
-     * @param integer $pid
-     *
-     * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function actionCreate($category = '', $pid = 0)
-    {
-        return $this->setParams([
-            'category' => $category,
-            'pid' => $pid
-        ])->run();
-    }
-
-    /**
-     * Updates an existing Menu model.
-     *
-     * @param $id
-     *
-     * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\web\NotFoundHttpException
-     */
-    public function actionUpdate($id)
-    {
-        return $this->setParams([
-            'id' => $id,
-        ])->run();
+        return [
+            'index',
+            'create',
+            'update',
+        ];
     }
 
 }

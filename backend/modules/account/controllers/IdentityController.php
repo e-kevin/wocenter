@@ -41,64 +41,17 @@ class IdentityController extends Controller
     }
 
     /**
-     * Lists all Identity models.
-     *
-     * @return mixed
+     * @inheritdoc
      */
-    public function actionIndex()
+    public function dispatches()
     {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 搜索操作
-     *
-     * @return mixed
-     */
-    public function actionSearch()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * Creates a new Identity model.
-     *
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * Updates an existing Identity model.
-     *
-     * @param $id
-     *
-     * @return array|string
-     * @throws \yii\web\NotFoundHttpException
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function actionUpdate($id)
-    {
-        return $this->setParams('id', $id)->run();
-    }
-
-    /**
-     * 默认信息配置
-     *
-     * @param string $type 配置类型 [score, avatar, rank, tag, profile, signup]
-     * @param integer $id 身份ID
-     *
-     * @return mixed
-     * @throws \yii\web\NotFoundHttpException
-     */
-    public function actionSetting($type, $id)
-    {
-        return $this->setParams([
-            'type' => $type,
-            'id' => $id,
-        ])->run();
+        return [
+            'index',
+            'search',
+            'create',
+            'update',
+            'setting',
+        ];
     }
 
 }

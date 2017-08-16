@@ -18,7 +18,6 @@ class Create extends Dispatch
 
     /**
      * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
      */
     public function run()
     {

@@ -35,28 +35,31 @@ class Setting extends Dispatch
     private $_identityModel;
 
     /**
+     * @param string $type 配置类型 [score, avatar, rank, tag, profile, signup]
+     * @param integer $id 身份ID
+     * 
      * @return mixed
      * @throws NotFoundHttpException
      */
-    public function run()
+    public function run($type, $id)
     {
         // 身份是否存在
-        $this->_identityModel = $this->loadModel(Identity::className(), $this->_params['id']);
+        $this->_identityModel = $this->loadModel(Identity::className(), $id);
         // 获取身份配置数据
-        $this->_configModel = $this->_identityModel->getIdentityConfigs()->where(['name' => $this->_params['type']])->one();
+        $this->_configModel = $this->_identityModel->getIdentityConfigs()->where(['name' => $type])->one();
         if ($this->_configModel) {
             $this->_configModel->parseConfig($this->_configModel);
         } else {
             $this->_configModel = new IdentityConfig([
-                'identity_id' => $this->_params['id'],
-                'name' => $this->_params['type'],
+                'identity_id' => $id,
+                'name' => $type,
             ]);
         }
 
         // 身份筛选列表
         $this->assign('identityList', $this->_identityModel->getSelectList());
 
-        switch ($this->_params['type']) {
+        switch ($type) {
             case 'score':
                 return $this->_scoreSetting();
             case 'avatar':

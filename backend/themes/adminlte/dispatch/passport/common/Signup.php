@@ -17,10 +17,12 @@ class Signup extends Dispatch
 {
 
     /**
+     * @param integer $code 邀请码
+     *
      * @return string|\yii\web\Response
      * @throws \yii\base\InvalidConfigException
      */
-    public function run()
+    public function run($code = 0)
     {
         if (!Yii::$app->getUser()->getIsGuest()) {
             return $this->controller->goHome();
@@ -38,7 +40,7 @@ class Signup extends Dispatch
             }
         }
 
-        $this->_assign($model);
+        $this->_assign($model, ['code' => $code]);
 
         return $this->display();
     }
@@ -47,10 +49,11 @@ class Signup extends Dispatch
      * 模板赋值
      *
      * @param SignupForm $model
+     * @param array $params
      */
-    protected function _assign($model)
+    protected function _assign($model, $params)
     {
-        $code = $this->_params['code'];
+        $code = $params['code'];
         $isInvite = $model->getIsInviteRegister();
         $isNormal = $model->getIsNormalRegister();
 

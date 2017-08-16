@@ -16,14 +16,15 @@ class Create extends Dispatch
 {
 
     /**
+     * @param integer $profile_id 扩展档案ID
+     *
      * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
      */
-    public function run()
+    public function run($profile_id)
     {
         $model = new ExtendFieldSetting();
         $model->loadDefaultValues();
-        $model->profile_id = (int)$this->_params['profile_id'];
+        $model->profile_id = (int)$profile_id;
         $request = Yii::$app->getRequest();
 
         if ($request->getIsPost()) {

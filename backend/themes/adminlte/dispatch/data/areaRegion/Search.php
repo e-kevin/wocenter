@@ -14,9 +14,11 @@ class Search extends Dispatch
 {
 
     /**
+     * @param integer $pid
+     *
      * @return string|\yii\web\Response
      */
-    public function run()
+    public function run($pid = 0)
     {
         $searchModel = new AreaRegionSearch();
         $searchModel->load(Yii::$app->getRequest()->getQueryParams());

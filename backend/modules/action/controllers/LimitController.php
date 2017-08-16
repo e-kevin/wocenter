@@ -41,49 +41,16 @@ class LimitController extends Controller
     }
 
     /**
-     * Lists all ActionLimit models.
-     *
-     * @return mixed
+     * @inheritdoc
      */
-    public function actionIndex()
+    public function dispatches()
     {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 搜索操作
-     *
-     * @return mixed
-     */
-    public function actionSearch()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * Creates a new ActionLimit model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     *
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * Updates an existing ActionLimit model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     *
-     * @param $id
-     *
-     * @return array|string
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\web\NotFoundHttpException
-     */
-    public function actionUpdate($id)
-    {
-        return $this->setParams('id', $id)->run();
+        return [
+            'index',
+            'search',
+            'create',
+            'update',
+        ];
     }
 
 }

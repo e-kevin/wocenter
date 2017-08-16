@@ -25,57 +25,16 @@ class ManageController extends Controller
     }
 
     /**
-     * 模块列表
-     *
-     * @author E-Kevin <e-kevin@qq.com>
-     * @return mixed
+     * @inheritdoc
      */
-    public function actionIndex()
+    public function dispatches()
     {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 更新模块
-     *
-     * @author E-Kevin <e-kevin@qq.com>
-     *
-     * @param $id
-     *
-     * @return mixed
-     */
-    public function actionUpdate($id)
-    {
-        return $this->setParams('id', $id)->run();
-    }
-
-    /**
-     * 安装模块
-     *
-     * @author E-Kevin <e-kevin@qq.com>
-     *
-     * @param $id
-     *
-     * @return mixed
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function actionInstall($id)
-    {
-        return $this->setParams('id', $id)->run();
-    }
-
-    /**
-     * 卸载模块
-     *
-     * @author E-Kevin <e-kevin@qq.com>
-     *
-     * @param $id
-     *
-     * @return mixed
-     */
-    public function actionUninstall($id)
-    {
-        return $this->setParams('id', $id)->run();
+        return [
+            'index',
+            'update',
+            'install',
+            'uninstall',
+        ];
     }
 
     /**

@@ -17,12 +17,14 @@ class Update extends Dispatch
     use LoadModelTrait;
 
     /**
+     * @param integer $id
+     *
      * @return string|\yii\web\Response
      * @throws \yii\base\InvalidConfigException
      */
-    public function run()
+    public function run($id)
     {
-        $models = new ConfigForm(['categoryGroup' => $this->_params['id']]);
+        $models = new ConfigForm(['categoryGroup' => $id]);
         $request = Yii::$app->getRequest();
         if ($request->getIsPost()) {
             if ($models->load($request->getBodyParams()) && $models->save()) {
@@ -34,7 +36,7 @@ class Update extends Dispatch
 
         return $this->assign([
             'models' => $models,
-            'id' => $this->_params['id'],
+            'id' => $id,
         ])->display();
     }
 

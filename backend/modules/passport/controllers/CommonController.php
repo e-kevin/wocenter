@@ -52,47 +52,18 @@ class CommonController extends Controller
         ];
     }
 
-    /**
-     * 用户登陆
-     *
-     * @return mixed|string
-     *
-     */
-    public function actionLogin()
-    {
-        return $this->runDispatch();
-    }
 
     /**
-     * 用户注册
-     *
-     * @param integer $code 邀请码
-     *
-     * @return mixed|string
+     * @inheritdoc
      */
-    public function actionSignup($code = 0)
+    public function dispatches()
     {
-        return $this->setParams('code', $code)->run();
-    }
-
-    /**
-     * 邀请注册
-     *
-     * @return mixed|string
-     */
-    public function actionInviteSignup()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 注册流程
-     *
-     * @return mixed
-     */
-    public function actionStep()
-    {
-        return $this->runDispatch();
+        return [
+            'login',
+            'signup',
+            'invite-signup',
+            'step',
+        ];
     }
 
     /**
@@ -108,7 +79,7 @@ class CommonController extends Controller
     }
 
     /**
-     * 注册流程里推出登陆
+     * 注册流程里退出登陆
      *
      * @return mixed|string
      */

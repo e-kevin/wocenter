@@ -19,6 +19,7 @@ interface ServiceInterface
      * 设置子服务
      *
      * @param string|array|callable $config 子服务配置信息
+     *
      * @see \yii\BaseYii::createObject()
      * @see \wocenter\core\ServiceLocator::loadServiceConfig()
      */
@@ -27,14 +28,14 @@ interface ServiceInterface
     /**
      * 服务类执行后的相关信息
      *
-     * @return string
+     * @return mixed
      */
     public function getInfo();
 
     /**
      * 服务类执行后的相关数据
      *
-     * @return array|string
+     * @return mixed
      */
     public function getData();
 

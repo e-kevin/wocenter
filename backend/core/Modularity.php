@@ -10,10 +10,4 @@ use yii\base\Module;
  */
 class Modularity extends Module
 {
-
-    /**
-     * @var array 后台系统核心模块，必须安装的
-     */
-    public static $coreModule = ['modularity', 'system', 'core', 'data'];
-
 }

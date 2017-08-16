@@ -29,90 +29,61 @@ class UserController extends Controller
     }
 
     /**
+     * @inheritdoc
+     */
+    public function dispatches()
+    {
+        return [
+            'view',
+            'update',
+            'search',
+            'generate',
+            'init-password',
+            'profile',
+        ];
+    }
+
+    /**
      * 用户列表
-     *
-     * @return string|\yii\web\Response
      */
     public function actionIndex()
     {
-        return $this->_getUserList(['status' => User::STATUS_ACTIVE]);
+        return $this->_getUserList(User::STATUS_ACTIVE);
     }
 
     /**
      * 用户禁用列表
-     *
-     * @return string|\yii\web\Response
      */
     public function actionForbiddenList()
     {
-        return $this->_getUserList(['status' => User::STATUS_FORBIDDEN]);
+        return $this->_getUserList(User::STATUS_FORBIDDEN);
     }
 
     /**
      * 用户锁定列表
-     *
-     * @return string|\yii\web\Response
      */
     public function actionLockedList()
     {
-        return $this->_getUserList(['status' => User::STATUS_LOCKED]);
+        return $this->_getUserList(User::STATUS_LOCKED);
     }
 
     /**
      * 获取用户列表
      *
-     * @param $params
+     * @param integer $status
      *
-     * @return string|\yii\web\Response
+     * @return mixed
      */
-    private function _getUserList($params)
+    private function _getUserList($status)
     {
-        return $this->getDispatch('index')->setParams($params)->run();
-    }
-
-    /**
-     * 搜索操作
-     *
-     * @return string|\yii\web\Response
-     */
-    public function actionSearch()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * Displays a single User model.
-     *
-     * @param integer $id
-     *
-     * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\web\NotFoundHttpException
-     */
-    public function actionView($id)
-    {
-        return $this->setParams('id', $id)->run();
-    }
-
-    /**
-     * Updates an existing User model.
-     *
-     * @param $id
-     *
-     * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\web\NotFoundHttpException
-     */
-    public function actionUpdate($id)
-    {
-        return $this->setParams('id', $id)->run();
+        return $this->getDispatch('index')->run($status);
     }
 
     /**
      * 删除用户
      *
-     * @author E-Kevin <e-kevin@qq.com>
      * @return mixed
+     * @author E-Kevin <e-kevin@qq.com>
      */
     public function actionDelete()
     {
@@ -122,8 +93,8 @@ class UserController extends Controller
     /**
      * 禁闭用户
      *
-     * @author E-Kevin <e-kevin@qq.com>
      * @return mixed
+     * @author E-Kevin <e-kevin@qq.com>
      */
     public function actionForbidden()
     {
@@ -133,8 +104,8 @@ class UserController extends Controller
     /**
      * 激活用户
      *
-     * @author E-Kevin <e-kevin@qq.com>
      * @return mixed
+     * @author E-Kevin <e-kevin@qq.com>
      */
     public function actionActive()
     {
@@ -144,56 +115,24 @@ class UserController extends Controller
     /**
      * 解锁用户
      *
-     * @author E-Kevin <e-kevin@qq.com>
      * @return mixed
+     * @author E-Kevin <e-kevin@qq.com>
      */
     public function actionUnlock()
     {
         return $this->changeStatus('unlock');
     }
 
-    /**
-     * 更改用户状态
+    /** 更改用户状态
      *
-     * @author E-Kevin <e-kevin@qq.com>
-     *
-     * @param $method string
+     * @param string $method
      *
      * @return mixed
+     * @author E-Kevin <e-kevin@qq.com>
      */
     protected function changeStatus($method)
     {
-        return $this->getDispatch('change-status')->setParams('method', $method)->run();
-    }
-
-    /**
-     * 生成随机用户
-     *
-     * @author E-Kevin <e-kevin@qq.com>
-     */
-    public function actionGenerate()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 重置用户密码
-     *
-     * @author E-Kevin <e-kevin@qq.com>
-     */
-    public function actionInitPassword()
-    {
-        return $this->runDispatch();
-    }
-
-    /**
-     * 用户个人资料
-     *
-     * @author E-Kevin <e-kevin@qq.com>
-     */
-    public function actionProfile()
-    {
-        return $this->runDispatch();
+        return $this->getDispatch('change-status')->run($method);
     }
 
 }

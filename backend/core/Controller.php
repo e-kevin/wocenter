@@ -12,6 +12,7 @@ use Yii;
  */
 class Controller extends baseController
 {
+
     /**
      * @inheritdoc
      */
@@ -21,7 +22,7 @@ class Controller extends baseController
 
         if (Yii::$app->getUser()->getIsGuest()) {
             if (Wc::$service->getSystem()->getConfig()->get('LOGIN_REMIND')) {
-                return $this->error('身份验证信息已过期，正在跳转至登录页面~', $this->getLoginUrl(), 1);
+                $this->error('身份验证信息已过期，正在跳转至登录页面~', $this->getLoginUrl(), 1);
             } else {
                 $this->redirect($this->getLoginUrl());
                 Yii::$app->end();
@@ -39,10 +40,6 @@ class Controller extends baseController
     protected function getLoginUrl()
     {
         $request = Yii::$app->getRequest();
-        /**
-         * 当Yii::$app->getUser()->loginUrl为字符串且为跨模块地址时（如：/passport/common/login），
-         * yii\filters\AccessControl无法正确跳转。这种情况需要设置该地址为数组格式，['/passport/common/login']
-         */
         $loginUrl = (array)Yii::$app->getUser()->loginUrl;
         $loginUrl[Yii::$app->params['redirect']] = base64_encode($this->isFullPageLoad($request) ?
             $request->getUrl() :

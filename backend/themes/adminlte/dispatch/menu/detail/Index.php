@@ -15,9 +15,12 @@ class Index extends Dispatch
 {
 
     /**
+     * @param string $category
+     * @param integer $pid
+     *
      * @return string|\yii\web\Response
      */
-    public function run()
+    public function run($category = '', $pid = 0)
     {
         $searchModel = new MenuSearch();
         $dataProvider = $searchModel->search(Yii::$app->getRequest()->getQueryParams());
@@ -26,8 +29,6 @@ class Index extends Dispatch
             $this->error($searchModel->message, '', 2);
         }
 
-        $category = $this->_params['category'];
-        $pid = $this->_params[$searchModel->breadcrumbParentParam];
         $categoryName = MenuCategory::find()->select('name')->where(['id' => $category])->scalar();
         $breadcrumbs = $searchModel->getBreadcrumbs(
             $pid,

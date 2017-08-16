@@ -47,18 +47,14 @@ class InviteLogController extends Controller
     }
 
     /**
-     * Lists all InviteLog models.
-     *
-     * @return string|\yii\web\Response
+     * @inheritdoc
      */
-    public function actionIndex()
+    public function dispatches()
     {
-        return $this->runDispatch();
-    }
-
-    public function actionSearch()
-    {
-        return $this->runDispatch();
+        return [
+            'index',
+            'search',
+        ];
     }
 
 }

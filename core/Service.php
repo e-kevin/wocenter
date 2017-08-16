@@ -1,7 +1,6 @@
 <?php
 namespace wocenter\core;
 
-use Exception;
 use Yii;
 use wocenter\interfaces\ServiceInterface;
 use yii\base\InvalidConfigException;
@@ -35,12 +34,12 @@ abstract class Service extends Object implements ServiceInterface
     private $_subService;
 
     /**
-     * @var string|array 服务类相关信息
+     * @var mixed 服务类相关信息
      */
     protected $_info = '';
 
     /**
-     * @var string|array 服务类相关数据
+     * @var mixed 服务类相关数据
      */
     protected $_data = '';
 
@@ -57,36 +56,34 @@ abstract class Service extends Object implements ServiceInterface
     /**
      * 获取子服务
      *
+     * 该方法不设为`public`类型，目的在于规范代码，使服务方法对IDE提供友好支持。故所属的子服务类必须以`public`类型新建方法获取，
+     * 具体参考可[[\wocenter\services\PassportService::getUcenter()]]等调用子服务类方法
+     * @see \wocenter\services\PassportService::getUcenter()
+     *
      * @param string $serviceName 子服务名，不带后缀`Service`
      *
-     * @return Service[]
+     * @return Service
      * @throws InvalidConfigException
      */
     protected function getSubService($serviceName)
     {
         $uniqueName = $this->getId() . '/' . $serviceName;
-        if (!$this->_subService[$uniqueName] instanceof Service) {
+        if (!$this->_subService[$serviceName] instanceof Service) {
             Yii::trace('Loading sub service: ' . $uniqueName, __METHOD__);
 
-            $this->_subService[$uniqueName] = Yii::createObject(array_merge($this->_subService[$uniqueName], [
+            $this->_subService[$serviceName] = Yii::createObject(array_merge($this->_subService[$serviceName], [
                 'service' => $this,
             ]));
-            if (!$this->_subService[$uniqueName] instanceof Service) {
-
+            if (!$this->_subService[$serviceName] instanceof Service) {
                 throw new InvalidConfigException("The required sub service component `{$uniqueName}` must return an object extends `\\wocenter\\core\\Service`.");
             }
         }
 
-        return $this->_subService[$uniqueName];
+        return $this->_subService[$serviceName];
     }
 
     /**
-     * 设置子服务
-     *
-     * @param string|array|callable $config 子服务配置信息
-     *
-     * @see \yii\BaseYii::createObject()
-     * @see \wocenter\core\ServiceLocator::loadServiceConfig()
+     * @inheritdoc
      */
     public function setSubService($config)
     {
@@ -94,10 +91,7 @@ abstract class Service extends Object implements ServiceInterface
     }
 
     /**
-     * 服务类执行后的相关信息
-     *
-     * @return string
-     * @throws Exception
+     * @inheritdoc
      */
     public function getInfo()
     {
@@ -105,9 +99,7 @@ abstract class Service extends Object implements ServiceInterface
     }
 
     /**
-     * 服务类执行后的相关数据
-     *
-     * @return array|string
+     * @inheritdoc
      */
     public function getData()
     {
@@ -115,9 +107,7 @@ abstract class Service extends Object implements ServiceInterface
     }
 
     /**
-     * 服务类执行后的结果数组
-     *
-     * @return array ['status', 'info', 'data']
+     * @inheritdoc
      */
     public function getResult()
     {

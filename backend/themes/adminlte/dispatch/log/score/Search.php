@@ -16,6 +16,9 @@ use yii\helpers\ArrayHelper;
 class Search extends Dispatch
 {
 
+    /**
+     * @return string|\yii\web\Response
+     */
     public function run()
     {
         $searchModel = new UserScoreLogSearch();

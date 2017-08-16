@@ -41,51 +41,16 @@ class AreaRegionController extends Controller
     }
 
     /**
-     * Lists all AreaRegion models.
-     *
-     * @param int $pid
-     *
-     * @return string|\yii\web\Response
+     * @inheritdoc
      */
-    public function actionIndex($pid = 0)
+    public function dispatches()
     {
-        return $this->setParams('pid', $pid)->run();
-    }
-
-    /**
-     * @param int $pid
-     *
-     * @return string|\yii\web\Response
-     */
-    public function actionSearch($pid = 0)
-    {
-        return $this->setParams('pid', $pid)->run();
-    }
-
-    /**
-     * Creates a new AreaRegion model.
-     *
-     * @param int $pid
-     *
-     * @return string|\yii\web\Response
-     */
-    public function actionCreate($pid = 0)
-    {
-        return $this->setParams('pid', $pid)->run();
-    }
-
-    /**
-     * Updates an existing AreaRegion model.
-     *
-     * @param $id
-     *
-     * @return array|string
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\web\NotFoundHttpException
-     */
-    public function actionUpdate($id)
-    {
-        return $this->setParams('id', $id)->run();
+        return [
+            'index',
+            'search',
+            'create',
+            'update',
+        ];
     }
 
 }

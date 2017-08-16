@@ -3,6 +3,7 @@ namespace wocenter\backend\themes\adminlte\dispatch\system\configManager;
 
 use wocenter\backend\modules\system\models\Config;
 use wocenter\backend\themes\adminlte\components\Dispatch;
+use wocenter\Wc;
 use Yii;
 
 /**

@@ -4,7 +4,6 @@ namespace wocenter\behaviors;
 use wocenter\helpers\DateTimeHelper;
 use wocenter\widgets\DateControl;
 use Yii;
-use yii\base\Event;
 use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;

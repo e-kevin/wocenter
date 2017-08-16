@@ -6,6 +6,8 @@ use Yii;
 
 /**
  * 系统消息服务类
+ *
+ * @author E-Kevin <e-kevin@qq.com>
  */
 class MessageService extends Service
 {

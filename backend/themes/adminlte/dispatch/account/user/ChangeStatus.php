@@ -14,7 +14,10 @@ use Yii;
 class ChangeStatus extends Dispatch
 {
 
-    public function run()
+    /**
+     * @param string $method
+     */
+    public function run($method)
     {
         $request = Yii::$app->getRequest();
         $selections = $request->getBodyParam('selection');
@@ -38,7 +41,7 @@ class ChangeStatus extends Dispatch
             $this->error(Yii::t('wocenter/app', 'Only one user can be operated at a time.'));
         }
 
-        switch ($this->_params['method']) {
+        switch ($method) {
             case 'forbidden':
                 if (User::updateAll(['status' => User::STATUS_FORBIDDEN], ['id' => $selections])) {
                     $this->success('', parent::RELOAD_LIST);
@@ -92,7 +95,7 @@ class ChangeStatus extends Dispatch
                 }
                 break;
             default:
-                $this->error($this->_params['method'] . '非法参数');
+                $this->error($method . '非法参数');
         }
     }
 
