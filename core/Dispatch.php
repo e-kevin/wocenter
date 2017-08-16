@@ -4,32 +4,20 @@ namespace wocenter\core;
 use wocenter\interfaces\DispatchInterface;
 use wocenter\Wc;
 use Yii;
-use yii\base\Object;
+use yii\base\Action;
+use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
-use yii\web\Request;
-use yii\web\Response;
 
 /**
- * Class Dispatch
+ * 系统调度器的基础实现类
+ *
+ * @method run() 执行调度
+ *
+ * @package wocenter\core
+ * @author E-Kevin <e-kevin@qq.com>
  */
-abstract class Dispatch extends Object implements DispatchInterface
+class Dispatch extends Action implements DispatchInterface
 {
-
-    /**
-     * @var Controller 调度类当前控制器，主要用于视图渲染等操作
-     */
-    public $controller;
-
-    /**
-     * @var string 调度器默认渲染的视图模板，在DispatchService里默认指定
-     * @see \wocenter\services\DispatchService::get()
-     */
-    public $view;
-
-    /**
-     * @var array 传递Controller和Dispatch之间的数据，如同View组件的`params`
-     */
-    protected $_params = [];
 
     /**
      * @var array 保存视图模板文件赋值数据
@@ -37,64 +25,41 @@ abstract class Dispatch extends Object implements DispatchInterface
     protected $_assign = [];
 
     /**
-     * 操作成功后返回结果至客户端
-     *
-     * @param string $message 提示信息
-     * @param string|array $jumpUrl 页面跳转地址
-     * @param mixed $data
-     *  - 为整数，则代表页面跳转停留时间，默认为1妙，时间结束后自动跳转至指定的`$jumpUrl`页面
-     *  - 为数组，则代表返回给客户端的数据
-     *
-     * 通常自建该方法时，建议在方法最后添加如下代码以防止不必要的输出显示
-     * \Yii::$app->end();
+     * @inheritdoc
      */
-    abstract public function success($message = '', $jumpUrl = '', $data = []);
+    public function success($message = '', $jumpUrl = '', $data = [])
+    {
+        Wc::setSuccessMessage($message);
+
+        $this->controller->redirect($jumpUrl)->send();
+    }
 
     /**
-     * 操作失败后返回结果至客户端
-     *
-     * @param string $message 提示信息
-     * @param string|array $jumpUrl 页面跳转地址
-     * @param mixed $data
-     *  - 为整数，则代表页面跳转停留时间，默认为3妙，时间结束后自动跳转至指定的`$jumpUrl`页面
-     *  - 为数组，则代表返回给客户端的数据
-     *
-     * 通常自建该方法时，建议在方法最后添加如下代码以防止不必要的输出显示
-     * \Yii::$app->end();
+     * @inheritdoc
      */
-    abstract public function error($message = '', $jumpUrl = '', $data = []);
+    public function error($message = '', $jumpUrl = '', $data = [])
+    {
+        Wc::setErrorMessage($message);
+
+        $this->controller->redirect($jumpUrl)->send();
+    }
 
     /**
-     * 显示页面
-     *
-     * @param string|null $view
-     * @param array $assign
-     *
-     * @return string|Response
+     * @inheritdoc
      */
-    abstract public function display($view = null, $assign = []);
+    public function display($view = null, $assign = [])
+    {
+        // 没有指定渲染的视图文件名，则默认渲染当前调度器ID的视图文件
+        $view = $view ?: $this->id;
+        $assign = array_merge($this->_assign, $assign);
+
+        return $this->controller->render($view, $assign);
+    }
 
     /**
-     * 保存视图模板文件赋值数据
-     *
-     * 示例：
-     * ```php
-     *  $this->assign('name1', 'apple');
-     *  $this->assign('name2', 'orange');
-     *  等于
-     *  $this->assign([
-     *      'name1' => 'apple',
-     *      'name2' => 'orange'
-     *  ]);
-     *
-     * ```
-     *
-     * @param string|array $key
-     * @param string|array $value
-     *
-     * @return $this
+     * @inheritdoc
      */
-    public function assign($key, $value = '')
+    public function assign($key, $value = null)
     {
         if (is_array($key)) {
             $this->_assign = ArrayHelper::merge($this->_assign, $key);
@@ -106,11 +71,7 @@ abstract class Dispatch extends Object implements DispatchInterface
     }
 
     /**
-     * 是否全页面加载
-     *
-     * @param Request $request
-     *
-     * @return bool
+     * @inheritdoc
      */
     public function isFullPageLoad($request = null)
     {
@@ -122,32 +83,26 @@ abstract class Dispatch extends Object implements DispatchInterface
     }
 
     /**
-     * 执行调度，返回调度结果
-     *
-     * @return mixed
+     * @inheritdoc
      */
-    public function run()
+    public function runWithParams($params)
     {
-        return Wc::$service->getDispatch()->generateRunFile();
-    }
-
-    /**
-     * 设置Controller和Dispatch之间需要传递的数据，一般是动作控制器需要绑定的参数
-     *
-     * @param string|array $key
-     * @param string|null $value
-     *
-     * @return $this
-     */
-    public function setParams($key, $value = null)
-    {
-        if (is_array($key)) {
-            $this->_params = ArrayHelper::merge($this->_params, $key);
-        } else {
-            $this->_params[$key] = $value;
+        if (!method_exists($this, 'run')) {
+            throw new InvalidConfigException(get_class($this) . ' must define a "run()" method.');
         }
+        $args = $this->controller->bindActionParams($this, $params);
+        Yii::trace('Running dispatch: ' . get_class($this) . '::run()', __METHOD__);
+        if (Yii::$app->requestedParams === null) {
+            Yii::$app->requestedParams = $args;
+        }
+        if ($this->beforeRun()) {
+            $result = call_user_func_array([$this, 'run'], $args);
+            $this->afterRun();
 
-        return $this;
+            return $result;
+        } else {
+            return null;
+        }
     }
 
 }

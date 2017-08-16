@@ -46,9 +46,6 @@ interface DispatchInterface
      * @param mixed $data
      *  - 为整数，则代表页面跳转停留时间，默认为3妙，时间结束后自动跳转至指定的`$jumpUrl`页面
      *  - 为数组，则代表返回给客户端的数据
-     *
-     * 通常自建该方法时，建议在方法最后添加如下代码以防止不必要的输出显示
-     * \Yii::$app->end();
      */
     public function success($message = '', $jumpUrl = '', $data = []);
 
@@ -60,9 +57,6 @@ interface DispatchInterface
      * @param mixed $data
      *  - 为整数，则代表页面跳转停留时间，默认为3妙，时间结束后自动跳转至指定的`$jumpUrl`页面
      *  - 为数组，则代表返回给客户端的数据
-     *
-     * 通常自建该方法时，建议在方法最后添加如下代码以防止不必要的输出显示
-     * \Yii::$app->end();
      */
     public function error($message = '', $jumpUrl = '', $data = []);
 
@@ -74,42 +68,25 @@ interface DispatchInterface
      *
      * @return Response
      */
-    public function display($view, $assign = []);
+    public function display($view = null, $assign = []);
 
     /**
      * 保存视图模板文件赋值数据
      *
      * @param string|array $key
-     * @param string|array $value
+     * @param mixed $value
      *
      * @return $this
      */
-    public function assign($key, $value = '');
+    public function assign($key, $value = null);
 
     /**
      * 是否全页面加载
      *
      * @param Request $request
      *
-     * @return bool
+     * @return boolean
      */
     public function isFullPageLoad($request = null);
-
-    /**
-     * 执行调度，返回调度结果
-     *
-     * @return mixed
-     */
-    public function run();
-
-    /**
-     * 设置Controller和Dispatch之间需要传递的数据，一般是动作控制器需要绑定的参数
-     *
-     * @param string|array $key
-     * @param string|null $value
-     *
-     * @return $this
-     */
-    public function setParams($key, $value = null);
 
 }

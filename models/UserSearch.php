@@ -51,8 +51,12 @@ class UserSearch extends User
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query->joinWith('userProfile')->where(['{{%user}}.status' => $params['status']])
-                ->andWhere(['not in', 'id', 1])->orderBy(['{{%user_profile}}.reg_time' => SORT_DESC]),
+                ->andWhere(['not in', 'id', 1]),
         ]);
+        // 设置默认排序
+        if (empty($dataProvider->getSort()->getOrders())) {
+            $dataProvider->query->orderBy(['{{%user_profile}}.reg_time' => SORT_DESC]);
+        }
 
         $this->load($queryParams);
         if (!$this->validate()) {
