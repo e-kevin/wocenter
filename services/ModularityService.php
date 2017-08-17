@@ -57,7 +57,7 @@ class ModularityService extends Service
     /**
      * @var string 模块命名空间
      */
-    public $moduleNamespace = 'wocenter\backend\modules\\';
+    public $moduleNamespace = 'wocenter\backend\modules';
 
     /**
      * @inheritdoc
@@ -269,8 +269,8 @@ class ModularityService extends Service
                     }
 
                     // 搜索模块信息数据
-                    if (FileHelper::exist($currentModuleDir . '/Info.php')) {
-                        $class = $this->moduleNamespace . $moduleFolder . '\\' . 'Info';
+                    if (FileHelper::exist($currentModuleDir . DIRECTORY_SEPARATOR . 'Info.php')) {
+                        $class = $this->moduleNamespace . '\\' . $moduleFolder . '\\' . 'Info';
                     } else {
                         continue;
                     }
@@ -288,7 +288,7 @@ class ModularityService extends Service
                     if ($instance !== null) {
                         $allModules[$instance->id] = [
                             'id' => $instance->id,
-                            'moduleNamespace' => $this->moduleNamespace . $instance->id . "\\Module",
+                            'moduleNamespace' => $this->moduleNamespace . '\\' . $instance->id . "\\Module",
                             'infoInstance' => $instance,
                         ];
                     }

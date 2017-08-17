@@ -2,6 +2,7 @@
 namespace wocenter\core;
 
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\base\Theme;
 use yii\web\View as baseView;
 
@@ -62,7 +63,7 @@ class View extends baseView
     public function getBasePath()
     {
         if ($this->_basePath == null) {
-            $this->_basePath = '@wocenter' . DIRECTORY_SEPARATOR . Yii::$app->id . DIRECTORY_SEPARATOR . 'themes';
+            $this->_basePath = '@wocenter/' . Yii::$app->id . '/themes';
         }
 
         return $this->_basePath;
@@ -71,11 +72,14 @@ class View extends baseView
     /**
      * 设置主题目录路径
      *
-     * @param string $path 主题路径，支持别名
+     * @param string $alias 主题別名路径，必须'@'开头
      */
-    public function setBasePath($path)
+    public function setBasePath($alias)
     {
-        $this->_basePath = $path;
+        if (strncmp($alias, '@', 1)) {
+            $alias = '@' . $alias;
+        }
+        $this->_basePath = $alias;
     }
 
     /**

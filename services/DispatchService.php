@@ -102,7 +102,7 @@ class DispatchService extends Service
      */
     public function getNamespace($route, $path = 'dispatch')
     {
-        return str_replace(DIRECTORY_SEPARATOR, '\\', substr($this->getBasePath($path) . '/' . $route, 1));
+        return str_replace('/', '\\', substr($this->getBasePath($path) . '/' . $route, 1));
     }
 
     /**

@@ -47,7 +47,7 @@ class ServiceLocator extends Object
      *
      * @var string 服务类命名空间
      */
-    public $serviceNamespace = 'wocenter\services\\';
+    public $serviceNamespace = 'wocenter\\services';
 
     /**
      * @var Service[] 已经实例化的服务单例
@@ -68,6 +68,7 @@ class ServiceLocator extends Object
             $service = $serviceName . 'Service';
             // todo 如果存在自定义配置信息却不存在'class'键名,则提取系统默认的'class'值
             if (!Yii::$app->has($service)) {
+                // todo 需要isset()判断
                 Yii::$app->set($service, $this->loadServiceConfig()[$service]);
                 unset($this->_allServices[$service]);
 
@@ -92,7 +93,7 @@ class ServiceLocator extends Object
      */
     public function getServicePath()
     {
-        return Yii::getAlias('@' . str_replace('\\', '/', $this->serviceNamespace));
+        return FileHelper::normalizePath(Yii::getAlias('@' . str_replace('\\', '/', $this->serviceNamespace)));
     }
 
     /**
@@ -122,17 +123,16 @@ class ServiceLocator extends Object
              */
             $serviceFiles = FileHelper::findFiles($servicePath, [
                 'except' => ['events', 'messages'],
-                'only' => ['*Service.php'],
+                'only' => ['*Service.php'], // 字符串长度为 11
             ]);
-
-            $path = str_replace('\\', '/', $this->serviceNamespace);
+            $path = str_replace('\\', DIRECTORY_SEPARATOR, $this->serviceNamespace);
             foreach ($serviceFiles as $file) {
-                $file = substr($file, strpos($file, $path) + strlen($path), -11);
+                $file = substr($file, strpos($file, $path) + strlen($path) + 1, -11);
                 // 存在子服务
-                if (strpos($file, '/') !== false) {
-                    list($parent, $serviceName) = explode('/', $file, 2);
+                if (strpos($file, DIRECTORY_SEPARATOR) !== false) {
+                    list($parent, $serviceName) = explode(DIRECTORY_SEPARATOR, $file, 2);
                     // 子服务存在子服务
-                    if (strpos($serviceName, '/') !== false) {
+                    if (strpos($serviceName, DIRECTORY_SEPARATOR) !== false) {
                         // 暂不支持多层级子服务
                         continue;
                     } else {
@@ -147,10 +147,10 @@ class ServiceLocator extends Object
                          */
                         $parentServiceName = $parent . 'Service';
                         $config = [
-                            'class' => $this->serviceNamespace . Inflector::camelize($parentServiceName),
+                            'class' => $this->serviceNamespace . '\\' .Inflector::camelize($parentServiceName),
                             'subService' => [
                                 strtolower($serviceName) => [
-                                    'class' => $this->serviceNamespace . $parent . '\\' . $serviceName . 'Service',
+                                    'class' => $this->serviceNamespace . '\\' .$parent . '\\' . $serviceName . 'Service',
                                 ],
                             ],
                         ];
@@ -170,13 +170,13 @@ class ServiceLocator extends Object
                         continue;
                     }
                     $allServices[Inflector::variablize($serviceName)] = [
-                        'class' => $this->serviceNamespace . $serviceName,
+                        'class' => $this->serviceNamespace . '\\' .$serviceName,
                     ];
                 }
             }
 
             return $allServices;
-        }, 60);
+        }, false);
 
         return $this->_allServices;
     }
