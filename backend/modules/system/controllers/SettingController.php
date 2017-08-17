@@ -7,16 +7,6 @@ class SettingController extends Controller
 {
 
     /**
-     * @inheritdoc
-     */
-    public function dispatches()
-    {
-        return [
-            'update',
-        ];
-    }
-
-    /**
      * 基本配置
      *
      * @return mixed

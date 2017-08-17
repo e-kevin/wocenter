@@ -32,6 +32,8 @@ trait DispatchTrait
 
     /**
      * 系统调度器配置
+     * 该方法与[[actions()]]唯一的区别是可以根据[[$dispatchBasePath]]、[[$dispatchTheme]]、系统主题配置等配置数据自动
+     * 获取相应的调度器执行结果返回给客户端
      *
      * @return array
      */
@@ -74,6 +76,15 @@ trait DispatchTrait
         }
     }
 
+    /**
+     * 根据路由地址获取调度器
+     *
+     * @param string $route 调度路由，支持以下格式：'view', 'comment/view', '/admin/comment/view'
+     *
+     * @return null|Dispatch
+     * @throws InvalidConfigException
+     * @throws InvalidRouteException
+     */
     protected function getDispatchByRoute($route)
     {
         $dispatchService = Wc::$service->getDispatch();

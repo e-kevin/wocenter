@@ -123,7 +123,8 @@ class UserController extends Controller
         return $this->changeStatus('unlock');
     }
 
-    /** 更改用户状态
+    /**
+     * 更改用户状态
      *
      * @param string $method
      *
