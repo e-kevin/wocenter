@@ -12,7 +12,7 @@ class Info extends ModularityInfo
 
         $this->id = 'action';
         $this->name = '行为管理';
-        $this->description = '管理系统所有行为操作';
+        $this->description = '管理系统所有行为操作，如：行为管理、行为限制管理';
         $this->version = '1.0';
         $this->developer = 'WoCenter';
         $this->email = 'e-kevin@qq.com';

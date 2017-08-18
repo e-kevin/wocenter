@@ -42,12 +42,12 @@ class ModularityService extends Service
     /**
      * @var array 调试模块。主要用于读取所需测试的模块目录，其他目录不加载
      */
-    public $debugModules = ['account', 'menu', 'passport', 'modularity', 'log', 'core'];
+    public $debugModules = ['account', 'menu', 'passport', 'modularity', 'log'];
 
     /**
      * @var array 核心模块，必须安装
      */
-    public $coreModules = ['modularity', 'menu', 'system', 'core', 'data'];
+    public $coreModules = ['modularity', 'menu', 'system', 'data'];
 
     /**
      * @var string|array|callable|Module 模块类

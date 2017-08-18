@@ -11,11 +11,11 @@ class Info extends ModularityInfo
         parent::init();
 
         $this->id = 'system';
-        $this->name = '系统设置';
+        $this->name = '系统管理';
         $this->version = '1.0';
         $this->developer = 'WoCenter';
         $this->email = 'e-kevin@qq.com';
-        $this->description = '管理系统相关配置';
+        $this->description = '提供网站设置、配置管理等';
         $this->isSystem = true;
         $this->defaultRoute = 'config-manager';
     }
@@ -26,8 +26,44 @@ class Info extends ModularityInfo
     public function getMenus()
     {
         return [
+            // 扩展中心
+            [
+                'name' => '扩展中心',
+                'icon_html' => 'cube',
+                'modularity' => 'core',
+                'show_on_menu' => true,
+                'sort_order' => 1005,
+            ],
+            // 人事管理
+            [
+                'name' => '人事管理',
+                'icon_html' => 'user',
+                'modularity' => 'core',
+                'show_on_menu' => true,
+                'sort_order' => 1001,
+            ],
+            // 安全管理
+            [
+                'name' => '安全管理',
+                'icon_html' => 'shield',
+                'modularity' => 'core',
+                'show_on_menu' => true,
+                'sort_order' => 1003,
+            ],
+            // 运营管理
+            [
+                'name' => '运营管理',
+                'icon_html' => 'line-chart',
+                'modularity' => 'core',
+                'show_on_menu' => true,
+                'sort_order' => 1004,
+            ],
             [
                 'name' => '系统管理',
+                'icon_html' => 'cog',
+                'modularity' => 'core',
+                'show_on_menu' => true,
+                'sort_order' => 1002,
                 'items' => [
                     // 网站设置
                     [

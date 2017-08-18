@@ -15,7 +15,7 @@ class Info extends ModularityInfo
         $this->version = '1.0';
         $this->developer = 'WoCenter';
         $this->email = 'e-kevin@qq.com';
-        $this->description = '系统通知管理模块';
+        $this->description = '系统通知管理模块，如：邮件通知、站内信、公告等';
         $this->isSystem = true;
         $this->defaultRoute = 'setting';
     }
