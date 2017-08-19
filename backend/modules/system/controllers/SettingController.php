@@ -3,6 +3,10 @@ namespace wocenter\backend\modules\system\controllers;
 
 use wocenter\backend\core\Controller;
 
+/**
+ * Class SettingController
+ * @package wocenter\backend\modules\system\controllers
+ */
 class SettingController extends Controller
 {
 
@@ -56,6 +60,13 @@ class SettingController extends Controller
         return $this->_update(5);
     }
 
+    /**
+     * 更新系统配置调度器
+     *
+     * @param integer $id
+     *
+     * @return mixed
+     */
     protected function _update($id)
     {
         return $this->getDispatch('update')->run($id);

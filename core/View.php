@@ -2,7 +2,6 @@
 namespace wocenter\core;
 
 use Yii;
-use yii\base\InvalidConfigException;
 use yii\base\Theme;
 use yii\web\View as baseView;
 
@@ -31,7 +30,7 @@ class View extends baseView
     public function renderFile($viewFile, $params = [], $context = null)
     {
         if ($this->theme == null) {
-            $this->setTheme();
+            $this->setPathMap();
         }
 
         return parent::renderFile($viewFile, $params, $context);
@@ -40,7 +39,7 @@ class View extends baseView
     /**
      * 设置视图路径映射
      */
-    protected function setTheme()
+    protected function setPathMap()
     {
         $app = Yii::$app->id;
         $config['pathMap'] = [
@@ -72,7 +71,7 @@ class View extends baseView
     /**
      * 设置主题目录路径
      *
-     * @param string $alias 主题別名路径，必须'@'开头
+     * @param string $alias 主题別名路径，必须以'@'开头
      */
     public function setBasePath($alias)
     {
@@ -91,7 +90,7 @@ class View extends baseView
      */
     public function getThemePath($path = null)
     {
-        return $this->getBasePath() . DIRECTORY_SEPARATOR . $this->themeName . ($path ? DIRECTORY_SEPARATOR . $path : '');
+        return $this->getBasePath() . '/' . $this->themeName . ($path ? '/' . $path : '');
     }
 
 }

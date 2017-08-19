@@ -47,7 +47,7 @@ class Error extends Dispatch
      */
     public function run()
     {
-        return $this->error($this->getExceptionMessage(), '', 5);
+        $this->error($this->getExceptionMessage(), '', $this->waitSecond);
     }
 
     /**

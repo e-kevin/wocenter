@@ -6,6 +6,10 @@ use wocenter\backend\core\Controller;
 use wocenter\backend\modules\system\models\Config;
 use yii\filters\VerbFilter;
 
+/**
+ * Class ConfigManagerController
+ * @package wocenter\backend\modules\system\controllers
+ */
 class ConfigManagerController extends Controller
 {
 

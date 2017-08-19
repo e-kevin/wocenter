@@ -3,6 +3,10 @@ namespace wocenter\backend\modules\system\controllers;
 
 use wocenter\backend\core\Controller;
 
+/**
+ * Class CacheController
+ * @package wocenter\backend\modules\system\controllers
+ */
 class CacheController extends Controller
 {
 

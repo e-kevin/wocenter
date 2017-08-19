@@ -1,13 +1,9 @@
 <?php
 namespace wocenter\traits;
 
-use wocenter\core\Controller;
 use wocenter\core\Dispatch;
 use wocenter\Wc;
 use Yii;
-use yii\base\InvalidConfigException;
-use yii\base\InvalidRouteException;
-use yii\helpers\Inflector;
 
 /**
  * Class DispatchTrait
@@ -51,108 +47,10 @@ trait DispatchTrait
      * @param null|string $route 调度路由，支持以下格式：'view', 'comment/view', '/admin/comment/view'
      *
      * @return null|Dispatch
-     * @throws InvalidConfigException
-     * @throws InvalidRouteException
      */
     public function getDispatch($route = null)
     {
-        $dispatchService = Wc::$service->getDispatch();
-        $createService = $dispatchService->getCreate();
-        // 是否调用指定主题的调度器
-        if ($this->dispatchTheme !== null) {
-            $dispatchService->theme = $this->dispatchTheme;
-        }
-        // 是否指定自定义调度器基础路径，系统会调用该路径下指定路由的调度器
-        if ($this->dispatchBasePath !== null) {
-            $dispatchService->getView()->basePath = $this->dispatchBasePath;
-        }
-        // 没有指定调度路由则默认获取主题公共调度器
-        if ($route === null) {
-            $className = $dispatchService->getCommonNamespace();
-
-            return $createService->create('common', $className, $this);
-        } else {
-            return $this->getDispatchByRoute($route);
-        }
-    }
-
-    /**
-     * 根据路由地址获取调度器
-     *
-     * @param string $route 调度路由，支持以下格式：'view', 'comment/view', '/admin/comment/view'
-     *
-     * @return null|Dispatch
-     * @throws InvalidConfigException
-     * @throws InvalidRouteException
-     */
-    protected function getDispatchByRoute($route)
-    {
-        $dispatchService = Wc::$service->getDispatch();
-        $createService = $dispatchService->getCreate();
-        /**
-         * 当前参数：
-         * ```php
-         * $moduleId = 'admin';
-         * $controllerId = 'comment';
-         * $actionId = 'view';
-         * ```
-         */
-        $pos = strpos($route, '/');
-        $oldController = null;
-        // 路由地址为：view
-        if ($pos === false) {
-            $controller = $this;
-            $actionId = Inflector::camelize($route);
-            $route = $createService->getUniqueId() . '/' . $actionId; // {$moduleId}/{$controllerId}/View
-        } // 路由地址为：comment/view
-        elseif ($pos > 0) {
-            $controllerId = substr($route, 0, $pos);
-            $controller = $this->module->createControllerByID($controllerId);
-            if ($controller === null) {
-                throw new InvalidRouteException('Unable to resolve the dispatch request: ' . $route);
-            }
-            $oldController = Yii::$app->controller;
-            Yii::$app->controller = $controller;
-            $controllerId = $createService->normalizeName($controllerId);
-            $actionId = Inflector::camelize(substr($route, $pos + 1));
-            $route = $controller->module->id . '/' . $controllerId . '/' . $actionId; // {$moduleId}/comment/View
-        } // 路由地址为：/admin/comment/view
-        else {
-            $route = trim($route, '/');
-            $requestRoute = $route;
-            $route = explode('/', $route);
-            // 确保格式必须包括{$moduleId}/{$controllerId}/{$actionId}
-            if (count($route) < 3) {
-                throw new InvalidRouteException('Unable to resolve the dispatch request: /' . $requestRoute);
-            }
-            $parts = Yii::$app->createController($requestRoute);
-            if (is_array($parts)) {
-                /* @var $controller Controller */
-                list($controller, $actionID) = $parts;
-                $oldController = Yii::$app->controller;
-                Yii::$app->controller = $controller;
-                $actionId = Inflector::camelize($actionID);
-                $controllerId = $createService->normalizeName($controller->id);
-                $moduleId = $controller->module->id;
-                $route = implode('/', [$moduleId, $controllerId, $actionId]); // admin/comment/View
-            } else {
-                throw new InvalidRouteException('Unable to resolve the dispatch request: ' . $requestRoute);
-            }
-        }
-
-        $className = $dispatchService->getNamespace($route);
-        $dispatch = $createService->create($actionId, $className, $controller);
-        if ($dispatch === null) {
-            throw new InvalidRouteException('Unable to resolve the dispatch request: ' . $route);
-        }
-
-        if ($oldController !== null) {
-            Yii::$app->controller = $oldController;
-        }
-
-        Yii::trace('Loading dispatch: ' . $route, __METHOD__);
-
-        return $dispatch;
+        return Wc::$service->getDispatch()->getDispatch($route, $this);
     }
 
     /**
@@ -162,7 +60,7 @@ trait DispatchTrait
     {
         $action = parent::createAction($id);
 
-        return $action === null ? Wc::$service->getDispatch()->getCreate()->createByConfig($id) : $action;
+        return $action ?: Wc::$service->getDispatch()->getCreate()->createByConfig($id);
     }
 
     /**
