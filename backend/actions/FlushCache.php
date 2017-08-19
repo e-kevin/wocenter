@@ -12,6 +12,8 @@ use yii\caching\Cache;
  * Class FlushCache
  *
  * From [DotPlant2](http://dotplant.ru/)
+ *
+ * @property \wocenter\core\Controller $controller
  */
 class FlushCache extends Action
 {

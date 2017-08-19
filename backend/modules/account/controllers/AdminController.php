@@ -5,6 +5,9 @@ use wocenter\backend\core\Controller;
 use Yii;
 use yii\filters\VerbFilter;
 
+/**
+ * AdminController implements the CRUD actions for BackendUser model.
+ */
 class AdminController extends Controller
 {
 

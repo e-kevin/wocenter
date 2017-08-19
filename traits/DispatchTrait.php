@@ -71,6 +71,8 @@ trait DispatchTrait
      * @param mixed $data
      *  - 为整数，则代表页面跳转停留时间，默认为3妙，时间结束后自动跳转至指定的`$jumpUrl`页面
      *  - 为数组，则代表返回给客户端的数据
+     *
+     * @return mixed
      */
     public function error($message = '', $jumpUrl = '', $data = [])
     {
@@ -85,6 +87,8 @@ trait DispatchTrait
      * @param mixed $data
      *  - 为整数，则代表页面跳转停留时间，默认为1妙，时间结束后自动跳转至指定的`$jumpUrl`页面
      *  - 为数组，则代表返回给客户端的数据
+     *
+     * @return mixed
      */
     public function success($message = '', $jumpUrl = '', $data = [])
     {

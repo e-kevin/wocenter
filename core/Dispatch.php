@@ -31,7 +31,7 @@ class Dispatch extends Action implements DispatchInterface
     {
         Wc::setSuccessMessage($message);
 
-        $this->controller->redirect($jumpUrl)->send();
+        return $this->controller->redirect($jumpUrl);
     }
 
     /**
@@ -41,7 +41,7 @@ class Dispatch extends Action implements DispatchInterface
     {
         Wc::setErrorMessage($message);
 
-        $this->controller->redirect($jumpUrl)->send();
+        return $this->controller->redirect($jumpUrl);
     }
 
     /**

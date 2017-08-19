@@ -16,13 +16,7 @@ class Dispatch extends \wocenter\core\Dispatch
 {
 
     /**
-     * 操作成功后返回结果至客户端
-     *
-     * @param string $message 提示信息
-     * @param string|array $jumpUrl 页面跳转地址
-     * @param mixed $data
-     *  - 为整数，则代表页面跳转停留时间，默认为1妙，时间结束后自动跳转至指定的`$jumpUrl`页面
-     *  - 为数组，则代表返回给客户端的数据
+     * @inheritdoc
      */
     public function success($message = '', $jumpUrl = '', $data = [])
     {
@@ -30,13 +24,7 @@ class Dispatch extends \wocenter\core\Dispatch
     }
 
     /**
-     * 操作失败后返回结果至客户端
-     *
-     * @param string $message 提示信息
-     * @param string|array $jumpUrl 页面跳转地址
-     * @param mixed $data
-     *  - 为整数，则代表页面跳转停留时间，默认为3妙，时间结束后自动跳转至指定的`$jumpUrl`页面
-     *  - 为数组，则代表返回给客户端的数据
+     * @inheritdoc
      */
     public function error($message = '', $jumpUrl = '', $data = [])
     {

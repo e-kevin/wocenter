@@ -147,6 +147,8 @@ class DispatchService extends Service
                 $createService->generateDispatchFile($className);
             }
 
+            Yii::trace('Loading dispatch: ' . $className, __METHOD__);
+
             return $dispatch;
         } else {
             return $this->_getDispatchByRoute($route, $controller);
@@ -225,7 +227,7 @@ class DispatchService extends Service
             Yii::$app->controller = $oldController;
         }
 
-        Yii::trace('Loading dispatch: ' . $route, __METHOD__);
+        Yii::trace('Loading dispatch: ' . $className, __METHOD__);
 
         return $dispatch;
     }

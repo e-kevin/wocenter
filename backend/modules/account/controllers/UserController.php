@@ -5,6 +5,9 @@ use wocenter\models\User;
 use wocenter\backend\core\Controller;
 use yii\filters\VerbFilter;
 
+/**
+ * UserController implements the CRUD actions for User model.
+ */
 class UserController extends Controller
 {
 

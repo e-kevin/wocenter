@@ -2,8 +2,6 @@
 namespace wocenter\backend\modules\modularity\controllers;
 
 use wocenter\backend\core\Controller;
-use wocenter\core\Dispatch;
-use wocenter\Wc;
 use yii\filters\VerbFilter;
 
 class ManageController extends Controller
@@ -34,20 +32,8 @@ class ManageController extends Controller
             'update',
             'install',
             'uninstall',
+            'clear-cache',
         ];
-    }
-
-    /**
-     * 清理缓存
-     *
-     * @author E-Kevin <e-kevin@qq.com>
-     * @return mixed
-     */
-    public function actionClearCache()
-    {
-        Wc::$service->getModularity()->clearCache();
-
-        return $this->success('清理成功', Dispatch::RELOAD_LIST);
     }
 
 }
