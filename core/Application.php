@@ -22,6 +22,7 @@ class Application extends baseApplication
         Yii::$container->get('Wc');
 
         $this->loadEnableModules();
+        $this->loadUrlRule();
 
         parent::init();
     }
@@ -38,6 +39,14 @@ class Application extends baseApplication
                 $this->setModule($name, $config);
             }
         }
+    }
+
+    /**
+     * 加载系统模块路由规则
+     */
+    protected function loadUrlRule()
+    {
+        $this->getUrlManager()->addRules(Wc::$service->getModularity()->getUrlRule());
     }
 
 }

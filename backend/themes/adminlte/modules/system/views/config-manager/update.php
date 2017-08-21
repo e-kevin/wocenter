@@ -4,9 +4,9 @@
 /* @var $configTypeList array */
 
 $this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => '配置管理', 'url' => ['/system']];
+$this->params['breadcrumbs'][] = ['label' => '配置管理', 'url' => ['/system/config-manager/index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['navSelectPage'] = '/system';
+$this->params['navSelectPage'] = '/system/config-manager/index';
 ?>
 
 <?=

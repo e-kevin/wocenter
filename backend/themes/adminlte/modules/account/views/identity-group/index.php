@@ -15,7 +15,7 @@ if ($this->context->isFullPageLoad()) {
     $this->title = '身份分组';
     $this->params['breadcrumbs'][] = $this->title;
     $this->params['breadcrumb_description'] = '每个身份只能归属一个分组，同一分组下的身份不能同时被用户拥有';
-    $this->params['navSelectPage'] = '/account/identity-group';
+    $this->params['navSelectPage'] = '/account/identity-group/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', [
         'create',
     ], [

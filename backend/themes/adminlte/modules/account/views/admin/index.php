@@ -15,7 +15,7 @@ $headerToolbar = '';
 // full_page:START
 if ($this->context->isFullPageLoad()) {
     $this->title = '管理员列表';
-    $this->params['navSelectPage'] = '/account/admin';
+    $this->params['navSelectPage'] = '/account/admin/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . '添加管理员' . '</span>', ['add'], [
         'class' => 'btn btn-success',
         'data-pjax' => 1,

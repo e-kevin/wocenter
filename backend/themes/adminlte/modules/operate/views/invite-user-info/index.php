@@ -17,7 +17,7 @@ $actionBtn = '';
 if ($this->context->isFullPageLoad()) {
     $this->title = Yii::t('wocenter/app', 'Invite User Infos');
     $this->params['breadcrumbs'][] = $this->title;
-    $this->params['navSelectPage'] = '/operate/invite-user-info';
+    $this->params['navSelectPage'] = '/operate/invite-user-info/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', ['generate'], [
         'class' => 'btn btn-success',
         'data-method' => 'post',

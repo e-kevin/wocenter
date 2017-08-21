@@ -2,7 +2,6 @@
 namespace wocenter\backend\modules\menu\models;
 
 use wocenter\backend\core\ActiveDataProvider;
-use yii\base\InvalidParamException;
 
 /**
  * MenuSearch represents the model behind the search form about `wocenter\backend\modules\menu\models\Menu`.

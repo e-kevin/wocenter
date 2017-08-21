@@ -15,17 +15,17 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
     /**
      * @var string 模块唯一标识
      */
-    public $id;
-
-    /**
-     * @var string 模块名
-     */
-    public $name;
+    private $_id;
 
     /**
      * @var string 模块版本
      */
     public $version;
+
+    /**
+     * @var string 模块名
+     */
+    public $name;
 
     /**
      * @var string 模块描述
@@ -68,18 +68,23 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
     public $canUninstall = false;
 
     /**
-     * @var string 模块的默认路由，当修改模块默认路由，此处也因同时修改
+     * @param string $id 模块唯一标识
+     * @param array $config
      */
-    public $defaultRoute = 'default';
+    public function __construct($id, $config = [])
+    {
+        $this->_id = $id;
+        parent::__construct($config);
+    }
 
     /**
      * 模块菜单信息
      *
-     * 系统模块菜单是一个多维数组。系统默认已经在Core模块菜单里添加一些主要的顶级菜单数据，其他模块归属已经存在的顶级菜单时只需添加以
+     * 系统模块菜单是一个多维数组。系统默认已经在System模块菜单里添加一些主要的顶级菜单数据，其他模块归属已经存在的顶级菜单时只需添加以
      * `name`为键名，顶级菜单为键值的键值对即可，如Account模块菜单，归属系统`人事管理`顶级菜单，故添加代码`'name' => '人事管理'`
-     * 即可标示该菜单归属`人事管理`。而子菜单只需添加在键名为`items`的数组里，参见Account模块的菜单配置数据。
+     * 即可表示该菜单归属`人事管理`。而子菜单只需添加在键名为`items`的数组里，参见Account模块的菜单配置数据。
      *
-     * 菜单配置数组里，可用的键名有
+     * 菜单配置数组里，可用的键名包含以下：
      *  - `name`: 菜单名称，建议简写，如`模块列表`简写为`列表`，在某些地方显示时可以简洁的文字显示出来，如系统的权限配置里所显示的
      *  - `alias_name`: 菜单别名，用于显示在菜单列表里的稍微详细的名字
      *  - `icon_html`: 菜单图标
@@ -92,14 +97,33 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
      *  - `description`: 菜单描述
      *  - `items`: 子类菜单配置数组
      *
-     * @see \wocenter\backend\modules\account\Info
+     * @see \wocenter\backend\modules\account\Info::getMenus()
      * @see \wocenter\backend\modules\core\Info
      * @return array
      */
-    abstract public function getMenus();
+    public function getMenus()
+    {
+        return [];
+    }
 
     /**
-     * 安装模块
+     * @inheritdoc
+     */
+    public function getUrlRule()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getId()
+    {
+        return $this->_id;
+    }
+
+    /**
+     * @inheritdoc
      */
     public function install()
     {
@@ -107,7 +131,7 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
     }
 
     /**
-     * 卸载模块
+     * @inheritdoc
      */
     public function uninstall()
     {
@@ -135,7 +159,7 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
     }
 
     /**
-     * 模块升级
+     * inheritdoc
      */
     public function upgrade()
     {

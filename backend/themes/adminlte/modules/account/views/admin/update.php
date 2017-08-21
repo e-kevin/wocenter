@@ -4,9 +4,9 @@
 /* @var $showStatus boolean */
 
 $this->title = '更新管理员';
-$this->params['breadcrumbs'][] = ['label' => '管理员列表', 'url' => ['/account/admin']];
+$this->params['breadcrumbs'][] = ['label' => '管理员列表', 'url' => ['/account/admin/index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['navSelectPage'] = '/account/admin';
+$this->params['navSelectPage'] = '/account/admin/index';
 ?>
 
 <?= $this->render('_form', [

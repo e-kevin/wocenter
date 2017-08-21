@@ -8,9 +8,9 @@ use yii\bootstrap\Html;
 /* @var $identityList array 身份列表 */
 
 $this->title = '头像配置';
-$this->params['breadcrumbs'][] = ['label' => '身份列表', 'url' => ['/account/identity']];
+$this->params['breadcrumbs'][] = ['label' => '身份列表', 'url' => ['/account/identity/index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['navSelectPage'] = '/account/identity';
+$this->params['navSelectPage'] = '/account/identity/index';
 $identityId = Yii::$app->getRequest()->get('id');
 $type = Yii::$app->getRequest()->get('type');
 ?>

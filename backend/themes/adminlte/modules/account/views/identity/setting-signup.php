@@ -11,9 +11,9 @@ use yii\bootstrap\Html;
 /* @var $fieldList array 字段列表 */
 
 $this->title = '注册配置';
-$this->params['breadcrumbs'][] = ['label' => '身份列表', 'url' => ['/account/identity']];
+$this->params['breadcrumbs'][] = ['label' => '身份列表', 'url' => ['/account/identity/index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['navSelectPage'] = '/account/identity';
+$this->params['navSelectPage'] = '/account/identity/index';
 $identityId = Yii::$app->getRequest()->get('id');
 $type = Yii::$app->getRequest()->get('type');
 ?>

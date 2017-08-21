@@ -17,7 +17,7 @@ $actionBtn = '';
 if ($this->context->isFullPageLoad()) {
     $this->title = Yii::t('wocenter/app', 'Invites');
     $this->params['breadcrumbs'][] = $this->title;
-    $this->params['navSelectPage'] = '/operate/invite';
+    $this->params['navSelectPage'] = '/operate/invite/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . '生成邀请码' . '</span>', ['generate'], [
             'class' => 'btn btn-success',
             'data-pjax' => 1,

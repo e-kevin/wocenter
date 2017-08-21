@@ -18,7 +18,7 @@ $headerToolbar = '';
 if ($this->context->isFullPageLoad()) {
     $this->title = '身份列表';
     $this->params['breadcrumbs'][] = $this->title;
-    $this->params['navSelectPage'] = '/account/identity';
+    $this->params['navSelectPage'] = '/account/identity/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', [
         'create',
     ], [

@@ -90,7 +90,7 @@ class MenuService extends Service
         $allInstalledMenuConfig = $this->_getMenuConfigs();
         // 获取数据库里的所有模块菜单数据，不包括用户自建数据
         $menuInDatabase = $this->getMenus('backend', [
-            'created_type' => $menuModel::CREATE_TYPE_BY_MODULE
+            'created_type' => $menuModel::CREATE_TYPE_BY_MODULE,
         ], false);
         $updateDbMenus = $this->_convertMenuData2Db($allInstalledMenuConfig, 0, $menuInDatabase);
         $this->_fixMenuData($menuInDatabase, $updateDbMenus);
@@ -155,11 +155,10 @@ class MenuService extends Service
     protected function _initMenuConfig(&$menus = [])
     {
         $menus['url'] = isset($menus['url']) ? $menus['url'] : 'javascript:;';
-        $menus['full_url'] = isset($menus['full_url']) ? $menus['full_url'] : $menus['url'];
         $menus['params'] = isset($menus['params']) ? serialize($menus['params']) : '';
         // 模块ID
-        if (!isset($menus['modularity']) && $menus['full_url'] != 'javascript:;') {
-            preg_match('/\w+/', $menus['full_url'], $modularity);
+        if (!isset($menus['modularity']) && $menus['url'] != 'javascript:;') {
+            preg_match('/\w+/', $menus['url'], $modularity);
             $menus['modularity'] = $modularity[0];
         }
         $menus['category_id'] = Yii::$app->id;
@@ -209,7 +208,7 @@ class MenuService extends Service
             $condition = [
                 'name' => $row['name'],
                 'modularity' => $row['modularity'],
-                'full_url' => $row['full_url'],
+                'url' => $row['url'],
                 'parent_id' => $row['parent_id'],
             ];
 
@@ -242,7 +241,7 @@ class MenuService extends Service
                 // 最底层菜单可以修改`name`字段
                 ($data = ArrayHelper::listSearch($menuInDatabase, [
                     'modularity' => $row['modularity'],
-                    'full_url' => $row['full_url'],
+                    'url' => $row['url'],
                     'parent_id' => $row['parent_id'],
                 ], true))
             ) {
@@ -278,7 +277,7 @@ class MenuService extends Service
                 !ArrayHelper::listSearch($arr['menuConfig'], [
                     'name' => $row['name'],
                     'modularity' => $row['modularity'],
-                    'full_url' => $row['full_url'],
+                    'url' => $row['url'],
                 ], true) &&
                 (!key_exists($row['id'], isset($arr['update']) ? $arr['update'] : []))
             ) {

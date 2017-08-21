@@ -15,7 +15,7 @@ $actionBtn = '';
 if ($this->context->isFullPageLoad()) {
     $this->title = '邀请记录';
     $this->params['breadcrumbs'][] = $this->title;
-    $this->params['navSelectPage'] = '/operate/invite-log';
+    $this->params['navSelectPage'] = '/operate/invite-log/index';
     $actionBtn = Html::tag('div',
         Html::button('<i class="fa fa-trash-o"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'Delete') . '</span>', [
             'class' => 'btn',

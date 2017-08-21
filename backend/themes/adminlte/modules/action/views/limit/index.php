@@ -15,7 +15,7 @@ $headerToolbar = '';
 if ($this->context->isFullPageLoad()) {
     $this->title = '行为限制列表';
     $this->params['breadcrumbs'][] = $this->title;
-    $this->params['navSelectPage'] = '/action/limit';
+    $this->params['navSelectPage'] = '/action/limit/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', [
         'create',
     ], [

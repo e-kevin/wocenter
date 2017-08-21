@@ -16,7 +16,7 @@ $headerToolbar = '';
 if ($this->context->isFullPageLoad()) {
     $this->title = '模块管理';
     $this->params['breadcrumbs'][] = $this->title;
-    $this->params['navSelectPage'] = '/modularity';
+    $this->params['navSelectPage'] = '/modularity/manage/index';
 //    $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">新建模块</span>', ['/gii/default/view', 'id' => 'wc_module'], [
 //        'class' => 'btn btn-success open-new',
 //    ]);

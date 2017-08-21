@@ -15,7 +15,6 @@ use Yii;
  * @property string $name
  * @property string $alias_name
  * @property string $url
- * @property string $full_url
  * @property string $params
  * @property string $target
  * @property string $description
@@ -82,13 +81,13 @@ class Menu extends ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'url', 'full_url', 'target', 'category_id', 'parent_id'], 'required'],
+            [['name', 'url', 'target', 'category_id', 'parent_id'], 'required'],
             [['status', 'sort_order', 'is_dev', 'target', 'created_type', 'show_on_menu', 'parent_id'], 'integer'],
             [['name', 'category_id', 'alias_name'], 'string', 'max' => 64],
             ['alias_name', 'default', 'value' => function ($model, $attribute) {
                 return empty($model->$attribute) ? $model->name : $model->$attribute;
             }],
-            [['url', 'full_url', 'description'], 'string', 'max' => 512],
+            [['url', 'description'], 'string', 'max' => 512],
             ['icon_html', 'string', 'max' => 30],
             ['params', 'string', 'max' => 200],
             ['modularity', 'string', 'max' => 20],
@@ -101,7 +100,7 @@ class Menu extends ActiveRecord
     public function scenarios()
     {
         return [
-            self::SCENARIO_DEFAULT => ['category_id', 'parent_id', 'name', 'alias_name', 'url', 'full_url', 'params',
+            self::SCENARIO_DEFAULT => ['category_id', 'parent_id', 'name', 'alias_name', 'url', 'params',
                 'target', 'status', 'sort_order', 'is_dev', 'description', 'icon_html', 'show_on_menu'],
         ];
     }
@@ -117,8 +116,7 @@ class Menu extends ActiveRecord
             'category_id' => '分类',
             'name' => '名称',
             'alias_name' => '菜单别名',
-            'url' => '菜单显示地址',
-            'full_url' => '完整URL地址',
+            'url' => '菜单路由地址',
             'params' => 'URL参数',
             'target' => '打开方式',
             'description' => '描述',
@@ -139,8 +137,6 @@ class Menu extends ActiveRecord
     {
         return [
             'alias_name' => "为空时默认为`{$this->getAttributeLabel('name')}`的值",
-            'url' => '一般为简写路由地址',
-            'full_url' => '权限验证时以此路由做判断',
             'target' => '建设中……',
         ];
     }

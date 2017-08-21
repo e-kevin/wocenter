@@ -7,7 +7,7 @@
 
 $this->title = $title;
 $this->params['breadcrumbs'] = $breadcrumbs;
-$this->params['navSelectPage'] = '/account/tag';
+$this->params['navSelectPage'] = '/account/tag/index';
 ?>
 
 <?= $this->render('_form', [

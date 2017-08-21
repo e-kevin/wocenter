@@ -8,9 +8,9 @@ use yii\widgets\DetailView;
 /* @var $configTypeList array */
 
 $this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => '配置管理', 'url' => ['/system/config-manager']];
+$this->params['breadcrumbs'][] = ['label' => '配置管理', 'url' => ['/system/config-manager/index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['navSelectPage'] = '/system';
+$this->params['navSelectPage'] = '/system/config-manager/index';
 ?>
 
 <?php \wonail\adminlte\widgets\Box::begin([

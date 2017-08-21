@@ -1,7 +1,6 @@
 <?php
 namespace wocenter\core;
 
-use wocenter\behaviors\getMessageBehavior;
 use wocenter\traits\ExtendModelTrait;
 use yii\base\Model as baseModel;
 
@@ -14,15 +13,5 @@ class Model extends baseModel
 {
 
     use ExtendModelTrait;
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            getMessageBehavior::className(),
-        ];
-    }
 
 }

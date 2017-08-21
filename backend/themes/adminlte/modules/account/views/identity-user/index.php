@@ -12,7 +12,7 @@ use wonail\adminlte\grid\GridView;
 if ($this->context->isFullPageLoad()) {
     $this->title = '身份用户管理';
     $this->params['breadcrumbs'][] = $this->title;
-    $this->params['navSelectPage'] = '/account/identity-user';
+    $this->params['navSelectPage'] = '/account/identity-user/index';
 }
 // full_page:END
 ?>

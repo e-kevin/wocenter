@@ -27,7 +27,7 @@ class Index extends Dispatch
             $this->error($searchModel->message, '', 2);
         }
 
-        $breadcrumbs = $searchModel->getBreadcrumbs($pid, '标签列表', '/account/tag');
+        $breadcrumbs = $searchModel->getBreadcrumbs($pid, '标签列表', '/account/tag/index');
 
         return $this->assign([
             'searchModel' => $searchModel,

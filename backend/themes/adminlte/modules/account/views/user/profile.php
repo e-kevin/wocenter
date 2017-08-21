@@ -7,9 +7,9 @@ use yii\captcha\Captcha;
 use yii\helpers\Url;
 
 $this->title = '个人资料';
-$this->params['breadcrumbs'][] = ['label' => '用户列表', 'url' => ['/account']];
+$this->params['breadcrumbs'][] = ['label' => '用户列表', 'url' => ['/account/user/index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['navSelectPage'] = '/account';
+$this->params['navSelectPage'] = '/account/user/index';
 
 $directoryAsset = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2010/adminlte/dist');
 // 用户信息

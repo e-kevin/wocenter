@@ -5,9 +5,9 @@
 /* @var $profiles array */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => '身份列表', 'url' => ['/account/identity']];
+$this->params['breadcrumbs'][] = ['label' => '身份列表', 'url' => ['/account/identity/index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['navSelectPage'] = '/account/identity';
+$this->params['navSelectPage'] = '/account/identity/index';
 ?>
 
 <?= $this->render('_form', [

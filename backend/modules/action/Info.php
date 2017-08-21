@@ -10,14 +10,11 @@ class Info extends ModularityInfo
     {
         parent::init();
 
-        $this->id = 'action';
         $this->name = '行为管理';
         $this->description = '管理系统所有行为操作，如：行为管理、行为限制管理';
-        $this->version = '1.0';
         $this->developer = 'WoCenter';
         $this->email = 'e-kevin@qq.com';
         $this->isSystem = true;
-        $this->defaultRoute = 'manage';
     }
 
     /**
@@ -33,29 +30,27 @@ class Info extends ModularityInfo
                     [
                         'name' => '行为管理',
                         'icon_html' => 'paw',
-                        'url' => "/{$this->id}",
-                        'full_url' => "/{$this->id}/{$this->defaultRoute}/index",
+                        'url' => "/{$this->getId()}/manage/index",
                         'show_on_menu' => true,
                         'items' => [
-                            ['name' => '列表', 'url' => "/{$this->id}/{$this->defaultRoute}/index", 'description' => '行为列表',],
-                            ['name' => '新增', 'url' => "/{$this->id}/{$this->defaultRoute}/create"],
-                            ['name' => '编辑', 'url' => "/{$this->id}/{$this->defaultRoute}/update"],
-                            ['name' => '删除', 'url' => "/{$this->id}/{$this->defaultRoute}/delete"],
-                            ['name' => '搜索', 'url' => "/{$this->id}/{$this->defaultRoute}/search", 'description' => '搜索行为'],
+                            ['name' => '列表', 'url' => "/{$this->getId()}/manage/index", 'description' => '行为列表',],
+                            ['name' => '新增', 'url' => "/{$this->getId()}/manage/create"],
+                            ['name' => '编辑', 'url' => "/{$this->getId()}/manage/update"],
+                            ['name' => '删除', 'url' => "/{$this->getId()}/manage/delete"],
+                            ['name' => '搜索', 'url' => "/{$this->getId()}/manage/search", 'description' => '搜索行为'],
                         ],
                     ],
                     [
                         'name' => '行为限制管理',
                         'icon_html' => 'paw',
-                        'url' => "/{$this->id}/limit",
-                        'full_url' => "/{$this->id}/limit/index",
+                        'url' => "/{$this->getId()}/limit/index",
                         'show_on_menu' => true,
                         'items' => [
-                            ['name' => '列表', 'url' => "/{$this->id}/limit/index", 'description' => '行为限制列表'],
-                            ['name' => '新增', 'url' => "/{$this->id}/limit/create"],
-                            ['name' => '编辑', 'url' => "/{$this->id}/limit/update"],
-                            ['name' => '删除', 'url' => "/{$this->id}/limit/delete"],
-                            ['name' => '搜索', 'url' => "/{$this->id}/limit/search", 'description' => '搜索行为限制'],
+                            ['name' => '列表', 'url' => "/{$this->getId()}/limit/index", 'description' => '行为限制列表'],
+                            ['name' => '新增', 'url' => "/{$this->getId()}/limit/create"],
+                            ['name' => '编辑', 'url' => "/{$this->getId()}/limit/update"],
+                            ['name' => '删除', 'url' => "/{$this->getId()}/limit/delete"],
+                            ['name' => '搜索', 'url' => "/{$this->getId()}/limit/search", 'description' => '搜索行为限制'],
                         ],
                     ],
                 ],

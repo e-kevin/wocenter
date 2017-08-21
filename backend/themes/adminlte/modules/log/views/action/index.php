@@ -18,7 +18,7 @@ $actionBtn = '';
 if ($this->context->isFullPageLoad()) {
     $this->title = '行为日志';
     $this->params['breadcrumbs'][] = $this->title;
-    $this->params['navSelectPage'] = '/log';
+    $this->params['navSelectPage'] = '/log/action/index';
     $actionBtn = Html::tag('div', Html::button('<i class="fa fa-trash-o"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'Delete') . '</span>', [
         'class' => 'btn',
         'href' => Url::to(['batch-delete']),

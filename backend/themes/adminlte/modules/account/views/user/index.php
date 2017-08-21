@@ -16,12 +16,12 @@ use yii\web\View;
 $headerToolbar = '';
 $actionBtn = '';
 
+$this->params['navSelectPage'] = '/' . Yii::$app->requestedRoute;
 // full_page:START
 if ($this->context->isFullPageLoad()) {
     switch (Yii::$app->controller->action->id) {
         case 'forbidden-list' :
             $this->title = '禁用列表';
-            $this->params['navSelectPage'] = '/account/user/forbidden-list';
             $actionBtn = Html::tag('div', Html::button('<i class="fa fa-check"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'Active') . '</span>', [
                 'class' => 'btn',
                 'href' => Url::to(['active']),
@@ -36,11 +36,9 @@ if ($this->context->isFullPageLoad()) {
             break;
         case 'locked-list' :
             $this->title = '锁定列表';
-            $this->params['navSelectPage'] = '/account/user/locked-list';
             break;
         default :
             $this->title = '用户列表';
-            $this->params['navSelectPage'] = '/account';
             $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'Generate User') . '</span>', ['generate'], [
                 'class' => 'btn btn-success',
                 'data-method' => 'post',

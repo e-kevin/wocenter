@@ -17,7 +17,7 @@ $actionBtn = '';
 if ($this->context->isFullPageLoad()) {
     $this->title = Yii::t('wocenter/app', 'Invite Buy Logs');
     $this->params['breadcrumbs'][] = $this->title;
-    $this->params['navSelectPage'] = '/operate/invite-buy-log';
+    $this->params['navSelectPage'] = '/operate/invite-buy-log/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', ['generate'], [
         'class' => 'btn btn-success',
         'data-method' => 'post',

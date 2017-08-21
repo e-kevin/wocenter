@@ -19,7 +19,7 @@ $actionBtn = '';
 if ($this->context->isFullPageLoad()) {
     $this->title = $title;
     $this->params['breadcrumbs'] = $breadcrumbs;
-    $this->params['navSelectPage'] = '/account/tag';
+    $this->params['navSelectPage'] = '/account/tag/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', [
         'create',
         'pid' => $pid ?: null

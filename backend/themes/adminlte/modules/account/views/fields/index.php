@@ -20,9 +20,9 @@ $headerToolbar = '';
 // full_page:START
 if ($this->context->isFullPageLoad()) {
     $this->title = '【' . $profileName . '】字段管理';
-    $this->params['breadcrumbs'][] = ['label' => '扩展资料', 'url' => ['/account/profile']];
+    $this->params['breadcrumbs'][] = ['label' => '扩展资料', 'url' => ['/account/profile/index']];
     $this->params['breadcrumbs'][] = $this->title;
-    $this->params['navSelectPage'] = '/account/profile';
+    $this->params['navSelectPage'] = '/account/profile/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', [
         'create', 'profile_id' => $profileId,
     ], [

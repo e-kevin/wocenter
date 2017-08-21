@@ -16,7 +16,7 @@ $headerToolbar = '';
 if ($this->context->isFullPageLoad()) {
     $this->title = '积分类型';
     $this->params['breadcrumbs'][] = $this->title;
-    $this->params['navSelectPage'] = '/data/score-type';
+    $this->params['navSelectPage'] = '/data/score-type/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', [
         'create',
     ], [

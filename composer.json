@@ -23,8 +23,8 @@
         "yiisoft/yii2-swiftmailer": "~2.0.0",
         "kartik-v/yii2-widgets": "@dev",
         "kartik-v/yii2-datecontrol": "~1.9.6",
-        "wonail/yii2-adminlte": "~0.1",
-        "wonail/yii2-widget-nestable": "~1.0"
+        "wonail/yii2-adminlte": "~0.1.0",
+        "wonail/yii2-widget-nestable": "~1.0.0"
     },
     "autoload": {
         "psr-4": {

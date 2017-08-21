@@ -1,10 +1,12 @@
 <?php
 namespace wocenter;
 
+use Closure;
 use wocenter\core\ServiceLocator;
 use wocenter\helpers\ArrayHelper;
 use Yii;
 use yii\base\Object;
+use yii\caching\Dependency;
 use yii\helpers\VarDumper;
 
 /**
@@ -104,66 +106,52 @@ class Wc extends Object
     }
 
     /**
-     * Method combines both [[set()]] and [[get()]] methods to retrieve value identified by a $key,
-     * or to store the result of $closure execution if there is no cache available for the $key.
-     *
-     * Usage example:
-     *
-     * ```php
-     * public function getTopProducts($count = 10) {
-     *     $cache = $this->cache; // Could be Yii::$app->cache
-     *     return $cache->getOrSet(['top-n-products', 'n' => $count], function ($cache) use ($count) {
-     *         return Products::find()->mostPopular()->limit(10)->all();
-     *     }, 1000);
-     * }
-     * ```
+     * 扩展[[Yii::$app->getCache()->getOrSet()]]该方法，当`$duration`为`false`时先删除缓存再缓存执行数据结果
      *
      * @param mixed $key a key identifying the value to be cached. This can be a simple string or
      * a complex data structure consisting of factors representing the key.
-     * @param \Closure $closure the closure that will be used to generate a value to be cached.
-     * In case $closure returns `false`, the value will not be cached.
-     * @param int|boolean $duration default duration in seconds before the cache will expire. If not set,
+     * @param callable|Closure $callable the callable or closure that will be used to generate a value to be cached.
+     * In case $callable returns `false`, the value will not be cached.
+     * @param int $duration default duration in seconds before the cache will expire. If not set,
      * [[defaultDuration]] value will be used.
-     * When the $duration is `false`, empty the current cache.
-     * @param \yii\caching\Dependency $dependency dependency of the cached item. If the dependency changes,
+     * @param Dependency $dependency dependency of the cached item. If the dependency changes,
      * the corresponding value in the cache will be invalidated when it is fetched via [[get()]].
      * This parameter is ignored if [[serializer]] is `false`.
      *
-     * @return mixed result of $closure execution
-     * @see \yii\caching\Cache
-     * @since 2.0.11
+     * @return mixed result of $callable execution
      */
-    public static function getOrSet($key, \Closure $closure, $duration = null, $dependency = null)
+    public static function getOrSet($key, $callable, $duration = null, $dependency = null)
     {
         if ($duration === false) {
             Yii::$app->getCache()->delete($key);
         }
 
-        return Yii::$app->getCache()->getOrSet($key, $closure, $duration, $dependency);
+        return Yii::$app->getCache()->getOrSet($key, $callable, $duration, $dependency);
     }
 
     /**
-     * Executes callback provided in a transaction.
+     * 支持抛出模型类（Model|ActiveRecord）验证错误的事务操作
+     *
+     * 事务操作默认只抛出异常错误，如果需要抛出模型类产生的验证错误，`$callback`函数内需要被获取到的模型类必须使用
+     * [[traits\ExtendModelTrait()]]用以支持该方法
      *
      * @param callable $callback a valid PHP callback that performs the job. Accepts connection instance as parameter.
      * @param string|null $isolationLevel The isolation level to use for this transaction.
-     * See [[Transaction::begin()]] for details.
      *
-     * @throws \Exception|\Throwable if there is any exception during query. In this case the transaction will be
-     *     rolled back.
+     * @throws \Exception
      * @return mixed result of callback function
      */
     public static function transaction(callable $callback, $isolationLevel = null)
     {
-        self::throwException();
+        self::setThrowException();
         $result = Yii::$app->getDb()->transaction($callback, $isolationLevel);
-        self::throwException(false);
+        self::setThrowException(false);
 
         return $result;
     }
 
     /**
-     * 抛出异常
+     * 抛出异常，默认不抛出
      *
      * @var boolean
      */
@@ -184,7 +172,7 @@ class Wc extends Object
      *
      * @param boolean $throw
      */
-    public static function throwException($throw = true)
+    public static function setThrowException($throw = true)
     {
         static::$_throwException = $throw;
     }

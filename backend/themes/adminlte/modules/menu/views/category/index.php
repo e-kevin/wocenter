@@ -17,7 +17,7 @@ $toolbars = '';
 if ($this->context->isFullPageLoad()) {
     $this->title = '菜单管理';
     $this->params['breadcrumbs'][] = $this->title;
-    $this->params['navSelectPage'] = '/menu';
+    $this->params['navSelectPage'] = '/menu/category/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', [
         'create',
     ], [

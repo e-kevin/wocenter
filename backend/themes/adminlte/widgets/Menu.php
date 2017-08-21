@@ -3,7 +3,6 @@ namespace wocenter\backend\themes\adminlte\widgets;
 
 use Closure;
 use rmrevin\yii\fontawesome\FA;
-use wocenter\Wc;
 use Yii;
 use yii\helpers\Html;
 
@@ -88,38 +87,6 @@ class Menu extends \wonail\adminlte\widgets\Menu
         }
 
         return array_values($items);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function parseUrl(&$items, &$item)
-    {
-        // todo 添加对url参数[params]的支持
-        $urlList = ['url', 'full_url'];
-        foreach ($urlList as $url) {
-            if (isset($item[$url])) {
-                $urlValue = $item[$url];
-                $items[$url] = $item[$url] = is_string($urlValue) && strpos($urlValue, '/') === 0 ? (array)$urlValue : $urlValue;
-            }
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function isItemActive($item)
-    {
-        if (!isset($item['url'])) {
-            return false;
-        }
-
-        // 用完整路由地址[full_url]和系统请求的路由地址[$this->route]做对比，而路由地址[url]则作为菜单地址显示，通常[url]都是简写地址
-        if (isset($item['full_url'])) {
-            $item['url'] = $item['full_url'];
-        }
-
-        return parent::isItemActive($item);
     }
 
 }

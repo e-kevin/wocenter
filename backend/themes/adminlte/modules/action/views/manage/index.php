@@ -17,7 +17,7 @@ if ($this->context->isFullPageLoad()) {
     $this->title = '行为列表';
     $this->params['breadcrumbs'][] = $this->title;
     $this->params['breadcrumb_description'] = '每个行为均会产生一条行为日志';
-    $this->params['navSelectPage'] = '/action';
+    $this->params['navSelectPage'] = '/action/manage/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', [
         'create',
     ], [

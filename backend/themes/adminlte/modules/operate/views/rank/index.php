@@ -15,7 +15,7 @@ $actionBtn = '';
 if ($this->context->isFullPageLoad()) {
     $this->title = Yii::t('wocenter/app', 'Ranks');
     $this->params['breadcrumbs'][] = $this->title;
-    $this->params['navSelectPage'] = '/operate/rank';
+    $this->params['navSelectPage'] = '/operate/rank/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', [
         'create',
     ], [

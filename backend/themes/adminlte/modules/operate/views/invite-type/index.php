@@ -14,7 +14,7 @@ $headerToolbar = '';
 if ($this->context->isFullPageLoad()) {
     $this->title = '邀请码类型';
     $this->params['breadcrumbs'][] = $this->title;
-    $this->params['navSelectPage'] = '/operate/invite-type';
+    $this->params['navSelectPage'] = '/operate/invite-type/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', [
         'create'
     ], [

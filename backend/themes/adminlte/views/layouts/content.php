@@ -7,7 +7,8 @@ use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 
 ?>
-<div class="content-wrapper" id="content-wrapper" data-title="<?= Html::encode($this->title . ' - ' . Yii::t('wocenter/app', Yii::$app->name)) ?>">
+<div class="content-wrapper" id="content-wrapper"
+     data-title="<?= Html::encode($this->title . ' - ' . Yii::t('wocenter/app', Yii::$app->name)) ?>">
     <?php if (!isset($this->params['dispatchView'])) : ?>
         <section class="content-header">
             <h1>
@@ -47,9 +48,9 @@ use yii\widgets\Breadcrumbs;
     </section>
 
     <?= Html::hiddenInput('navSelectPage',
-        isset($this->params['navSelectPage']) ?
-            Url::toRoute($this->params['navSelectPage']) :
-            Url::toRoute('/')
+        isset($this->params['navSelectPage'])
+            ? Url::toRoute($this->params['navSelectPage'])
+            : Url::toRoute('/')
         , ['id' => 'navSelectPage']);
     ?>
 </div>

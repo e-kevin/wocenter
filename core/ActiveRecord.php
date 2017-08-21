@@ -1,7 +1,6 @@
 <?php
 namespace wocenter\core;
 
-use wocenter\behaviors\getMessageBehavior;
 use wocenter\traits\ExtendModelTrait;
 use yii\db\ActiveRecord as baseActiveRecord;
 
@@ -14,16 +13,6 @@ class ActiveRecord extends baseActiveRecord
 {
 
     use ExtendModelTrait;
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            getMessageBehavior::className(),
-        ];
-    }
 
     /**
      * @inheritdoc

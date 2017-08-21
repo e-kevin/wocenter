@@ -6,9 +6,9 @@ use yii\widgets\DetailView;
 /* @var $model wocenter\models\User */
 
 $this->title = $model->username;
-$this->params['breadcrumbs'][] = ['label' => '用户列表', 'url' => ['/account']];
+$this->params['breadcrumbs'][] = ['label' => '用户列表', 'url' => ['/account/user/index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['navSelectPage'] = '/account';
+$this->params['navSelectPage'] = '/account/user/index';
 ?>
 
 <?php \wonail\adminlte\widgets\Box::begin([

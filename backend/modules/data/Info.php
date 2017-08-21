@@ -10,10 +10,8 @@ class Info extends ModularityInfo
     {
         parent::init();
 
-        $this->id = 'data';
         $this->name = '基础数据';
         $this->description = '提供系统所有基础数据的支持，如：区域数据、积分类型';
-        $this->version = '1.0';
         $this->developer = 'WoCenter';
         $this->email = 'e-kevin@qq.com';
         $this->isSystem = true;
@@ -37,28 +35,26 @@ class Info extends ModularityInfo
                             // 区域管理
                             [
                                 'name' => '区域管理',
-                                'url' => "/{$this->id}/area-region",
-                                'full_url' => "/{$this->id}/area-region/index",
+                                'url' => "/{$this->getId()}/area-region/index",
                                 'show_on_menu' => true,
                                 'items' => [
-                                    ['name' => '列表', 'url' => "/{$this->id}/area-region/index", 'description' => '区域管理列表'],
-                                    ['name' => '新增', 'url' => "/{$this->id}/area-region/create"],
-                                    ['name' => '编辑', 'url' => "/{$this->id}/area-region/update"],
-                                    ['name' => '删除', 'url' => "/{$this->id}/area-region/delete"],
-                                    ['name' => '搜索', 'url' => "/{$this->id}/area-region/search"],
+                                    ['name' => '列表', 'url' => "/{$this->getId()}/area-region/index", 'description' => '区域管理列表'],
+                                    ['name' => '新增', 'url' => "/{$this->getId()}/area-region/create"],
+                                    ['name' => '编辑', 'url' => "/{$this->getId()}/area-region/update"],
+                                    ['name' => '删除', 'url' => "/{$this->getId()}/area-region/delete"],
+                                    ['name' => '搜索', 'url' => "/{$this->getId()}/area-region/search"],
                                 ],
                             ],
                             // 积分类型
                             [
                                 'name' => '积分类型',
-                                'url' => "/{$this->id}/score-type",
-                                'full_url' => "/{$this->id}/score-type/index",
+                                'url' => "/{$this->getId()}/score-type/index",
                                 'show_on_menu' => true,
                                 'items' => [
-                                    ['name' => '列表', 'url' => "/{$this->id}/score-type/index", 'description' => '积分类型列表'],
-                                    ['name' => '新增', 'url' => "/{$this->id}/score-type/create"],
-                                    ['name' => '编辑', 'url' => "/{$this->id}/score-type/update"],
-                                    ['name' => '删除', 'url' => "/{$this->id}/score-type/delete"],
+                                    ['name' => '列表', 'url' => "/{$this->getId()}/score-type/index", 'description' => '积分类型列表'],
+                                    ['name' => '新增', 'url' => "/{$this->getId()}/score-type/create"],
+                                    ['name' => '编辑', 'url' => "/{$this->getId()}/score-type/update"],
+                                    ['name' => '删除', 'url' => "/{$this->getId()}/score-type/delete"],
                                 ],
                             ],
                         ],

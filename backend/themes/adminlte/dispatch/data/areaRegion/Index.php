@@ -27,7 +27,7 @@ class Index extends Dispatch
             $this->error($searchModel->message, '', 2);
         }
 
-        $breadcrumbs = $searchModel->getBreadcrumbs($pid, '区域管理', '/data/area-region');
+        $breadcrumbs = $searchModel->getBreadcrumbs($pid, '区域管理', '/data/area-region/index');
 
         return $this->assign([
             'searchModel' => $searchModel,

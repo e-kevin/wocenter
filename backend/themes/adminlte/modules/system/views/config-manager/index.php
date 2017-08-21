@@ -18,7 +18,7 @@ $headerToolbar = '';
 // full_page:START
 if ($this->context->isFullPageLoad()) {
     $this->title = '配置管理';
-    $this->params['navSelectPage'] = '/system';
+    $this->params['navSelectPage'] = '/system/config-manager/index';
     $this->params['breadcrumbs'][] = $this->title;
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', [
         'create',

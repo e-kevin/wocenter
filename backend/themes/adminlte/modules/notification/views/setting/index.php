@@ -17,7 +17,7 @@ $headerToolbar = '';
 // full_page:START
 if ($this->context->isFullPageLoad()) {
     $this->title = '通知管理';
-    $this->params['navSelectPage'] = '/notification';
+    $this->params['navSelectPage'] = '/notification/setting/index';
     $this->params['breadcrumbs'][] = $this->title;
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', [
         'create',

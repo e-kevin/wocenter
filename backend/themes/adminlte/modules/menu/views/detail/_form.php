@@ -32,8 +32,6 @@ use wonail\adminlte\widgets\Select2;
 
 <?= $form->field($model, 'url')->textInput(['maxlength' => 512]) ?>
 
-<?= $form->field($model, 'full_url')->textInput(['maxlength' => 512]) ?>
-
 <?= $form->field($model, 'description')->textarea(['maxlength' => 512]) ?>
 
 <?= $form->field($model, 'sort_order')->textInput() ?>

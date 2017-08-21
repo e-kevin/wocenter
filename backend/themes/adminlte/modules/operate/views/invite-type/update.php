@@ -5,9 +5,9 @@
 /* @var $inviteIdentityList array 可邀请注册的身份列表 */
 
 $this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => '邀请码类型', 'url' => ['/operate/invite-type']];
+$this->params['breadcrumbs'][] = ['label' => '邀请码类型', 'url' => ['/operate/invite-type/index']];
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['navSelectPage'] = '/operate/invite-type';
+$this->params['navSelectPage'] = '/operate/invite-type/index';
 ?>
 
 <?= $this->render('_form', [

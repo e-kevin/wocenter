@@ -33,10 +33,10 @@ class Index extends Dispatch
         $breadcrumbs = $searchModel->getBreadcrumbs(
             $pid,
             $categoryName,
-            '/menu/detail',
+            '/menu/detail/index',
             ['category' => $category],
             [
-                -1 => ['label' => '菜单管理', 'url' => ['/menu']],
+                -1 => ['label' => '菜单管理', 'url' => ['/menu/category/index']],
             ]
         );
 

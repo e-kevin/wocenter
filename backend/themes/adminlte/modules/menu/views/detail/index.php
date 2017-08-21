@@ -19,7 +19,7 @@ $headerToolbar = '';
 if ($this->context->isFullPageLoad()) {
     $this->title = $title;
     $this->params['breadcrumbs'] = $breadcrumbs;
-    $this->params['navSelectPage'] = '/menu';
+    $this->params['navSelectPage'] = '/menu/category/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', [
         'create',
         'category' => $category,
@@ -48,7 +48,6 @@ $column = [
     ],
     'alias_name',
     'url',
-    'full_url',
     'description:ntext',
     [
         'attribute' => 'target',

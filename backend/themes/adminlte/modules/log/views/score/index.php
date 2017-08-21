@@ -15,7 +15,7 @@ use wonail\adminlte\grid\GridView;
 if ($this->context->isFullPageLoad()) {
     $this->title = '奖罚日志';
     $this->params['breadcrumbs'][] = $this->title;
-    $this->params['navSelectPage'] = '/log/score';
+    $this->params['navSelectPage'] = '/log/score/index';
 }
 // full_page:END
 ?>
