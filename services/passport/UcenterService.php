@@ -111,7 +111,7 @@ class UcenterService extends Service
      * @return boolean `true`: 注册成功，通过[[getData()]]方法返回用户数据数组[id, username, email, mobile, created_at]
      * @throws NotFoundHttpException
      */
-    public function signup($username, $password, $email, $mobile, $autoGenerate = false, $createdBy = User::CREATED_BY_USER)
+    public function signup($username, $password, $email = null, $mobile = null, $autoGenerate = false, $createdBy = User::CREATED_BY_USER)
     {
         $class = Yii::$app->getUser()->identityClass;
         /* @var $model User */
@@ -377,7 +377,7 @@ class UcenterService extends Service
      */
     public function addRandUser()
     {
-        return $this->signup($this->_randUsername(), StringHelper::randString(10), $this->_randEmail(), '', true);
+        return $this->signup($this->_randUsername(), StringHelper::randString(10), $this->_randEmail(), null, true);
     }
 
     /**

@@ -15,7 +15,7 @@ use yii\web\User;
  * @property integer $num
  * @property string $content
  * @property integer $created_at
- * 
+ *
  * @property User $user
  * @property InviteType $inviteType
  */
@@ -41,8 +41,8 @@ class InviteBuyLog extends ActiveRecord
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT => 'created_at',
                 ],
-                'updatedAtAttribute' => false
-            ]
+                'updatedAtAttribute' => false,
+            ],
         ]);
     }
 

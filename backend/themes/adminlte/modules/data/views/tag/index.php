@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-/* @var $searchModel \wocenter\backend\modules\account\models\TagSearch */
+/* @var $searchModel \wocenter\backend\modules\data\models\TagSearch */
 /* @var $dataProvider \wocenter\backend\core\ActiveDataProvider */
 /* @var $pid integer */
 /* @var $breadcrumbs array 面包屑导航 */
@@ -19,7 +19,7 @@ $actionBtn = '';
 if ($this->context->isFullPageLoad()) {
     $this->title = $title;
     $this->params['breadcrumbs'] = $breadcrumbs;
-    $this->params['navSelectPage'] = '/account/tag/index';
+    $this->params['navSelectPage'] = '/data/tag/index';
     $headerToolbar = Html::a('<i class="fa fa-plus"></i> <span class="hidden-xs">' . Yii::t('wocenter/app', 'New add') . '</span>', [
         'create',
         'pid' => $pid ?: null
@@ -64,7 +64,7 @@ GridView::widget([
             'format' => 'raw',
             'value' => function ($model) {
                 return Html::a($model->title, [
-                    '/account/tag',
+                    '/data/tag',
                     'pid' => $model->id,
                 ], ['data-pjax' => 1]);
             },

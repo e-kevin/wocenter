@@ -4,7 +4,7 @@ use wonail\adminlte\widgets\ActiveForm;
 use wonail\adminlte\widgets\Select2;
 
 /* @var $this yii\web\View */
-/* @var $model \wocenter\backend\modules\account\models\Tag */
+/* @var $model \wocenter\backend\modules\data\models\Tag */
 /* @var $form ActiveForm */
 /* @var $tagList array 标签列表 */
 ?>

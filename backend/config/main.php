@@ -1,5 +1,5 @@
 <?php
-foreach (require_once('classMap.php') as $old => $new) {
+foreach (require_once(__DIR__ . '/../../config/classMap.php') as $old => $new) {
     Yii::$classMap[$old] = $new;
 }
 $captchaAction = '/passport/security/captcha'; // 验证码路由地址
@@ -89,14 +89,10 @@ return [
     ],
     'container' => [
         'definitions' => [
-            'Wc' => 'wocenter\Wc',
             'yii\captcha\Captcha' => [
                 'captchaAction' => $captchaAction,
                 'template' => '<div class="input-group">{input}<div class="input-group-addon">{image}</div></div>',
             ]
         ],
-    ],
-    'aliases' => [
-        '@wocenter' => '@vendor/wonail/wocenter',
     ],
 ];

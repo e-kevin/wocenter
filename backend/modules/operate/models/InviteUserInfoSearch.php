@@ -6,9 +6,11 @@ use yii\base\Model;
 use wocenter\backend\core\ActiveDataProvider;
 
 /**
- * InviteUserInfoSearch represents the model behind the search form about `wocenter\backend\modules\operate\models\InviteUserInfo`.
+ * InviteUserInfoSearch represents the model behind the search form about
+ * `wocenter\backend\modules\operate\models\InviteUserInfo`.
  */
-class InviteUserInfoSearch extends InviteUserInfo{
+class InviteUserInfoSearch extends InviteUserInfo
+{
 
     /**
      * @inheritdoc

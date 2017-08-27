@@ -1,6 +1,7 @@
 <?php
 namespace wocenter\backend\modules\account\models;
 
+use wocenter\backend\modules\data\models\TagUser;
 use wocenter\backend\modules\operate\models\RankUser;
 use wocenter\backend\modules\passport\models\LoginForm;
 use wocenter\core\ActiveRecord;

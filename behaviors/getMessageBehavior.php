@@ -49,7 +49,7 @@ class getMessageBehavior extends Behavior
              * 添加事务支持
              *
              * 如果存在事务操作且事务内的模型启用抛出异常，则把获取到的反馈信息以异常方式抛出，否则反馈信息由模型自行吞掉，
-             * 此时可通过模型内`message`属性获取相关反馈信息
+             * 此时可通过模型内`$message`属性获取相关反馈信息
              */
             if (Yii::$app->getDb()->getIsActive() && (
                     $this->owner->throwException === true

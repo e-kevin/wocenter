@@ -25,6 +25,10 @@ class Info extends ModularityInfo
         return [
             [
                 'name' => '系统管理',
+                'icon_html' => 'cog',
+                'modularity' => 'core',
+                'show_on_menu' => true,
+                'sort_order' => 1002,
                 'items' => [
                     // 基础功能
                     [
@@ -38,6 +42,7 @@ class Info extends ModularityInfo
                                 'name' => '菜单管理',
                                 'url' => "/{$this->getId()}/category/index",
                                 'show_on_menu' => true,
+                                'sort_order' => 10,
                                 'items' => [
                                     ['name' => '列表', 'url' => "/{$this->getId()}/category/index", 'description' => '菜单分类列表'],
                                     ['name' => '新增', 'url' => "/{$this->getId()}/category/create", 'description' => '新增菜单分类'],

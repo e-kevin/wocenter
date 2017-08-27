@@ -23,8 +23,13 @@ class Info extends ModularityInfo
     public function getMenus()
     {
         return [
+            // 系统管理
             [
                 'name' => '系统管理',
+                'icon_html' => 'cog',
+                'modularity' => 'core',
+                'show_on_menu' => true,
+                'sort_order' => 1002,
                 'items' => [
                     // 基础功能
                     [
@@ -38,6 +43,7 @@ class Info extends ModularityInfo
                                 'name' => '通知管理',
                                 'url' => "/{$this->getId()}/setting/index",
                                 'show_on_menu' => true,
+                                'sort_order' => 20,
                                 'items' => [
                                     ['name' => '列表', 'url' => "/{$this->getId()}/setting/index", 'description' => '通知管理列表'],
                                     ['name' => '新增', 'url' => "/{$this->getId()}/setting/create", 'description' => '新增通知'],

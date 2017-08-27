@@ -33,7 +33,7 @@ interface ModularityInfoInterface
      *
      * @return array
      */
-    public function getUrlRule();
+    public function getUrlRules();
 
     /**
      * 安装模块

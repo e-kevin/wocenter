@@ -2,8 +2,8 @@
 namespace wocenter\models;
 
 use wocenter\backend\modules\account\models\ExtendFieldUser;
-use wocenter\backend\modules\account\models\TagUser;
 use wocenter\backend\modules\account\models\UserIdentity;
+use wocenter\backend\modules\data\models\TagUser;
 use wocenter\backend\modules\log\models\ActionLog;
 use wocenter\backend\modules\log\models\UserScoreLog;
 use wocenter\backend\modules\operate\models\Invite;

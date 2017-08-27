@@ -1,6 +1,7 @@
 <?php
 namespace wocenter\helpers;
 
+use Yii;
 use yii\helpers\BaseFileHelper;
 
 /**
@@ -69,9 +70,20 @@ class FileHelper extends BaseFileHelper
         return $res;
     }
 
-    public static function createFile($filePath, $content)
+    public static function createFile($filePath, $content, $mode = 0777)
     {
+        if (@file_put_contents($filePath, $content, LOCK_EX) !== false) {
+            if ($mode !== null) {
+                @chmod($filePath, $mode);
+            }
 
+            return @touch($filePath);
+        } else {
+            $error = error_get_last();
+            Yii::warning("Unable to write file '{$filePath}': {$error['message']}", __METHOD__);
+
+            return false;
+        }
     }
 
     public static function removeFile($filePath)

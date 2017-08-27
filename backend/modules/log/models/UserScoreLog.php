@@ -13,9 +13,9 @@ use Yii;
  * @property integer $id
  * @property integer $uid
  * @property integer $ip
- * @property integer $type
- * @property integer $action
- * @property double $value
+ * @property integer $type 奖励类型
+ * @property integer $action 调整类型 0:加 1:减
+ * @property double $value 积分变动
  * @property double $finally_value
  * @property integer $created_at
  * @property string $remark

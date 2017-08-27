@@ -23,38 +23,7 @@ class Info extends ModularityInfo
     public function getMenus()
     {
         return [
-            // 扩展中心
-            [
-                'name' => '扩展中心',
-                'icon_html' => 'cube',
-                'modularity' => 'core',
-                'show_on_menu' => true,
-                'sort_order' => 1005,
-            ],
-            // 人事管理
-            [
-                'name' => '人事管理',
-                'icon_html' => 'user',
-                'modularity' => 'core',
-                'show_on_menu' => true,
-                'sort_order' => 1001,
-            ],
-            // 安全管理
-            [
-                'name' => '安全管理',
-                'icon_html' => 'shield',
-                'modularity' => 'core',
-                'show_on_menu' => true,
-                'sort_order' => 1003,
-            ],
-            // 运营管理
-            [
-                'name' => '运营管理',
-                'icon_html' => 'line-chart',
-                'modularity' => 'core',
-                'show_on_menu' => true,
-                'sort_order' => 1004,
-            ],
+            // 系统管理
             [
                 'name' => '系统管理',
                 'icon_html' => 'cog',
@@ -87,6 +56,7 @@ class Info extends ModularityInfo
                                 'name' => '配置管理',
                                 'url' => "/{$this->getId()}/config-manager/index",
                                 'show_on_menu' => true,
+                                'sort_order' => 30,
                                 'items' => [
                                     ['name' => '列表', 'url' => "/{$this->getId()}/config-manager/index", 'description' => '配置管理列表'],
                                     ['name' => '新增', 'url' => "/{$this->getId()}/config-manager/create"],
@@ -95,7 +65,7 @@ class Info extends ModularityInfo
                                     ['name' => '搜索', 'url' => "/{$this->getId()}/config-manager/search"],
                                 ],
                             ],
-                            ['name' => '清理缓存', 'url' => "/{$this->getId()}/cache/flushCache", 'show_on_menu' => true],
+                            ['name' => '清理缓存', 'url' => "/{$this->getId()}/cache/flushCache", 'show_on_menu' => true, 'sort_order' => 100],
                         ],
                     ],
                 ],

@@ -1,11 +1,11 @@
 <?php
-namespace wocenter\backend\modules\account\models;
+namespace wocenter\backend\modules\data\models;
 
 use wocenter\backend\core\ActiveDataProvider;
 use wocenter\libs\Constants;
 
 /**
- * TagSearch represents the model behind the search form about `wocenter\backend\modules\account\models\Tag`.
+ * TagSearch represents the model behind the search form about `wocenter\backend\modules\data\models\Tag`.
  */
 class TagSearch extends Tag
 {

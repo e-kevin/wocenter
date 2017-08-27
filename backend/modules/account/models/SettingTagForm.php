@@ -1,6 +1,8 @@
 <?php
 namespace wocenter\backend\modules\account\models;
 
+use wocenter\backend\modules\data\models\Tag;
+
 /**
  * 标签配置表单模型
  *

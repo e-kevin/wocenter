@@ -26,6 +26,10 @@ class Info extends ModularityInfo
             // 安全管理
             [
                 'name' => '安全管理',
+                'icon_html' => 'shield',
+                'modularity' => 'core',
+                'show_on_menu' => true,
+                'sort_order' => 1003,
                 'items' => [
                     [
                         'name' => '行为管理',

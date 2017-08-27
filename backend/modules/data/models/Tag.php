@@ -1,5 +1,5 @@
 <?php
-namespace wocenter\backend\modules\account\models;
+namespace wocenter\backend\modules\data\models;
 
 use wocenter\behaviors\TreeBehavior;
 use wocenter\core\ActiveRecord;

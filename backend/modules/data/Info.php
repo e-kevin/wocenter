@@ -23,8 +23,13 @@ class Info extends ModularityInfo
     public function getMenus()
     {
         return [
+            // 系统管理
             [
                 'name' => '系统管理',
+                'icon_html' => 'cog',
+                'modularity' => 'core',
+                'show_on_menu' => true,
+                'sort_order' => 1002,
                 'items' => [
                     [
                         'name' => '基础数据',
@@ -55,6 +60,20 @@ class Info extends ModularityInfo
                                     ['name' => '新增', 'url' => "/{$this->getId()}/score-type/create"],
                                     ['name' => '编辑', 'url' => "/{$this->getId()}/score-type/update"],
                                     ['name' => '删除', 'url' => "/{$this->getId()}/score-type/delete"],
+                                ],
+                            ],
+                            // 标签列表
+                            [
+                                'name' => '标签列表',
+                                'icon_html' => 'tags',
+                                'url' => "/{$this->getId()}/tag/index",
+                                'show_on_menu' => true,
+                                'items' => [
+                                    ['name' => '列表', 'url' => "/{$this->getId()}/tag/index", 'description' => '标签列表'],
+                                    ['name' => '新增', 'url' => "/{$this->getId()}/tag/create", 'description' => '新增标签'],
+                                    ['name' => '编辑', 'url' => "/{$this->getId()}/tag/update", 'description' => '编辑标签'],
+                                    ['name' => '删除', 'url' => "/{$this->getId()}/tag/delete", 'description' => '删除标签'],
+                                    ['name' => '批量删除', 'url' => "/{$this->getId()}/tag/batch-delete", 'description' => '批量删除标签'],
                                 ],
                             ],
                         ],
