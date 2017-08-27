@@ -1,5 +1,5 @@
 <?php
-namespace wocenter\console\core\mysql;
+namespace wocenter\console;
 
 /**
  * Class Migration

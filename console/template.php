@@ -3,7 +3,7 @@
 
 echo "<?php\n";
 ?>
-use wocenter\console\core\mysql\Migration;
+use wocenter\console\Migration;
 
 class <?= $className ?> extends Migration
 {
