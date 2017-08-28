@@ -23,8 +23,13 @@ class Info extends ModularityInfo
     public function getMenus()
     {
         return [
+            // 运营管理
             [
                 'name' => '运营管理',
+                'icon_html' => 'line-chart',
+                'modularity' => 'core',
+                'show_on_menu' => true,
+                'sort_order' => 1004,
                 // 邀请码管理
                 'items' => [
                     [
@@ -32,6 +37,7 @@ class Info extends ModularityInfo
                         'icon_html' => 'key',
                         'modularity' => $this->getId(),
                         'show_on_menu' => true,
+                        'sort_order' => 10,
                         'items' => [
                             // 类型列表
                             [
@@ -79,6 +85,7 @@ class Info extends ModularityInfo
                         'icon_html' => 'mortar-board',
                         'modularity' => $this->getId(),
                         'show_on_menu' => true,
+                        'sort_order' => 20,
                         'items' => [
                             [
                                 'name' => '头衔列表',

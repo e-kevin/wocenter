@@ -94,8 +94,8 @@ class Invite extends ActiveRecord
     {
         return [
             parent::SCENARIO_DEFAULT => ['invite_type', 'can_num', 'count',
-                'code', 'created_at', 'expired_at', 'status', 'uid'
-            ]
+                'code', 'created_at', 'expired_at', 'status', 'uid',
+            ],
         ];
     }
 
@@ -105,7 +105,7 @@ class Invite extends ActiveRecord
     public function transactions()
     {
         return [
-            parent::SCENARIO_DEFAULT => parent::OP_INSERT
+            parent::SCENARIO_DEFAULT => parent::OP_INSERT,
         ];
     }
 
@@ -313,7 +313,7 @@ class Invite extends ActiveRecord
     public function clearCode()
     {
         return $this->deleteAll([
-            'or', ['status' => self::CODE_DELETED], ['<', 'expired_at', time()]
+            'or', ['status' => self::CODE_DELETED], ['<', 'expired_at', time()],
         ]) ? true : false;
     }
 

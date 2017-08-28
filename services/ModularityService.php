@@ -2,12 +2,10 @@
 namespace wocenter\services;
 
 use wocenter\core\Service;
-use wocenter\helpers\FileHelper;
 use wocenter\models\Module;
 use wocenter\Wc;
 use Yii;
 use yii\base\InvalidParamException;
-use yii\base\UnknownClassException;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 
@@ -15,6 +13,8 @@ use yii\web\NotFoundHttpException;
  * 管理系统模块类
  *
  * @property string $moduleRootPath 模块目录
+ * @property \wocenter\services\modularity\LoadService $load 加载模块配置服务类
+ *
  * @author E-Kevin <e-kevin@qq.com>
  */
 class ModularityService extends Service
@@ -53,12 +53,12 @@ class ModularityService extends Service
     /**
      * @var array 调试模块。主要用于读取所需测试的模块目录，其他目录不加载
      */
-    public $debugModules = ['account', 'menu', 'passport', 'modularity', 'log'];
+    public $debugModules = ['account', 'menu', 'passport', 'modularity', 'system'];
 
     /**
      * @var array 核心模块，必须安装
      */
-    public $coreModules = ['modularity', 'menu', 'system'];
+    public $coreModules = ['account', 'action', 'data', 'log', 'menu', 'modularity', 'notification', 'operate', 'passport', 'system'];
 
     /**
      * @var string|array|callable|Module 模块类
@@ -66,7 +66,8 @@ class ModularityService extends Service
     public $moduleModel = '\wocenter\models\Module';
 
     /**
-     * @var string 模块命名空间
+     * @var string 模块命名空间，加载模块时系统会自动转换该命名空间为模块目录并搜索其下所有有效的模块
+     * @see getModulePath()
      */
     public $moduleNamespace = 'wocenter\backend\modules';
 
@@ -103,8 +104,9 @@ class ModularityService extends Service
     {
         /** @var Module $moduleModel */
         $moduleModel = Yii::createObject($this->moduleModel);
+        $installedModule = $moduleModel->getInstalledModuleId();
 
-        return $this->loadModuleFiles($moduleModel->getInstalledModuleId());
+        return $installedModule ? $this->getLoad()->getModuleFiles($installedModule) : [];
     }
 
     /**
@@ -122,7 +124,7 @@ class ModularityService extends Service
      *
      * @return array [
      * [
-     *  $moduleId => 'moduleNamespace',
+     *  $moduleId => 'moduleClass',
      * ]
      */
     public function getInstalledModuleConfigs()
@@ -139,23 +141,24 @@ class ModularityService extends Service
      */
     protected function getModulesInternal($type)
     {
+        $appId = Yii::$app->id;
         switch ($type) {
             case 'install':
-                $arr = Wc::getOrSet(self::CACHE_INSTALLED_MODULES, function () {
+                $arr = Wc::getOrSet([$appId, self::CACHE_INSTALLED_MODULES], function () {
                     return ArrayHelper::getColumn(
                         $this->getInstalledModules(),
-                        'moduleNamespace'
+                        'moduleClass'
                     );
                 }, $this->cacheDuration);
                 break;
             case 'uninstall':
-                $arr = Wc::getOrSet(self::CACHE_UNINSTALL_MODULES, function () {
+                $arr = Wc::getOrSet([$appId, self::CACHE_UNINSTALL_MODULES], function () {
                     /** @var Module $moduleModel */
                     $moduleModel = Yii::createObject($this->moduleModel);
                     // 已经安装的模块ID数组
                     $installedModuleIds = $moduleModel->getInstalledModuleId();
                     // 系统存在的模块ID数组
-                    $existModuleIds = ArrayHelper::getColumn($this->loadModuleFiles(), 'id');
+                    $existModuleIds = array_keys($this->getLoad()->getModuleFiles());
 
                     // 未安装的模块ID数组
                     return array_diff($existModuleIds, $installedModuleIds);
@@ -180,18 +183,19 @@ class ModularityService extends Service
         $dbModules = $moduleModel::find()->select('id,is_system')
             ->where(['app' => Yii::$app->id])
             ->indexBy('id')->asArray()->all();
-        $allModules = $this->loadModuleFiles();
-        foreach ($allModules as &$v) {
+        $allModules = $this->getLoad()->getModuleFiles();
+        foreach ($allModules as $moduleId => &$v) {
+            $v['id'] = $moduleId;
             // 数据库里存在模块信息则标识模块已安装
             if (array_key_exists($v['id'], $dbModules)) {
                 $existModule = $dbModules[$v['id']];
-                // 系统模块及必须安装的模块不可卸载
-                $v['infoInstance']->canUninstall =
-                    !$v['infoInstance']->isSystem &&
-                    !$existModule['is_system'] &&
-                    !in_array($v['id'], $this->coreModules);
                 // 是否为系统模块
-                $v['infoInstance']->isSystem = $v['infoInstance']->isSystem || $existModule['is_system'];
+                $v['infoInstance']->isSystem =
+                    $v['infoInstance']->isSystem
+                    || $existModule['is_system']
+                    || in_array($v['id'], $this->coreModules);
+                // 系统模块不可卸载
+                $v['infoInstance']->canUninstall = !$v['infoInstance']->isSystem;
             } else {
                 // 数据库不存在数据则可以进行安装
                 $v['infoInstance']->canInstall = true;
@@ -212,7 +216,7 @@ class ModularityService extends Service
      */
     public function getModuleInfo($id, $onDataBase = true)
     {
-        $modules = $this->loadModuleFiles();
+        $modules = $this->getLoad()->getModuleFiles();
         if ($modules[$id] == null) {
             throw new NotFoundHttpException('模块不存在');
         }
@@ -249,105 +253,13 @@ class ModularityService extends Service
     }
 
     /**
-     * 搜索模块目录，默认获取所有模块信息
+     * 加载模块配置服务类
      *
-     * @param array $modules 只获取该数组模块信息，如：['account', 'passport', ...]
-     *
-     * @return array [
-     * [
-     *  moduleId => [
-     *      id,
-     *      moduleNamespace,
-     *      infoInstance
-     *  ]
-     * ]
+     * @return \wocenter\services\modularity\LoadService
      */
-    public function loadModuleFiles($modules = [])
+    public function getLoad()
     {
-        $allModuleFiles = Wc::getOrSet(self::CACHE_ALL_MODULE_FILES, function () {
-            $allModules = [];
-            $modulePath = $this->getModulePath();
-            if (($moduleRootDir = @dir($modulePath))) {
-                while (($moduleFolder = $moduleRootDir->read()) !== false) {
-                    $currentModuleDir = $modulePath . DIRECTORY_SEPARATOR . $moduleFolder;
-                    if (preg_match('|^\.+$|', $moduleFolder) || !FileHelper::isDir($currentModuleDir)) {
-                        continue;
-                    }
-
-                    // 搜索模块类
-                    if (FileHelper::exist($currentModuleDir . DIRECTORY_SEPARATOR . 'Module.php')
-                    ) {
-                        $moduleClass = $this->moduleNamespace . '\\' . $moduleFolder . '\Module';
-                    } else {
-                        continue;
-                    }
-
-                    // 初始化模块类，获取相关信息
-                    try {
-                        /** @var \yii\base\Module $module */
-                        $module = Yii::createObject($moduleClass, [$moduleFolder, Yii::$app]);
-                    } catch (\Exception $e) {
-                        throw new UnknownClassException($moduleClass);
-                    }
-
-                    // 初始化模块信息类
-                    $infoClass = $this->moduleNamespace . '\\' . $moduleFolder . '\Info';
-                    try {
-                        /** @var \wocenter\core\ModularityInfo $instance */
-                        $instance = Yii::createObject($infoClass, [$module->id, [
-                            'version' => $module->version,
-                        ]]);
-                        $instance->name = $instance->name ?: $moduleFolder;
-                    } catch (\Exception $e) {
-                        throw new UnknownClassException($infoClass);
-                    }
-
-                    $allModules[$instance->id] = [
-                        'id' => $instance->id,
-                        'moduleNamespace' => $moduleClass,
-                        'infoInstance' => $instance,
-                    ];
-                }
-            }
-
-            return $allModules;
-        }, $this->cacheDuration);
-
-        if ($this->debug || !empty($modules)) {
-            foreach ($allModuleFiles as $moduleId => $row) {
-                if (
-                    // 开启调试模式，则只获取指定模块
-                    ($this->debug && !in_array($moduleId, $this->debugModules)) ||
-                    // 只获取该数组模块信息
-                    (!empty($modules) && !in_array($moduleId, $modules))
-                ) {
-                    unset($allModuleFiles[$moduleId]);
-                    continue;
-                }
-            }
-        }
-
-        return $allModuleFiles;
-    }
-
-    /**
-     * 获取模块路由规则
-     *
-     * @return mixed
-     */
-    public function getUrlRule()
-    {
-        return Wc::getOrSet(self::CACHE_MODULE_URL_RULE, function () {
-            $arr = [];
-            // 获取所有已经安装的模块配置文件
-            foreach ($this->getInstalledModules() as $moduleId => $row) {
-                /* @var $infoInstance \wocenter\core\ModularityInfo */
-                $infoInstance = $row['infoInstance'];
-                $arr = ArrayHelper::merge($arr, $infoInstance->getUrlRule());
-            }
-
-            return $arr;
-        }, $this->cacheDuration);
+        return $this->getSubService('load');
     }
 
     /**
@@ -356,10 +268,11 @@ class ModularityService extends Service
      */
     public function clearCache()
     {
-        Yii::$app->getCache()->delete(self::CACHE_INSTALLED_MODULES);
-        Yii::$app->getCache()->delete(self::CACHE_UNINSTALL_MODULES);
-        Yii::$app->getCache()->delete(self::CACHE_ALL_MODULE_FILES);
-        Yii::$app->getCache()->delete(self::CACHE_MODULE_URL_RULE);
+        $appId = Yii::$app->id;
+        Yii::$app->getCache()->delete([$appId, self::CACHE_INSTALLED_MODULES]);
+        Yii::$app->getCache()->delete([$appId, self::CACHE_UNINSTALL_MODULES]);
+        Yii::$app->getCache()->delete([$appId, self::CACHE_ALL_MODULE_FILES]);
+        Yii::$app->getCache()->delete([$appId, self::CACHE_MODULE_URL_RULE]);
     }
 
 }

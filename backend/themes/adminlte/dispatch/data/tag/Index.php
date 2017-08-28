@@ -1,14 +1,14 @@
 <?php
-namespace wocenter\backend\themes\adminlte\dispatch\account\tag;
+namespace wocenter\backend\themes\adminlte\dispatch\data\tag;
 
-use wocenter\backend\modules\account\models\TagSearch;
+use wocenter\backend\modules\data\models\TagSearch;
 use wocenter\backend\themes\adminlte\components\Dispatch;
 use Yii;
 
 /**
  * Class Index
  *
- * @package wocenter\backend\themes\adminlte\dispatch\account\tag
+ * @package wocenter\backend\themes\adminlte\dispatch\data\tag
  */
 class Index extends Dispatch
 {
@@ -27,7 +27,7 @@ class Index extends Dispatch
             $this->error($searchModel->message, '', 2);
         }
 
-        $breadcrumbs = $searchModel->getBreadcrumbs($pid, '标签列表', '/account/tag/index');
+        $breadcrumbs = $searchModel->getBreadcrumbs($pid, '标签列表', '/data/tag/index');
 
         return $this->assign([
             'searchModel' => $searchModel,

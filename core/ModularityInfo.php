@@ -109,7 +109,7 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
     /**
      * @inheritdoc
      */
-    public function getUrlRule()
+    public function getUrlRules()
     {
         return [];
     }

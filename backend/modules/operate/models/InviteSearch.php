@@ -40,9 +40,9 @@ class InviteSearch extends Invite
                 'inviteType' => function (ActiveQuery $query) {
                     $query->select('id, title');
                 },
-                'user' => function(ActiveQuery $query) {
+                'user' => function (ActiveQuery $query) {
                     $query->select('id, username');
-                }
+                },
             ]),
         ]);
 

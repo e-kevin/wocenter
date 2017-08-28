@@ -40,7 +40,8 @@ class ServiceLocator extends Object
      * 'container' => [
      *      'definitions' => [
      *          'wocenter\core\ServiceLocator' => [
-     *              'serviceNamespace' => 'app\services\\',
+     *              'serviceNamespace' => 'app\\services',
+     *              'cacheDuration' => 86400,
      *          ],
      *      ]
      *  ],
@@ -48,6 +49,11 @@ class ServiceLocator extends Object
      * @var string 服务类命名空间
      */
     public $serviceNamespace = 'wocenter\\services';
+
+    /**
+     * @var integer|false 缓存时间间隔。当为`false`时，则删除缓存数据，默认缓存`一天`
+     */
+    public $cacheDuration = 86400;
 
     /**
      * @var Service[] 已经实例化的服务单例
@@ -66,14 +72,23 @@ class ServiceLocator extends Object
     {
         if (!isset($this->_service[$serviceName])) {
             $service = $serviceName . 'Service';
-            // todo 如果存在自定义配置信息却不存在'class'键名,则提取系统默认的'class'值
+            $this->loadServiceConfig();
+            // 没有自定义设置服务组件，则以系统默认配置进行设置
             if (!Yii::$app->has($service)) {
-                // todo 需要isset()判断
-                Yii::$app->set($service, $this->loadServiceConfig()[$service]);
-                unset($this->_allServices[$service]);
-
-                return $this->getService($serviceName);
+                if (!isset($this->_allServices[$service])) {
+                    throw new InvalidConfigException("Unknown service ID: $service");
+                }
+            } // 存在自定义配置信息则递归替换系统默认的配置
+            else {
+                $components = Yii::$app->getComponents();
+                if (isset($components[$service])) {
+                    // 主要是为主服务类添加子服务配置信息
+                    $this->_allServices[$service] = array_replace_recursive($this->_allServices[$service], $components[$service]);
+                }
             }
+
+            Yii::$app->set($service, $this->_allServices[$service]);
+            unset($this->_allServices[$service]);
 
             Yii::trace('Loading service: ' . $serviceName, __METHOD__);
 
@@ -176,7 +191,7 @@ class ServiceLocator extends Object
             }
 
             return $allServices;
-        }, false);
+        }, $this->cacheDuration);
 
         return $this->_allServices;
     }

@@ -21,7 +21,7 @@ class FlushCache extends Action
     /**
      * @var integer 页面停留时间
      */
-    public $waitSecond = 1;
+    public $waitSecond = 3;
 
     /**
      * Recursive flush all app cache

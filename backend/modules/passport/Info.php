@@ -23,7 +23,7 @@ class Info extends ModularityInfo
     /**
      * @inheritdoc
      */
-    public function getUrlRule()
+    public function getUrlRules()
     {
         return [
             'login' => "{$this->getId()}/common/login",

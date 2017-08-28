@@ -57,7 +57,7 @@ abstract class Service extends Object implements ServiceInterface
      * 获取子服务
      *
      * 该方法不设为`public`类型，目的在于规范代码，使服务方法对IDE提供友好支持。故所属的子服务类必须以`public`类型新建方法获取，
-     * 具体参考可[[\wocenter\services\PassportService::getUcenter()]]等调用子服务类方法
+     * 具体可参考[[\wocenter\services\PassportService::getUcenter()]]等调用子服务类方法
      * @see \wocenter\services\PassportService::getUcenter()
      *
      * @param string $serviceName 子服务名，不带后缀`Service`

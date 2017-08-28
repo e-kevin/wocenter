@@ -26,6 +26,10 @@ class Info extends ModularityInfo
             // 人事管理
             [
                 'name' => '人事管理',
+                'icon_html' => 'user',
+                'modularity' => 'core',
+                'show_on_menu' => true,
+                'sort_order' => 1001,
                 'items' => [
                     // 用户管理
                     [
@@ -146,27 +150,6 @@ class Info extends ModularityInfo
                                     ['name' => '新增', 'url' => "/{$this->getId()}/field/create", 'description' => '新增扩展档案字段'],
                                     ['name' => '编辑', 'url' => "/{$this->getId()}/field/update", 'description' => '编辑扩展档案字段'],
                                     ['name' => '删除', 'url' => "/{$this->getId()}/field/delete", 'description' => '删除扩展档案字段'],
-                                ],
-                            ],
-                        ],
-                    ],
-                    [
-                        'name' => '标签管理',
-                        'icon_html' => 'tags',
-                        'modularity' => $this->getId(),
-                        'show_on_menu' => true,
-                        'items' => [
-                            // 标签列表
-                            [
-                                'name' => '标签列表',
-                                'url' => "/{$this->getId()}/tag/index",
-                                'show_on_menu' => true,
-                                'items' => [
-                                    ['name' => '列表', 'url' => "/{$this->getId()}/tag/index", 'description' => '标签列表'],
-                                    ['name' => '新增', 'url' => "/{$this->getId()}/tag/create", 'description' => '新增标签'],
-                                    ['name' => '编辑', 'url' => "/{$this->getId()}/tag/update", 'description' => '编辑标签'],
-                                    ['name' => '删除', 'url' => "/{$this->getId()}/tag/delete", 'description' => '删除标签'],
-                                    ['name' => '批量删除', 'url' => "/{$this->getId()}/tag/batch-delete", 'description' => '批量删除标签'],
                                 ],
                             ],
                         ],

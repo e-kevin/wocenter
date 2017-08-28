@@ -3,7 +3,6 @@ namespace wocenter\services;
 
 use wocenter\backend\modules\menu\models\Menu;
 use wocenter\core\Service;
-use wocenter\interfaces\ModularityInfoInterface;
 use wocenter\Wc;
 use wocenter\helpers\ArrayHelper;
 use Yii;
@@ -22,6 +21,11 @@ class MenuService extends Service
     public $menuModel = '\wocenter\backend\modules\menu\models\Menu';
 
     /**
+     * @var integer|false 缓存时间间隔。当为`false`时，则删除缓存数据，默认缓存`一天`
+     */
+    public $cacheDuration = 86400;
+
+    /**
      * @inheritdoc
      */
     public function getId()
@@ -34,13 +38,12 @@ class MenuService extends Service
      *
      * @param string|array $category 分类ID
      * @param array $condition 查询条件
-     * @param integer|boolean $duration 缓存时间
      *
      * @return array 如果$category分类ID为字符串，则返回该分类的一维数组，否则返回二维数组['backend' => [], 'frontend' => [], 'main' => []]
      */
-    public function getMenus($category = '', array $condition = [], $duration = 60)
+    public function getMenus($category = '', array $condition = [])
     {
-        $menus = $this->getMenusByCategoryWithFilter($category, $condition, false, $duration);
+        $menus = $this->getMenusByCategoryWithFilter($category, $condition, false);
         if (is_string($category)) {
             return isset($menus[$category]) ? $menus[$category] : [];
         } else {
@@ -54,16 +57,15 @@ class MenuService extends Service
      * @param string|array $category 分类ID
      * @param array $condition 查询条件
      * @param boolean $filterCategory 过滤指定$category分类的菜单，默认：不过滤
-     * @param integer|boolean $duration 缓存时间
      *
      * @return array ['backend' => [], 'frontend' => [], 'main' => []]
      */
-    public function getMenusByCategoryWithFilter($category = '', array $condition = [], $filterCategory = false, $duration = 60)
+    public function getMenusByCategoryWithFilter($category = '', array $condition = [], $filterCategory = false)
     {
         /** @var Menu $menuModel */
         $menuModel = Yii::createObject($this->menuModel);
         $menus = ArrayHelper::listSearch(
-            $menuModel->getAll($duration),
+            $menuModel->getAll($this->cacheDuration),
             array_merge([
                 'category_id' => [
                     $filterCategory ?
@@ -87,7 +89,7 @@ class MenuService extends Service
         /** @var Menu $menuModel */
         $menuModel = $this->menuModel;
         // 获取已经安装的模块菜单配置信息
-        $allInstalledMenuConfig = $this->_getMenuConfigs();
+        $allInstalledMenuConfig = Wc::$service->getModularity()->getLoad()->getMenus();
         // 获取数据库里的所有模块菜单数据，不包括用户自建数据
         $menuInDatabase = $this->getMenus('backend', [
             'created_type' => $menuModel::CREATE_TYPE_BY_MODULE,
@@ -101,50 +103,6 @@ class MenuService extends Service
         $this->clearCache();
 
         return true;
-    }
-
-    /**
-     * 获取所有已安装模块的菜单配置数据
-     *
-     * @param boolean $treeToList 是否把树型结构数组转换为一维数组，默认为`false`，不转换
-     *
-     * @return array
-     */
-    protected function _getMenuConfigs($treeToList = false)
-    {
-        $arr = [];
-        // 获取所有已经安装的模块配置文件
-        foreach (Wc::$service->getModularity()->getInstalledModules() as $moduleId => $row) {
-            /* @var $infoInstance ModularityInfoInterface */
-            $infoInstance = $row['infoInstance'];
-            $arr = ArrayHelper::merge($arr, $this->_formatMenuConfig($infoInstance->getMenus()));
-        }
-
-        return $treeToList ? ArrayHelper::treeToList($arr, 'items') : $arr;
-    }
-
-    /**
-     * 格式化菜单配置数据，主要把键值`name`转换成键名，方便使用\yii\helpers\ArrayHelper::merge合并相同键名的数组到同一分组下
-     *
-     * @param array $menus 菜单数据
-     *
-     * @return array
-     */
-    protected function _formatMenuConfig($menus)
-    {
-        $arr = [];
-        if (empty($menus)) {
-            return $arr;
-        }
-        foreach ($menus as $key => $menu) {
-            $key = isset($menu['name']) ? $menu['name'] : $key;
-            $arr[$key] = $menu;
-            if (isset($menu['items'])) {
-                $arr[$key]['items'] = $this->_formatMenuConfig($menu['items']);
-            }
-        }
-
-        return $arr;
     }
 
     /**
@@ -165,6 +123,7 @@ class MenuService extends Service
         $menus['created_type'] = Menu::CREATE_TYPE_BY_MODULE;
         $menus['show_on_menu'] = isset($menus['show_on_menu']) ? 1 : 0;
         $menus['alias_name'] = isset($menus['alias_name']) ? $menus['alias_name'] : $menus['name'];
+        $menus['sort_order'] = isset($menus['sort_order']) ? $menus['sort_order'] : 0;
         // 需要补全的字段
         $fields = ['icon_html', 'description'];
         foreach ($fields as $field) {

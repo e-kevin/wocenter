@@ -2,8 +2,8 @@
 namespace wocenter\backend\modules\passport\models;
 
 use wocenter\backend\core\Model;
-use wocenter\backend\modules\account\models\Tag;
-use wocenter\backend\modules\account\models\TagUser;
+use wocenter\backend\modules\data\models\Tag;
+use wocenter\backend\modules\data\models\TagUser;
 use wocenter\backend\modules\account\models\UserIdentity;
 use Yii;
 use yii\base\InvalidConfigException;

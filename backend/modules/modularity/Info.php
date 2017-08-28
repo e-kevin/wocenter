@@ -23,8 +23,13 @@ class Info extends ModularityInfo
     public function getMenus()
     {
         return [
+            // 扩展中心
             [
                 'name' => '扩展中心',
+                'icon_html' => 'cube',
+                'modularity' => 'core',
+                'show_on_menu' => true,
+                'sort_order' => 1005,
                 'items' => [
                     // 模块管理
                     [
