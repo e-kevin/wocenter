@@ -23,6 +23,7 @@ trait ApplicationTrait
 
         $this->loadEnableModules();
         $this->loadUrlRule();
+        $this->loadBootstrap();
 
         parent::init();
     }
@@ -47,6 +48,14 @@ trait ApplicationTrait
     protected function loadUrlRule()
     {
         $this->getUrlManager()->addRules(Wc::$service->getModularity()->getLoad()->getUrlRules());
+    }
+
+    /**
+     * 加载需要启用bootstrap的模块
+     */
+    protected function loadBootstrap()
+    {
+        $this->bootstrap = array_merge($this->bootstrap, Wc::$service->getModularity()->getLoad()->getBootstraps());
     }
 
 }

@@ -9,16 +9,17 @@ class Info extends ModularityInfo
     /**
      * @inheritdoc
      */
-    public function init()
-    {
-        parent::init();
-        
-        $this->name = '通行证管理';
-        $this->developer = 'WoCenter';
-        $this->email = 'e-kevin@qq.com';
-        $this->description = '提供登录、注册、密码找回、验证码等与账户安全相关的服务';
-        $this->isSystem = true;
-    }
+    public $name = '通行证管理';
+
+    /**
+     * @inheritdoc
+     */
+    public $description = '提供登录、注册、密码找回、验证码等与账户安全相关的服务';
+
+    /**
+     * @inheritdoc
+     */
+    public $isSystem = true;
 
     /**
      * @inheritdoc

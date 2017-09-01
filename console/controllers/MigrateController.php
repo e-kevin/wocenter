@@ -47,7 +47,7 @@ class MigrateController extends BaseMigrateController
         $installLockFile = Yii::getAlias($this->installLockFile);
         if (is_file($installLockFile)) {
             // 安装成功，请不要重复安装
-            $this->stdout("====== The installation is successful. Please do not repeat the installation ======\n", Console::FG_YELLOW);
+            $this->stdout("====== The installation is successful. Please do not repeat the installation. ======\n", Console::FG_YELLOW);
 
             return self::EXIT_CODE_NORMAL;
         }
@@ -59,7 +59,7 @@ class MigrateController extends BaseMigrateController
         $this->syncMenus();
 
         // 安装成功，欢迎使用 WoCenter
-        $this->stdout("====== Installation is successful. Welcome to use WoCenter ======\n\n", Console::FG_BLUE);
+        $this->stdout("====== Installation is successful. Welcome to use WoCenter. ======\n\n", Console::FG_BLUE);
 
         // 创建安装锁定文件
         FileHelper::createFile($installLockFile, 'lock');

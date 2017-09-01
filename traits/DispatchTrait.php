@@ -15,13 +15,9 @@ trait DispatchTrait
 {
 
     /**
-     * @var string 调度器基础路径，默认为[[wocenter\services\DispatchService::getBasePath()]]设置的路径
-     * @see wocenter\services\DispatchService::getBasePath()
-     */
-    public $dispatchBasePath;
-
-    /**
      * @var string 调用指定主题的调度器，默认为[[wocenter\services\DispatchService::$theme]]设置的[[$theme]]主题
+     * 该参数会影响由调度服务触发的所有操作，如：[[Wc::$service->getDispatch()->getDispatch()]]方法触发的操作,
+     * [[display()]], [[success()]]等
      * @see wocenter\services\DispatchService::$theme
      */
     public $dispatchTheme;

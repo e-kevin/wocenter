@@ -9,6 +9,11 @@ class Module extends Modularity
     /**
      * @inheritdoc
      */
+    public $controllerNamespace = 'wocenter\backend\modules\account\controllers';
+
+    /**
+     * @inheritdoc
+     */
     public $defaultRoute = 'user';
 
 }

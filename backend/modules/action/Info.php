@@ -6,16 +6,20 @@ use wocenter\core\ModularityInfo;
 class Info extends ModularityInfo
 {
 
-    public function init()
-    {
-        parent::init();
+    /**
+     * @inheritdoc
+     */
+    public $name = '行为管理';
 
-        $this->name = '行为管理';
-        $this->description = '管理系统所有行为操作，如：行为管理、行为限制管理';
-        $this->developer = 'WoCenter';
-        $this->email = 'e-kevin@qq.com';
-        $this->isSystem = true;
-    }
+    /**
+     * @inheritdoc
+     */
+    public $description = '管理系统所有行为操作，如：行为管理、行为限制管理';
+
+    /**
+     * @inheritdoc
+     */
+    public $isSystem = true;
 
     /**
      * @inheritdoc

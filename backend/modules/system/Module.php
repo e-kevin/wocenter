@@ -9,6 +9,11 @@ class Module extends Modularity
     /**
      * @inheritdoc
      */
+    public $controllerNamespace = 'wocenter\backend\modules\system\controllers';
+
+    /**
+     * @inheritdoc
+     */
     public $defaultRoute = 'config-manager';
 
 }

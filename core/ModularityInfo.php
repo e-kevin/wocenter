@@ -40,7 +40,7 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
     /**
      * @var string 开发者
      */
-    public $developer;
+    public $developer = 'WoCenter';
 
     /**
      * @var string 开发者网站
@@ -50,7 +50,7 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
     /**
      * @var string 开发者邮箱
      */
-    public $email;
+    public $email = 'e-kevin@qq.com';
 
     /**
      * @var boolean 是否系统模块
@@ -66,6 +66,11 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
      * @var boolean 是否可卸载
      */
     public $canUninstall = false;
+
+    /**
+     * @var boolean 是否启用bootstrap
+     */
+    public $bootstrap = false;
 
     /**
      * @param string $id 模块唯一标识
@@ -159,7 +164,7 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
     }
 
     /**
-     * inheritdoc
+     * @inheritdoc
      */
     public function upgrade()
     {

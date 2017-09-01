@@ -6,16 +6,20 @@ use wocenter\core\ModularityInfo;
 class Info extends ModularityInfo
 {
 
-    public function init()
-    {
-        parent::init();
+    /**
+     * @inheritdoc
+     */
+    public $name = '系统通知管理';
 
-        $this->name = '系统通知管理';
-        $this->developer = 'WoCenter';
-        $this->email = 'e-kevin@qq.com';
-        $this->description = '系统通知管理模块，如：邮件通知、站内信、公告等';
-        $this->isSystem = true;
-    }
+    /**
+     * @inheritdoc
+     */
+    public $description = '系统通知管理模块，如：邮件通知、站内信、公告等';
+
+    /**
+     * @inheritdoc
+     */
+    public $isSystem = true;
 
     /**
      * @inheritdoc

@@ -9,11 +9,11 @@ class Module extends Modularity
     /**
      * @inheritdoc
      */
-    public $layout = 'passport';
+    public $controllerNamespace = 'wocenter\backend\modules\passport\controllers';
 
     /**
      * @inheritdoc
      */
-    public $defaultRoute = 'common';
+    public $layout = 'passport';
 
 }

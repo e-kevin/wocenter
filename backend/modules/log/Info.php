@@ -6,16 +6,20 @@ use wocenter\core\ModularityInfo;
 class Info extends ModularityInfo
 {
 
-    public function init()
-    {
-        parent::init();
+    /**
+     * @inheritdoc
+     */
+    public $name = '日志管理';
 
-        $this->name = '日志管理';
-        $this->description = '管理系统所有日志，如：行为日志、积分日志';
-        $this->developer = 'WoCenter';
-        $this->email = 'e-kevin@qq.com';
-        $this->isSystem = true;
-    }
+    /**
+     * @inheritdoc
+     */
+    public $description = '管理系统所有日志，如：行为日志、积分日志';
+
+    /**
+     * @inheritdoc
+     */
+    public $isSystem = true;
 
     /**
      * @inheritdoc

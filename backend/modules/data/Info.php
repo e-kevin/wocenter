@@ -6,16 +6,20 @@ use wocenter\core\ModularityInfo;
 class Info extends ModularityInfo
 {
 
-    public function init()
-    {
-        parent::init();
+    /**
+     * @inheritdoc
+     */
+    public $name = '基础数据';
 
-        $this->name = '基础数据';
-        $this->description = '提供系统所有基础数据的支持，如：区域数据、积分类型';
-        $this->developer = 'WoCenter';
-        $this->email = 'e-kevin@qq.com';
-        $this->isSystem = true;
-    }
+    /**
+     * @inheritdoc
+     */
+    public $description = '提供系统所有基础数据的支持，如：区域数据、积分类型';
+
+    /**
+     * @inheritdoc
+     */
+    public $isSystem = true;
 
     /**
      * @inheritdoc

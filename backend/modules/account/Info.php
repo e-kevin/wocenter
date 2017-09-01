@@ -5,18 +5,22 @@ use wocenter\core\ModularityInfo;
 
 class Info extends ModularityInfo
 {
-    
-    public function init()
-    {
-        parent::init();
-        
-        $this->name = '人事管理';
-        $this->developer = 'WoCenter';
-        $this->email = 'e-kevin@qq.com';
-        $this->description = '提供用户、身份、档案、标签等功能的管理';
-        $this->isSystem = true;
-    }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public $name = '人事管理';
+
+    /**
+     * @inheritdoc
+     */
+    public $description = '提供用户、身份、档案、标签等功能的管理';
+
+    /**
+     * @inheritdoc
+     */
+    public $isSystem = true;
+
     /**
      * @inheritdoc
      */

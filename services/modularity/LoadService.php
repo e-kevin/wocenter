@@ -8,14 +8,17 @@ use wocenter\interfaces\ModularityInfoInterface;
 use wocenter\services\ModularityService;
 use wocenter\Wc;
 use Yii;
-use yii\base\UnknownClassException;
+use yii\base\Exception;
 
 /**
  * 加载模块配置服务类
  *
- * @property array $moduleFiles 搜索模块目录，默认获取所有模块信息
+ * @property array $moduleConfig 搜索模块目录，默认获取所有模块信息
  * @property mixed $urlRules 获取模块路由规则
  * @property array $menus 获取模块菜单配置数据
+ * @property array $migrationPath 获取模块数据库迁移目录
+ * @property array $bootstraps 获取需要执行bootstrap的模块
+ * @property array $modulePathConfig 获取模块路径配置信息
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
@@ -83,7 +86,46 @@ class LoadService extends Service
      */
     public function getMigrationPath()
     {
-        return ArrayHelper::getColumn($this->getModuleFiles(), 'migrationPath');
+        return ArrayHelper::getColumn($this->getModuleConfig(), 'migrationPath');
+    }
+
+    /**
+     * 获取需要执行bootstrap的模块
+     *
+     * @return array
+     */
+    public function getBootstraps()
+    {
+        $bootstrap = [];
+        // 获取所有已经安装的模块配置文件
+        foreach ($this->service->getInstalledModules() as $moduleId => $row) {
+            /** @var \wocenter\core\ModularityInfo $instance */
+            $instance = $row['infoInstance'];
+            if ($instance->bootstrap) {
+                $bootstrap[] = $moduleId;
+            }
+        }
+
+        return $bootstrap;
+    }
+
+    /**
+     * 获取模块路径配置信息，包括系统核心模块和开发者模块
+     *
+     * @return array
+     */
+    public function getModulePathConfig()
+    {
+        return [
+            'core' => [
+                'path' => $this->service->getCoreModulePath(),
+                'namespace' => $this->service->coreModuleNamespace,
+            ],
+            'developer' => [
+                'path' => $this->service->getDeveloperModulePath(),
+                'namespace' => $this->service->developerModuleNamespace,
+            ],
+        ];
     }
 
     /**
@@ -124,59 +166,61 @@ class LoadService extends Service
      *  ]
      * ]
      */
-    public function getModuleFiles($modules = [])
+    public function getModuleConfig($modules = [])
     {
         $allModuleFiles = Wc::getOrSet([
             Yii::$app->id,
             ModularityService::CACHE_ALL_MODULE_FILES,
         ], function () {
             $allModules = [];
-            $modulePath = $this->service->getModulePath();
-            if (($moduleRootDir = @dir($modulePath))) {
-                while (($moduleFolder = $moduleRootDir->read()) !== false) {
-                    $currentModuleDir = $modulePath . DIRECTORY_SEPARATOR . $moduleFolder;
-                    if (preg_match('|^\.+$|', $moduleFolder) || !FileHelper::isDir($currentModuleDir)) {
-                        continue;
+            foreach ($this->getModulePathConfig() as $config) {
+                $modulePath = $config['path'];
+                if (($moduleRootDir = @dir($modulePath))) {
+                    while (($moduleFolder = $moduleRootDir->read()) !== false) {
+                        $currentModuleDir = $modulePath . DIRECTORY_SEPARATOR . $moduleFolder;
+                        if (preg_match('|^\.+$|', $moduleFolder) || !FileHelper::isDir($currentModuleDir)) {
+                            continue;
+                        }
+
+                        $namespacePrefix = $config['namespace'] . '\\' . $moduleFolder;
+
+                        // 搜索 WoCenter 核心模块类
+                        if (FileHelper::exist($currentModuleDir . DIRECTORY_SEPARATOR . 'Module.php')) {
+                            $moduleClass = $namespacePrefix . '\Module';
+                        } else {
+                            continue;
+                        }
+
+                        // 初始化模块类，获取相关信息
+                        try {
+                            /** @var \yii\base\Module $module */
+                            $module = Yii::createObject($moduleClass, [$moduleFolder, Yii::$app]);
+                        } catch (\Exception $e) {
+                            throw new Exception($e->getMessage());
+                        }
+
+                        // 初始化模块信息类
+                        $infoClass = $namespacePrefix . '\Info';
+                        try {
+                            /** @var \wocenter\core\ModularityInfo $instance */
+                            $instance = Yii::createObject($infoClass, [$module->id, [
+                                'version' => $module->version,
+                            ]]);
+                            $instance->name = $instance->name ?: $moduleFolder;
+                        } catch (\Exception $e) {
+                            // 不存在模块信息类则意味着该模块不接受系统模块管理
+                            continue;
+                        }
+
+                        // 模块数据库迁移目录
+                        $migrationPath = '@' . str_replace('\\', '/', $namespacePrefix . '/migrations');
+
+                        $allModules[$instance->id] = [
+                            'moduleClass' => $moduleClass,
+                            'infoInstance' => $instance,
+                            'migrationPath' => $migrationPath,
+                        ];
                     }
-
-                    $namespacePrefix = $this->service->moduleNamespace . '\\' . $moduleFolder;
-
-                    // 搜索模块类
-                    if (FileHelper::exist($currentModuleDir . DIRECTORY_SEPARATOR . 'Module.php')
-                    ) {
-                        $moduleClass = $namespacePrefix . '\Module';
-                    } else {
-                        continue;
-                    }
-
-                    // 初始化模块类，获取相关信息
-                    try {
-                        /** @var \yii\base\Module $module */
-                        $module = Yii::createObject($moduleClass, [$moduleFolder, Yii::$app]);
-                    } catch (\Exception $e) {
-                        throw new UnknownClassException($moduleClass);
-                    }
-
-                    // 初始化模块信息类
-                    $infoClass = $namespacePrefix . '\Info';
-                    try {
-                        /** @var \wocenter\core\ModularityInfo $instance */
-                        $instance = Yii::createObject($infoClass, [$module->id, [
-                            'version' => $module->version,
-                        ]]);
-                        $instance->name = $instance->name ?: $moduleFolder;
-                    } catch (\Exception $e) {
-                        throw new UnknownClassException($infoClass);
-                    }
-
-                    // 模块数据库迁移目录
-                    $migrationPath = '@' . str_replace('\\', '/', $namespacePrefix . '/migrations');
-
-                    $allModules[$instance->id] = [
-                        'moduleClass' => $moduleClass,
-                        'infoInstance' => $instance,
-                        'migrationPath' => $migrationPath,
-                    ];
                 }
             }
 

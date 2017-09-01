@@ -12,7 +12,8 @@ use yii\web\NotFoundHttpException;
 /**
  * 管理系统模块类
  *
- * @property string $moduleRootPath 模块目录
+ * @property string $coreModulePath 系统核心模块目录
+ * @property string $developerModulePath 开发者模块目录
  * @property \wocenter\services\modularity\LoadService $load 加载模块配置服务类
  *
  * @author E-Kevin <e-kevin@qq.com>
@@ -66,10 +67,16 @@ class ModularityService extends Service
     public $moduleModel = '\wocenter\models\Module';
 
     /**
-     * @var string 模块命名空间，加载模块时系统会自动转换该命名空间为模块目录并搜索其下所有有效的模块
-     * @see getModulePath()
+     * @var string 系统核心模块命名空间，加载模块时系统会自动转换该命名空间为模块目录并搜索其下所有有效的模块
+     * @see getCoreModulePath()
      */
-    public $moduleNamespace = 'wocenter\backend\modules';
+    public $coreModuleNamespace = 'wocenter\backend\modules';
+
+    /**
+     * @var string 开发者模块命名空间，加载模块时系统会自动转换该命名空间为模块目录并搜索其下所有有效的模块
+     * @see getDeveloperModulePath()
+     */
+    public $developerModuleNamespace = 'backend\modules';
 
     /**
      * @inheritdoc
@@ -106,7 +113,7 @@ class ModularityService extends Service
         $moduleModel = Yii::createObject($this->moduleModel);
         $installedModule = $moduleModel->getInstalledModuleId();
 
-        return $installedModule ? $this->getLoad()->getModuleFiles($installedModule) : [];
+        return $installedModule ? $this->getLoad()->getModuleConfig($installedModule) : [];
     }
 
     /**
@@ -158,7 +165,7 @@ class ModularityService extends Service
                     // 已经安装的模块ID数组
                     $installedModuleIds = $moduleModel->getInstalledModuleId();
                     // 系统存在的模块ID数组
-                    $existModuleIds = array_keys($this->getLoad()->getModuleFiles());
+                    $existModuleIds = array_keys($this->getLoad()->getModuleConfig());
 
                     // 未安装的模块ID数组
                     return array_diff($existModuleIds, $installedModuleIds);
@@ -183,7 +190,7 @@ class ModularityService extends Service
         $dbModules = $moduleModel::find()->select('id,is_system')
             ->where(['app' => Yii::$app->id])
             ->indexBy('id')->asArray()->all();
-        $allModules = $this->getLoad()->getModuleFiles();
+        $allModules = $this->getLoad()->getModuleConfig();
         foreach ($allModules as $moduleId => &$v) {
             $v['id'] = $moduleId;
             // 数据库里存在模块信息则标识模块已安装
@@ -216,7 +223,7 @@ class ModularityService extends Service
      */
     public function getModuleInfo($id, $onDataBase = true)
     {
-        $modules = $this->getLoad()->getModuleFiles();
+        $modules = $this->getLoad()->getModuleConfig();
         if ($modules[$id] == null) {
             throw new NotFoundHttpException('模块不存在');
         }
@@ -243,13 +250,23 @@ class ModularityService extends Service
     }
 
     /**
-     * 根据模块命名空间自动获取模块目录
+     * 根据系统核心模块命名空间自动获取模块目录
      *
      * @return boolean|string
      */
-    public function getModulePath()
+    public function getCoreModulePath()
     {
-        return Yii::getAlias('@' . str_replace('\\', '/', $this->moduleNamespace));
+        return Yii::getAlias('@' . str_replace('\\', '/', $this->coreModuleNamespace));
+    }
+
+    /**
+     * 根据开发者模块命名空间自动获取模块目录
+     *
+     * @return boolean|string
+     */
+    public function getDeveloperModulePath()
+    {
+        return Yii::getAlias('@' . str_replace('\\', '/', $this->developerModuleNamespace));
     }
 
     /**
