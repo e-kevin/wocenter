@@ -57,6 +57,22 @@ $column = [
         'label' => '描述',
     ],
     [
+        'class' => 'kartik\grid\BooleanColumn',
+        'value' => function ($model) {
+            return $model['infoInstance']->isSystem;
+        },
+        'label' => '系统模块',
+    ],
+    [
+        'format' => 'html',
+        'label' => '模块类型',
+        'value' => function ($model) {
+            return $model['infoInstance']->type == 'core'
+                ? '<span class="text-danger">系统核心</span>'
+                : '<span class="text-info">开发者</span>';
+        },
+    ],
+    [
         'attribute' => 'author',
         'value' => function ($model) {
             return $model['infoInstance']->developer;
@@ -69,13 +85,6 @@ $column = [
             return $model['infoInstance']->version;
         },
         'label' => '版本',
-    ],
-    [
-        'class' => 'kartik\grid\BooleanColumn',
-        'value' => function ($model) {
-            return $model['infoInstance']->isSystem;
-        },
-        'label' => '系统模块',
     ],
     [
         'class' => \wonail\adminlte\grid\ActionColumn::className(),
@@ -109,15 +118,15 @@ echo GridView::widget([
     'panel' => [
         'headerToolbar' => [
             $headerToolbar,
-            '{goback}'
+            '{goback}',
         ],
     ],
     'toolbar' => [
         [
             'content' => '{refresh}',
             'options' => [
-                'class' => 'hide'
-            ]
+                'class' => 'hide',
+            ],
         ],
         Html::a('清理缓存', ['clear-cache'], [
             'class' => 'btn btn-warning',

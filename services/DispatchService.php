@@ -72,7 +72,7 @@ class DispatchService extends Service
     }
 
     /**
-     * 格式化带'-'的字符窜
+     * 格式化带'-_'字符的控制器名
      * 例如：ConfigManager控制器，路由地址为'config-manager'，调度器在处理路由地址时，因命名空间不支持带'-'的命名方式，
      * 因此需要处理该字符窜，操作将返回如`configManager`这样格式的字符窜
      *
@@ -80,13 +80,40 @@ class DispatchService extends Service
      *
      * @return string
      */
-    public function normalizeName($string)
+    public function normalizeControllerName($string)
     {
         if (($pos = strpos($string, '-')) !== false) {
             $string = Inflector::variablize($string);
         }
 
         return $string;
+    }
+
+    /**
+     * 格式化调度器类名
+     * 例如：操作路由为'invite-signup'，调度器在处理路由地址时，因命名空间不支持带'-'的命名方式，
+     * 因此需要处理该字符窜，操作将返回如`InviteSignup`这样格式的字符窜
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    public function normalizeDispatchName($string)
+    {
+        return Inflector::camelize($string);
+    }
+
+    /**
+     * 格式化调度器视图文件名
+     * 例如：调度器名为'InviteSignup'，处理后返回值为'invite-signup'
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    public function normalizeDispatchViewFileName($string)
+    {
+        return Inflector::camel2id($string);
     }
 
     /**
@@ -131,8 +158,6 @@ class DispatchService extends Service
      */
     protected function _getNamespaceByRoute($route, $dispatchPath)
     {
-        $dispatchPath = str_replace('app', Yii::$app->id, $dispatchPath);
-
         return str_replace('/', '\\', substr($dispatchPath . '/' . $route, 1));
     }
 
@@ -208,7 +233,7 @@ class DispatchService extends Service
         $oldController = null;
         // 路由地址为：view
         if ($pos === false) {
-            $actionId = Inflector::camelize($route);
+            $actionId = $this->normalizeDispatchName($route);
             $route = $createService->getUniqueId() . '/' . $actionId; // {$moduleId}/{$controllerId}/View
         } // 路由地址为：comment/view
         elseif ($pos > 0) {
@@ -219,8 +244,8 @@ class DispatchService extends Service
             }
             $oldController = Yii::$app->controller;
             Yii::$app->controller = $controller;
-            $controllerId = $this->normalizeName($controllerId);
-            $actionId = Inflector::camelize(substr($route, $pos + 1));
+            $controllerId = $this->normalizeControllerName($controllerId);
+            $actionId = $this->normalizeDispatchName(substr($route, $pos + 1));
             $route = $controller->module->id . '/' . $controllerId . '/' . $actionId; // {$moduleId}/comment/View
         } // 路由地址为：/admin/comment/view
         else {
@@ -237,8 +262,8 @@ class DispatchService extends Service
                 list($controller, $actionID) = $parts;
                 $oldController = Yii::$app->controller;
                 Yii::$app->controller = $controller;
-                $actionId = Inflector::camelize($actionID);
-                $controllerId = $this->normalizeName($controller->id);
+                $actionId = $this->normalizeDispatchName($actionID);
+                $controllerId = $this->normalizeControllerName($controller->id);
                 $moduleId = $controller->module->id;
                 $route = implode('/', [$moduleId, $controllerId, $actionId]); // admin/comment/View
             } else {

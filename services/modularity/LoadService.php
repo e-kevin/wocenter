@@ -31,6 +31,11 @@ class LoadService extends Service
     public $service;
 
     /**
+     * @var array 路径配置信息
+     */
+    protected $_modulePathConfig;
+
+    /**
      * @inheritdoc
      */
     public function getId()
@@ -116,7 +121,21 @@ class LoadService extends Service
      */
     public function getModulePathConfig()
     {
-        return [
+        if ($this->_modulePathConfig == null) {
+            $this->setModulePathConfig();
+        }
+
+        return $this->_modulePathConfig;
+    }
+
+    /**
+     * 设置模块路径配置信息
+     *
+     * @param array $config 路径配置信息，必须包含'path'和'namespace'键名，当键值为空，则代表该路径配置信息无效
+     */
+    public function setModulePathConfig($config = [])
+    {
+        $this->_modulePathConfig = array_merge([
             'core' => [
                 'path' => $this->service->getCoreModulePath(),
                 'namespace' => $this->service->coreModuleNamespace,
@@ -125,7 +144,7 @@ class LoadService extends Service
                 'path' => $this->service->getDeveloperModulePath(),
                 'namespace' => $this->service->developerModuleNamespace,
             ],
-        ];
+        ], $config);
     }
 
     /**
@@ -153,7 +172,7 @@ class LoadService extends Service
     }
 
     /**
-     * 搜索模块目录，默认获取所有模块信息
+     * 搜索模块目录，默认获取所有模块信息，包括开发者模块和系统核心模块
      *
      * @param array $modules 只获取该数组模块信息，如：['account', 'passport', ...]
      *
@@ -166,14 +185,17 @@ class LoadService extends Service
      *  ]
      * ]
      */
-    public function getModuleConfig($modules = [])
+    public function getModuleConfig(array $modules = [])
     {
-        $allModuleFiles = Wc::getOrSet([
+        $allModuleConfig = Wc::getOrSet([
             Yii::$app->id,
             ModularityService::CACHE_ALL_MODULE_FILES,
         ], function () {
             $allModules = [];
             foreach ($this->getModulePathConfig() as $config) {
+                if (empty($config)) {
+                    continue;
+                }
                 $modulePath = $config['path'];
                 if (($moduleRootDir = @dir($modulePath))) {
                     while (($moduleFolder = $moduleRootDir->read()) !== false) {
@@ -229,20 +251,20 @@ class LoadService extends Service
 
         // 只获取`$modules`数组模块信息
         if ($this->service->debug || !empty($modules)) {
-            foreach ($allModuleFiles as $moduleId => $row) {
+            foreach ($allModuleConfig as $moduleId => $row) {
                 if (
                     // 开启调试模式，则只获取指定模块
                     ($this->service->debug && !in_array($moduleId, $this->service->debugModules)) ||
                     // 只获取该数组模块信息
                     (!empty($modules) && !in_array($moduleId, $modules))
                 ) {
-                    unset($allModuleFiles[$moduleId]);
+                    unset($allModuleConfig[$moduleId]);
                     continue;
                 }
             }
         }
 
-        return $allModuleFiles;
+        return $allModuleConfig;
     }
 
 }

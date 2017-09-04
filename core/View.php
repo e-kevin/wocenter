@@ -106,7 +106,9 @@ class View extends baseView
      */
     public function getDeveloperThemePath($path = null)
     {
-        return $this->getBaseThemePath() . '/' . $this->relativeThemePath($path);
+        $path = $this->getBaseThemePath() . '/' . $this->relativeThemePath($path);
+
+        return str_replace('app', Yii::$app->id, $path);
     }
 
     /**

@@ -2,6 +2,7 @@
 namespace wocenter\core;
 
 use wocenter\interfaces\ModularityInfoInterface;
+use yii\base\InvalidConfigException;
 use yii\base\Object;
 
 /**
@@ -73,12 +74,27 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
     public $bootstrap = false;
 
     /**
+     * 如果模块是继承系统核心模块则必须配置该值为`developer`，用以区分当前的模块正在使用开发者二次开发的模块，
+     * 否则无需另外配置该值。可用的值如下：
+     *  - `core`: 系统核心模块
+     *  - `developer`: 开发者模块
+     *
+     * @var string 模块类型
+     */
+    public $type = 'core';
+
+    /**
      * @param string $id 模块唯一标识
      * @param array $config
+     *
+     * @throws InvalidConfigException
      */
     public function __construct($id, $config = [])
     {
         $this->_id = $id;
+        if (!in_array($this->type, ['core', 'developer'])) {
+            throw new InvalidConfigException("You must define a valid 'type' which must be either 'core' or 'developer'.");
+        }
         parent::__construct($config);
     }
 

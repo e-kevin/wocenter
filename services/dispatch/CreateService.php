@@ -10,7 +10,6 @@ use Yii;
 use yii\base\Application;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
-use yii\helpers\Inflector;
 
 /**
  * 创建调度器服务类
@@ -45,7 +44,7 @@ class CreateService extends Service
         $moduleId = $controller->module instanceof Application ? $controller->module->id : $controller->module->getUniqueId();
         $uniqueId = explode('/', $moduleId . '/' . $controller->id);
         foreach ($uniqueId as &$part) {
-            $part = $this->service->normalizeName($part);
+            $part = $this->service->normalizeControllerName($part);
         }
 
         return implode('/', $uniqueId);
@@ -77,10 +76,13 @@ class CreateService extends Service
                  * 调度配置为数组，支持以下键名配置
                  *  - `class`: 使用该类创建调度器，该类必须继承`wocenter\core\Dispatch`。注意：当该值被指定，以下配置将不生效
                  *  - `dispatchOptions`: 调度器配置，可以使用的配置键如下：
-                 *   - `theme`: 是否调用指定主题的调度器。可能的值如下：
+                 *   - `theme`: 是否调用指定主题的调度器，系统会调用该主题下指定路由的调度器。可能的值如下：
                  *    - false: 禁用控制器[Controller::$dispatchTheme]]配置
                  *    - string: 用户自定义的主题
-                 *   - `path`: 是否自定义开发者主题基础路径，系统会调用该路径下指定路由的调度器，使用别名路径。可能的值如下：
+                 *   - `themePath`: 是否自定义开发者主题基础路径，系统会调用该路径下指定路由的调度器，使用别名路径，
+                 *      默认为'@app/themes'，即为当前应用的themes主题目录。
+                 *      详情请看：[[\wocenter\core\View\getBaseThemePath()]]。
+                 *      可能的值如下：
                  *    - string: 用户自定义的基础路径
                  *   - `map`: 使用其他调度器映射。如：
                  *   ```php
@@ -95,9 +97,9 @@ class CreateService extends Service
                  *      'update' => 'edit', // 直接使用调度器映射
                  *   ```
                  *  注意：配置映射后，如果调度器内使用的是[[display()]]方法进行页面渲染而没有指定方法内的`$view`参数，则该方法将
-                 *  自动用所调用的调度器ID所对应的视图文件进行渲染（如：[[Update]]对应的是`update`视图文件而不是映射后的`edit`），
-                 *  如果需要用[[Edit]]调度器所对应的视图文件（如：`edit`）进行渲染，则只需要配置`$view`参数即可，
-                 *  如：[[display('edit')]]
+                 *  自动用所调用的调度器ID所对应的视图文件进行渲染（如：[[Update]]用[[Edit]]进行映射后所对应的是`update`
+                 *  视图文件而不是映射后的`edit`），如果需要用[[Edit]]调度器所对应的视图文件（如：`edit`）进行渲染，
+                 *  则只需要显式配置`$view`参数即可，如：[[display('edit')]]
                  */
                 if (is_array($config)) {
                     $dispatchOptions = ArrayHelper::remove($config, 'dispatchOptions', []);
@@ -110,10 +112,10 @@ class CreateService extends Service
                             'theme' => isset($dispatchOptions['theme'])
                                 ? ($dispatchOptions['theme'] === false) ? null : $dispatchOptions['theme']
                                 : $controller->dispatchTheme,
-                            'path' => isset($dispatchOptions['path']) ? $dispatchOptions['path'] : null,
+                            'themePath' => isset($dispatchOptions['themePath']) ? $dispatchOptions['themePath'] : null,
                         ]);
                         // 使用其他调度器映射
-                        $route = $this->getUniqueId() . '/' . Inflector::camelize(isset($dispatchOptions['map'])
+                        $route = $this->getUniqueId() . '/' . $this->service->normalizeDispatchName(isset($dispatchOptions['map'])
                                 ? $dispatchOptions['map']
                                 : $id
                             );
@@ -122,12 +124,12 @@ class CreateService extends Service
                 }  // 调度配置为类名
                 elseif (class_exists($config)) {
                     $classConfig = $config;
-                } // 调度器映射
+                } // 其他字符串则为直接调度器映射
                 else {
                     $this->_setDispatchOptions([
                         'theme' => $controller->dispatchTheme,
                     ]);
-                    $route = $this->getUniqueId() . '/' . Inflector::camelize($config);
+                    $route = $this->getUniqueId() . '/' . $this->service->normalizeDispatchName($config);
                     $classConfig = $this->service->getNamespace($route);
                 }
             } // 调用系统默认调度器
@@ -135,7 +137,7 @@ class CreateService extends Service
                 $this->_setDispatchOptions([
                     'theme' => $controller->dispatchTheme,
                 ]);
-                $route = $this->getUniqueId() . '/' . Inflector::camelize($id);
+                $route = $this->getUniqueId() . '/' . $this->service->normalizeDispatchName($id);
                 $classConfig = $this->service->getNamespace($route);
             }
 
@@ -175,8 +177,8 @@ class CreateService extends Service
             $this->service->getView()->themeName = $dispatchOptions['theme'];
         }
         // 是否自定义开发者主题基础路径，系统会调用该路径下指定路由的调度器
-        if (isset($dispatchOptions['path']) && $dispatchOptions['path'] !== null) {
-            $this->service->getView()->setBaseThemePath($dispatchOptions['path']);
+        if (isset($dispatchOptions['themePath']) && $dispatchOptions['themePath'] !== null) {
+            $this->service->getView()->setBaseThemePath($dispatchOptions['themePath']);
         }
     }
 
@@ -201,9 +203,10 @@ class CreateService extends Service
         if (!class_exists($className)) {
             return null;
         } elseif (is_subclass_of($className, 'wocenter\core\Dispatch')) {
-            // 转换调度器ID为调度器所属视图文件ID。如： Index => index, ConfigManage => config-manage
-            $id = Inflector::camel2id($id);
-            $dispatch = Yii::createObject($classConfig, [$id, $controller]);
+            $dispatch = Yii::createObject($classConfig, [
+                $this->service->normalizeDispatchViewFileName($id),
+                $controller
+            ]);
 
             return get_class($dispatch) === $className ? $dispatch : null;
         } elseif (YII_DEBUG) {
