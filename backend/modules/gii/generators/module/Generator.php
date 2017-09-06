@@ -3,6 +3,7 @@ namespace wocenter\backend\modules\gii\generators\module;
 
 use wocenter\core\Controller;
 use wocenter\core\View;
+use wocenter\services\ModularityService;
 use wocenter\Wc;
 use yii\gii\CodeFile;
 use Yii;
@@ -157,10 +158,7 @@ class Generator extends \yii\gii\Generator
         // 开发者模块路径
         $developerModulePath = $modularityService->getDeveloperModulePath() . '/' . $this->moduleID;
         $files = [];
-        // 只搜索系统核心模块，用于检测该模块ID是否为系统核心模块
-        $modularityService->getLoad()->setModulePathConfig(['developer' => null]);
-        $this->_coreModuleConfig = $modularityService->getLoad()->getModuleConfig([$this->moduleID]);
-        $this->_isCoreModule = !empty($this->_coreModuleConfig) ? true : false;
+        $this->_isCoreModule = !empty($this->getCoreModuleConfig()) ? true : false;
         // 如果为核心模块，则加载该模块相关配置信息
         if ($this->_isCoreModule) {
             $this->_coreModuleConfig = $this->_coreModuleConfig[$this->moduleID];
@@ -169,14 +167,22 @@ class Generator extends \yii\gii\Generator
             $this->_defaultRoute = $module->defaultRoute;
             $this->_defaultController = $module->createControllerByID($module->defaultRoute);
             $this->_defaultAction = $this->_defaultController->defaultAction;
+            /** @var \wocenter\core\ModularityInfo $infoClass */
+            $infoClass = $this->_coreModuleConfig['infoInstance'];
+            $useInfoClass = "use {$infoClass->className()} as baseInfo;";
+            $useModuleClass = "use {$module->className()} as baseModule;";
+        } else {
+            $useInfoClass = 'use wocenter\core\ModularityInfo as baseInfo;';
+            $useModuleClass = 'use wocenter\backend\core\Modularity as baseModule;';
         }
+
         $files[] = new CodeFile(
             $developerModulePath . '/Info.php',
-            $this->render("info.php")
+            $this->render("info.php", ['useInfoClass' => $useInfoClass])
         );
         $files[] = new CodeFile(
             $developerModulePath . '/Module.php',
-            $this->render("module.php")
+            $this->render("module.php", ['useModuleClass' => $useModuleClass])
         );
         /**
          * 开发者模块默认生成控制器，核心模块只需生成调度器即可。
@@ -213,6 +219,8 @@ class Generator extends \yii\gii\Generator
             Yii::getAlias($view->getDeveloperThemePath("modules/{$this->moduleID}/views/{$this->_defaultRoute}/{$defaultAction}.php")),
             $this->render("view.php")
         );
+
+        $modularityService->clearAllModuleConfig();
         
         return $files;
     }
@@ -250,10 +258,17 @@ class Generator extends \yii\gii\Generator
     }
     
     /**
-     * @return array [[$moduleId]]核心模块配置信息，仅在[[$moduleId]]为核心模块时有效
+     * 获取[[$moduleId]]核心模块配置信息，仅在[[$moduleId]]为核心模块时有效
+     *
+     * @return array
      */
     public function getCoreModuleConfig()
     {
+        if ($this->_coreModuleConfig == null) {
+            $loadModuleService = Wc::$service->getModularity()->getLoad();
+            $this->_coreModuleConfig = $loadModuleService->filterModules($loadModuleService->getCoreModuleConfig(), [$this->moduleID]);
+        }
+
         return $this->_coreModuleConfig;
     }
     

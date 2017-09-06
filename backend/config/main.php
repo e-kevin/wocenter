@@ -37,7 +37,7 @@ return [
         ],
         'urlManager' => [
             'rules' => [
-                '/' => 'site/index',
+                '' => 'site/index',
             ],
         ],
     ],

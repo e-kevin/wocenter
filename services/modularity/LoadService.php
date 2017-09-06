@@ -9,16 +9,15 @@ use wocenter\services\ModularityService;
 use wocenter\Wc;
 use Yii;
 use yii\base\Exception;
+use yii\base\InvalidConfigException;
 
 /**
  * 加载模块配置服务类
  *
- * @property array $moduleConfig 搜索模块目录，默认获取所有模块信息
  * @property mixed $urlRules 获取模块路由规则
  * @property array $menus 获取模块菜单配置数据
  * @property array $migrationPath 获取模块数据库迁移目录
  * @property array $bootstraps 获取需要执行bootstrap的模块
- * @property array $modulePathConfig 获取模块路径配置信息
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
@@ -85,69 +84,6 @@ class LoadService extends Service
     }
 
     /**
-     * 获取模块数据库迁移目录
-     *
-     * @return array
-     */
-    public function getMigrationPath()
-    {
-        return ArrayHelper::getColumn($this->getModuleConfig(), 'migrationPath');
-    }
-
-    /**
-     * 获取需要执行bootstrap的模块
-     *
-     * @return array
-     */
-    public function getBootstraps()
-    {
-        $bootstrap = [];
-        // 获取所有已经安装的模块配置文件
-        foreach ($this->service->getInstalledModules() as $moduleId => $row) {
-            /** @var \wocenter\core\ModularityInfo $instance */
-            $instance = $row['infoInstance'];
-            if ($instance->bootstrap) {
-                $bootstrap[] = $moduleId;
-            }
-        }
-
-        return $bootstrap;
-    }
-
-    /**
-     * 获取模块路径配置信息，包括系统核心模块和开发者模块
-     *
-     * @return array
-     */
-    public function getModulePathConfig()
-    {
-        if ($this->_modulePathConfig == null) {
-            $this->setModulePathConfig();
-        }
-
-        return $this->_modulePathConfig;
-    }
-
-    /**
-     * 设置模块路径配置信息
-     *
-     * @param array $config 路径配置信息，必须包含'path'和'namespace'键名，当键值为空，则代表该路径配置信息无效
-     */
-    public function setModulePathConfig($config = [])
-    {
-        $this->_modulePathConfig = array_merge([
-            'core' => [
-                'path' => $this->service->getCoreModulePath(),
-                'namespace' => $this->service->coreModuleNamespace,
-            ],
-            'developer' => [
-                'path' => $this->service->getDeveloperModulePath(),
-                'namespace' => $this->service->developerModuleNamespace,
-            ],
-        ], $config);
-    }
-
-    /**
      * 格式化菜单配置数据，主要把键值`name`转换成键名，方便使用\yii\helpers\ArrayHelper::merge合并相同键名的数组到同一分组下
      *
      * @param array $menus 菜单数据
@@ -172,11 +108,120 @@ class LoadService extends Service
     }
 
     /**
-     * 搜索模块目录，默认获取所有模块信息，包括开发者模块和系统核心模块
+     * 获取模块数据库迁移目录
      *
-     * @param array $modules 只获取该数组模块信息，如：['account', 'passport', ...]
+     * @return array
+     */
+    public function getMigrationPath()
+    {
+        return ArrayHelper::getColumn($this->getAllModuleConfig(), 'migrationPath');
+    }
+
+    /**
+     * 获取需要执行bootstrap的模块
      *
-     * @return array [
+     * @return array
+     */
+    public function getBootstraps()
+    {
+        $bootstrap = [];
+        // 获取所有已经安装的模块配置文件
+        foreach ($this->service->getInstalledModules() as $moduleId => $row) {
+            /** @var \wocenter\core\ModularityInfo $instance */
+            $instance = $row['infoInstance'];
+            if ($instance->bootstrap) {
+                $bootstrap[] = $moduleId;
+            }
+        }
+
+        return $bootstrap;
+    }
+
+    /**
+     * @return array 开发者模块路径配置信息
+     */
+    public function getDeveloperModulePathConfig()
+    {
+        if ($this->_modulePathConfig == null) {
+            $this->_modulePathConfig = [
+                'path' => $this->service->getDeveloperModulePath(),
+                'namespace' => $this->service->developerModuleNamespace,
+            ];
+        }
+
+        return $this->_modulePathConfig;
+    }
+
+    /**
+     * 设置开发者模块路径配置信息
+     *
+     * @param array $config 路径配置信息，必须包含'path'和'namespace'键名，当键值为空，则代表该路径配置信息无效
+     *
+     * @throws InvalidConfigException
+     */
+    public function setDeveloperModulePathConfig(array $config = [])
+    {
+        if (!isset($config['path']) || !isset($config['namespace'])) {
+            throw new InvalidConfigException('The `path` and `namespace` value must be set.');
+        }
+        $this->service->clearAllModuleConfig();
+        $this->_modulePathConfig = $config;
+    }
+
+    /**
+     * @return array 系统核心模块路径配置信息
+     */
+    public function getCoreModulePathConfig()
+    {
+        return [
+            'path' => $this->service->getCoreModulePath(),
+            'namespace' => $this->service->coreModuleNamespace,
+        ];
+    }
+
+    /**
+     * 获取系统核心模块配置信息
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function getCoreModuleConfig()
+    {
+        return $this->_getModuleConfig($this->getCoreModulePathConfig());
+    }
+
+    /**
+     * 获取开发者模块配置信息
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function getDeveloperModuleConfig()
+    {
+        return $this->_getModuleConfig($this->getDeveloperModulePathConfig());
+    }
+
+    /**
+     * 获取所有模块配置信息，包括系统核心模块和开发者模块
+     *
+     * @return array
+     */
+    public function getAllModuleConfig()
+    {
+        return Wc::getOrSet([
+            Yii::$app->id,
+            ModularityService::CACHE_ALL_MODULE_CONFIG,
+        ], function () {
+            return array_merge($this->getCoreModuleConfig(), $this->getDeveloperModuleConfig());
+        }, $this->service->cacheDuration);
+    }
+
+    /**
+     * 搜索模块目录，获取模块相关配置信息
+     *
+     * @param array $pathConfig 模块路径配置信息
+     *
+     * @return array
      * [
      *  moduleId => [
      *      moduleClass,
@@ -184,87 +229,92 @@ class LoadService extends Service
      *      migrationPath
      *  ]
      * ]
+     * @throws Exception
      */
-    public function getModuleConfig(array $modules = [])
+    protected function _getModuleConfig(array $pathConfig = [])
     {
-        $allModuleConfig = Wc::getOrSet([
-            Yii::$app->id,
-            ModularityService::CACHE_ALL_MODULE_FILES,
-        ], function () {
-            $allModules = [];
-            foreach ($this->getModulePathConfig() as $config) {
-                if (empty($config)) {
+        $allModuleConfig = [];
+        if (empty($pathConfig)) {
+            return $allModuleConfig;
+        }
+        $modulePath = $pathConfig['path'];
+        if (($moduleRootDir = @dir($modulePath))) {
+            while (($moduleFolder = $moduleRootDir->read()) !== false) {
+                $currentModuleDir = $modulePath . DIRECTORY_SEPARATOR . $moduleFolder;
+                if (preg_match('|^\.+$|', $moduleFolder) || !FileHelper::isDir($currentModuleDir)) {
                     continue;
                 }
-                $modulePath = $config['path'];
-                if (($moduleRootDir = @dir($modulePath))) {
-                    while (($moduleFolder = $moduleRootDir->read()) !== false) {
-                        $currentModuleDir = $modulePath . DIRECTORY_SEPARATOR . $moduleFolder;
-                        if (preg_match('|^\.+$|', $moduleFolder) || !FileHelper::isDir($currentModuleDir)) {
-                            continue;
-                        }
 
-                        $namespacePrefix = $config['namespace'] . '\\' . $moduleFolder;
+                $namespacePrefix = $pathConfig['namespace'] . '\\' . $moduleFolder;
 
-                        // 搜索 WoCenter 核心模块类
-                        if (FileHelper::exist($currentModuleDir . DIRECTORY_SEPARATOR . 'Module.php')) {
-                            $moduleClass = $namespacePrefix . '\Module';
-                        } else {
-                            continue;
-                        }
-
-                        // 初始化模块类，获取相关信息
-                        try {
-                            /** @var \yii\base\Module $module */
-                            $module = Yii::createObject($moduleClass, [$moduleFolder, Yii::$app]);
-                        } catch (\Exception $e) {
-                            throw new Exception($e->getMessage());
-                        }
-
-                        // 初始化模块信息类
-                        $infoClass = $namespacePrefix . '\Info';
-                        try {
-                            /** @var \wocenter\core\ModularityInfo $instance */
-                            $instance = Yii::createObject($infoClass, [$module->id, [
-                                'version' => $module->version,
-                            ]]);
-                            $instance->name = $instance->name ?: $moduleFolder;
-                        } catch (\Exception $e) {
-                            // 不存在模块信息类则意味着该模块不接受系统模块管理
-                            continue;
-                        }
-
-                        // 模块数据库迁移目录
-                        $migrationPath = '@' . str_replace('\\', '/', $namespacePrefix . '/migrations');
-
-                        $allModules[$instance->id] = [
-                            'moduleClass' => $moduleClass,
-                            'infoInstance' => $instance,
-                            'migrationPath' => $migrationPath,
-                        ];
-                    }
+                // 搜索 WoCenter 核心模块类
+                if (FileHelper::exist($currentModuleDir . DIRECTORY_SEPARATOR . 'Module.php')) {
+                    $moduleClass = $namespacePrefix . '\Module';
+                } else {
+                    continue;
                 }
+
+                // 初始化模块类，获取相关信息
+                try {
+                    /** @var \yii\base\Module $module */
+                    $module = Yii::createObject($moduleClass, [$moduleFolder, Yii::$app]);
+                } catch (\Exception $e) {
+                    throw new Exception($e->getMessage());
+                }
+
+                // 初始化模块信息类
+                $infoClass = $namespacePrefix . '\Info';
+                try {
+                    /** @var \wocenter\core\ModularityInfo $instance */
+                    $instance = Yii::createObject($infoClass, [$module->id, [
+                        'version' => $module->version,
+                    ]]);
+                    $instance->name = $instance->name ?: $moduleFolder;
+                } catch (\Exception $e) {
+                    // 不存在模块信息类则意味着该模块不接受系统模块管理
+                    continue;
+                }
+
+                // 模块数据库迁移目录
+                $migrationPath = '@' . str_replace('\\', '/', $namespacePrefix . '/migrations');
+
+                $allModuleConfig[$instance->id] = [
+                    'moduleClass' => $moduleClass,
+                    'infoInstance' => $instance,
+                    'migrationPath' => $migrationPath,
+                ];
             }
+        }
 
-            return $allModules;
-        }, $this->service->cacheDuration);
+        return $allModuleConfig;
+    }
 
+    /**
+     * 获取指定的模块配置信息
+     *
+     * @param array $moduleConfig 待过滤的模块配置信息
+     * @param array $modules 只获取该数组模块信息，如：['account', 'passport', ...]，默认获取所有
+     *
+     * @return array
+     */
+    public function filterModules(array $moduleConfig, array $modules = [])
+    {
         // 只获取`$modules`数组模块信息
         if ($this->service->debug || !empty($modules)) {
-            foreach ($allModuleConfig as $moduleId => $row) {
+            foreach ($moduleConfig as $moduleId => $row) {
                 if (
                     // 开启调试模式，则只获取指定模块
                     ($this->service->debug && !in_array($moduleId, $this->service->debugModules)) ||
                     // 只获取该数组模块信息
                     (!empty($modules) && !in_array($moduleId, $modules))
                 ) {
-                    unset($allModuleConfig[$moduleId]);
+                    unset($moduleConfig[$moduleId]);
                     continue;
                 }
             }
         }
 
-        return $allModuleConfig;
+        return $moduleConfig;
     }
 
 }

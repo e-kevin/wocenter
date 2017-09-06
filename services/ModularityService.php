@@ -32,12 +32,12 @@ class ModularityService extends Service
     const CACHE_UNINSTALL_MODULES = 'uninstallModules';
 
     /**
-     * 缓存所有模块信息
+     * 缓存所有模块信息，包括系统核心模块和开发者模块
      */
-    const CACHE_ALL_MODULE_FILES = 'allModuleFiles';
+    const CACHE_ALL_MODULE_CONFIG = 'allModuleConfig';
 
     /**
-     * 缓存所有模块路由规则
+     * 缓存所有已经安装的模块路由规则
      */
     const CACHE_MODULE_URL_RULE = 'allModuleUrlRule';
 
@@ -64,7 +64,7 @@ class ModularityService extends Service
     /**
      * @var string|array|callable|Module 模块类
      */
-    public $moduleModel = '\wocenter\models\Module';
+    public $moduleModel = 'wocenter\models\Module';
 
     /**
      * @var string 系统核心模块命名空间，加载模块时系统会自动转换该命名空间为模块目录并搜索其下所有有效的模块
@@ -113,7 +113,9 @@ class ModularityService extends Service
         $moduleModel = Yii::createObject($this->moduleModel);
         $installedModule = $moduleModel->getInstalledModuleId();
 
-        return $installedModule ? $this->getLoad()->getModuleConfig($installedModule) : [];
+        return $installedModule
+            ? $this->getLoad()->filterModules($this->getLoad()->getAllModuleConfig(), $installedModule)
+            : [];
     }
 
     /**
@@ -165,7 +167,7 @@ class ModularityService extends Service
                     // 已经安装的模块ID数组
                     $installedModuleIds = $moduleModel->getInstalledModuleId();
                     // 系统存在的模块ID数组
-                    $existModuleIds = array_keys($this->getLoad()->getModuleConfig());
+                    $existModuleIds = array_keys($this->getLoad()->getAllModuleConfig());
 
                     // 未安装的模块ID数组
                     return array_diff($existModuleIds, $installedModuleIds);
@@ -190,7 +192,7 @@ class ModularityService extends Service
         $dbModules = $moduleModel::find()->select('id,is_system')
             ->where(['app' => Yii::$app->id])
             ->indexBy('id')->asArray()->all();
-        $allModules = $this->getLoad()->getModuleConfig();
+        $allModules = $this->getLoad()->getAllModuleConfig();
         foreach ($allModules as $moduleId => &$v) {
             $v['id'] = $moduleId;
             // 数据库里存在模块信息则标识模块已安装
@@ -223,7 +225,7 @@ class ModularityService extends Service
      */
     public function getModuleInfo($id, $onDataBase = true)
     {
-        $modules = $this->getLoad()->getModuleConfig();
+        $modules = $this->getLoad()->getAllModuleConfig();
         if ($modules[$id] == null) {
             throw new NotFoundHttpException('模块不存在');
         }
@@ -288,8 +290,19 @@ class ModularityService extends Service
         $appId = Yii::$app->id;
         Yii::$app->getCache()->delete([$appId, self::CACHE_INSTALLED_MODULES]);
         Yii::$app->getCache()->delete([$appId, self::CACHE_UNINSTALL_MODULES]);
-        Yii::$app->getCache()->delete([$appId, self::CACHE_ALL_MODULE_FILES]);
         Yii::$app->getCache()->delete([$appId, self::CACHE_MODULE_URL_RULE]);
+        $this->clearAllModuleConfig();
+    }
+
+    /**
+     * 删除所有模块缓存信息
+     */
+    public function clearAllModuleConfig()
+    {
+        Yii::$app->getCache()->delete([
+            Yii::$app->id,
+            self::CACHE_ALL_MODULE_CONFIG
+        ]);
     }
 
 }
