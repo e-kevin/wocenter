@@ -21,7 +21,7 @@ class NotificationService extends Service
     /**
      * @var string|array|callable|Notify 通知模型
      */
-    public $notifyModel = 'wocenter\backend\modules\notification\models\Notify';
+    public $notifyModel = '\wocenter\backend\modules\notification\models\Notify';
 
     /**
      * @inheritdoc

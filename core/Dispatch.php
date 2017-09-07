@@ -20,6 +20,11 @@ class Dispatch extends Action implements DispatchInterface
 {
 
     /**
+     * @var Controller
+     */
+    public $controller;
+
+    /**
      * @var array 保存视图模板文件赋值数据
      */
     protected $_assign = [];

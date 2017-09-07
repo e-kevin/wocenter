@@ -22,22 +22,22 @@ class LogService extends Service
     /**
      * @var string|array|callable|Action 行为模型
      */
-    public $actionModel = 'wocenter\backend\modules\action\models\Action';
+    public $actionModel = '\wocenter\backend\modules\action\models\Action';
 
     /**
      * @var string|array|callable|UserScoreType 用户积分类型模型
      */
-    public $userScoreTypeModel = 'wocenter\backend\modules\data\models\UserScoreType';
+    public $userScoreTypeModel = '\wocenter\backend\modules\data\models\UserScoreType';
 
     /**
      * @var string|array|callable|ActionLog 行为日志模型
      */
-    public $actionLogModel = 'wocenter\backend\modules\log\models\ActionLog';
+    public $actionLogModel = '\wocenter\backend\modules\log\models\ActionLog';
 
     /**
      * @var string|array|callable|UserScoreLog 用户奖罚日志模型
      */
-    public $userScoreLogModel = 'wocenter\backend\modules\log\models\UserScoreLog';
+    public $userScoreLogModel = '\wocenter\backend\modules\log\models\UserScoreLog';
 
     /**
      * @inheritdoc

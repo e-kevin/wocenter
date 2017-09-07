@@ -40,7 +40,7 @@ class Info extends ModularityInfo
                         'modularity' => 'core',
                         'show_on_menu' => true,
                         'items' => [
-                            ['name' => '代码生成器', 'url' => "/{$this->getId()}", 'show_on_menu' => true, 'description' => '提供 WoCenter 系统开发所需的代码生成器', 'sort_order' => 100],
+                            ['name' => '代码生成器', 'url' => "/{$this->getId()}/default/index", 'show_on_menu' => true, 'description' => '提供 WoCenter 系统开发所需的代码生成器', 'sort_order' => 100],
                         ],
                     ],
                 ],

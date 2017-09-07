@@ -13,7 +13,6 @@ $this->title = null;
 <?php if ($generator->useDispatch) : ?>
 <?= "<?php\n"; ?>
 $markdown = file_get_contents(Yii::getAlias('@wocenter/DISPATCH.md'));
-$parser = new \cebe\markdown\GithubMarkdown();
 $dispatchService = \wocenter\Wc::$service->getDispatch();
 // 开发者调度器目录
 $developerDispatchPath = $dispatchService->getView()->getDeveloperThemePath('dispatches');
@@ -55,7 +54,7 @@ $developerDispatch = Yii::getAlias('@'.substr($developerDispatchPath . '/' . $ro
 
         <div class="row-fluid">
             <p class="text-muted">
-                <?= "<?= " ?>$parser->parse($markdown); ?>
+                <?= "<?= " ?>yii\helpers\Markdown::process($markdown, 'gfm')?>
             </p>
         </div>
     </div><!-- /.box-body -->

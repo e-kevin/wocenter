@@ -64,7 +64,7 @@ class ModularityService extends Service
     /**
      * @var string|array|callable|Module 模块类
      */
-    public $moduleModel = 'wocenter\models\Module';
+    public $moduleModel = '\wocenter\models\Module';
 
     /**
      * @var string 系统核心模块命名空间，加载模块时系统会自动转换该命名空间为模块目录并搜索其下所有有效的模块
