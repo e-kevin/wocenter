@@ -30,9 +30,9 @@ class LoadService extends Service
     public $service;
 
     /**
-     * @var array 路径配置信息
+     * @var array 开发者模块路径配置信息
      */
-    protected $_modulePathConfig;
+    protected $_developerModulePathConfig;
 
     /**
      * @inheritdoc
@@ -138,18 +138,20 @@ class LoadService extends Service
     }
 
     /**
-     * @return array 开发者模块路径配置信息
+     * 获取开发者模块路径配置信息
+     *
+     * @return array
      */
     public function getDeveloperModulePathConfig()
     {
-        if ($this->_modulePathConfig == null) {
-            $this->_modulePathConfig = [
+        if ($this->_developerModulePathConfig == null) {
+            $this->_developerModulePathConfig = [
                 'path' => $this->service->getDeveloperModulePath(),
                 'namespace' => $this->service->developerModuleNamespace,
             ];
         }
 
-        return $this->_modulePathConfig;
+        return $this->_developerModulePathConfig;
     }
 
     /**
@@ -165,11 +167,13 @@ class LoadService extends Service
             throw new InvalidConfigException('The `path` and `namespace` value must be set.');
         }
         $this->service->clearAllModuleConfig();
-        $this->_modulePathConfig = $config;
+        $this->_developerModulePathConfig = $config;
     }
 
     /**
-     * @return array 系统核心模块路径配置信息
+     * 获取系统核心模块路径配置信息
+     *
+     * @return array
      */
     public function getCoreModulePathConfig()
     {
@@ -219,7 +223,7 @@ class LoadService extends Service
     /**
      * 搜索模块目录，获取模块相关配置信息
      *
-     * @param array $pathConfig 模块路径配置信息
+     * @param array $moduleConfig 模块配置信息
      *
      * @return array
      * [
@@ -231,13 +235,13 @@ class LoadService extends Service
      * ]
      * @throws Exception
      */
-    protected function _getModuleConfig(array $pathConfig = [])
+    protected function _getModuleConfig(array $moduleConfig = [])
     {
         $allModuleConfig = [];
-        if (empty($pathConfig)) {
+        if (empty($moduleConfig)) {
             return $allModuleConfig;
         }
-        $modulePath = $pathConfig['path'];
+        $modulePath = $moduleConfig['path'];
         if (($moduleRootDir = @dir($modulePath))) {
             while (($moduleFolder = $moduleRootDir->read()) !== false) {
                 $currentModuleDir = $modulePath . DIRECTORY_SEPARATOR . $moduleFolder;
@@ -245,7 +249,7 @@ class LoadService extends Service
                     continue;
                 }
 
-                $namespacePrefix = $pathConfig['namespace'] . '\\' . $moduleFolder;
+                $namespacePrefix = $moduleConfig['namespace'] . '\\' . $moduleFolder;
 
                 // 搜索 WoCenter 核心模块类
                 if (FileHelper::exist($currentModuleDir . DIRECTORY_SEPARATOR . 'Module.php')) {

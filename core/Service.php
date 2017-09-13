@@ -57,7 +57,7 @@ abstract class Service extends Object implements ServiceInterface
      * 获取子服务
      *
      * 该方法不设为`public`类型，目的在于规范代码，使服务方法对IDE提供友好支持。故所属的子服务类必须以`public`类型新建方法获取，
-     * 具体可参考[[\wocenter\services\PassportService::getUcenter()]]等调用子服务类方法
+     * 具体可参考[[\wocenter\services\PassportService::getUcenter()]]等调用子服务类方法的设置
      * @see \wocenter\services\PassportService::getUcenter()
      *
      * @param string $serviceName 子服务名，不带后缀`Service`
@@ -68,18 +68,27 @@ abstract class Service extends Object implements ServiceInterface
     protected function getSubService($serviceName)
     {
         $uniqueName = $this->getId() . '/' . $serviceName;
-        if (!$this->_subService[$serviceName] instanceof Service) {
-            Yii::trace('Loading sub service: ' . $uniqueName, __METHOD__);
+        if (!Yii::$app->has($uniqueName, true)) {
+            if (isset($this->_subService[$serviceName])) {
+                Yii::$app->set($uniqueName, array_merge((array)$this->_subService[$serviceName], [
+                    'service' => $this,
+                ]));
 
-            $this->_subService[$serviceName] = Yii::createObject(array_merge($this->_subService[$serviceName], [
-                'service' => $this,
-            ]));
-            if (!$this->_subService[$serviceName] instanceof Service) {
-                throw new InvalidConfigException("The required sub service component `{$uniqueName}` must return an object extends `\\wocenter\\core\\Service`.");
+                $this->_subService[$serviceName] = Yii::$app->get($uniqueName);
+                if (!$this->_subService[$serviceName] instanceof Service) {
+                    throw new InvalidConfigException("The required sub service component `{$uniqueName}` must return
+                    an object extends `\\wocenter\\core\\Service`.");
+                }
+
+                Yii::trace('Loading sub service: ' . $uniqueName, __METHOD__);
+
+                return $this->_subService[$serviceName];
+            } else {
+                throw new InvalidConfigException("The required sub service component `{$uniqueName}` is not found.");
             }
+        } else {
+            return Yii::$app->get($uniqueName);
         }
-
-        return $this->_subService[$serviceName];
     }
 
     /**

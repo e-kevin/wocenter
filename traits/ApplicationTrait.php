@@ -6,7 +6,7 @@ use Yii;
 
 /**
  * Class ApplicationTrait
- * 为Application增加自动加载模块功能
+ * 扩展Application为WoCenter构建运行所需条件
  *
  * @author E-Kevin <e-kevin@qq.com>
  */

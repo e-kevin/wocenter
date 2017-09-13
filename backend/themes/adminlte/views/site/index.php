@@ -10,7 +10,12 @@ $this->title = '首页';
             <h1>从“心”开始!</h1>
 
             <p class="lead">越被嘲笑的理想，就越有被实现的价值</p>
-            <p><a class="btn btn-lg btn-success" href="https://github.com/Wonail/wocenter" target="_blank">了解 WoCenter 最新动态</a></p>
+            <p>
+                <a class="btn btn-lg btn-success" href="https://github.com/Wonail/wocenter"
+                   target="_blank">了解 WoCenter 最新动态</a>
+                <a class="btn btn-lg btn-primary" href="https://github.com/Wonail/wocenter_doc/tree/master/guide/zh-CN"
+                   target="_blank">WoCenter权威指南</a>
+            </p>
         </div>
 
         <div class="row">

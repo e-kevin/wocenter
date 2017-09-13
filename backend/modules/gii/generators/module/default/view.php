@@ -12,7 +12,6 @@ $this->title = null;
 <!-- 自定义该页面时可直接从此行开始删除下面所有代码 -->
 <?php if ($generator->useDispatch) : ?>
 <?= "<?php\n"; ?>
-$markdown = file_get_contents(Yii::getAlias('@wocenter/DISPATCH.md'));
 $dispatchService = \wocenter\Wc::$service->getDispatch();
 // 开发者调度器目录
 $developerDispatchPath = $dispatchService->getView()->getDeveloperThemePath('dispatches');
@@ -28,8 +27,8 @@ $developerDispatch = Yii::getAlias('@'.substr($developerDispatchPath . '/' . $ro
             <h1>That's amazing!</h1>
 
             <p class="lead">It's so easy!</p>
-            <p><a class="btn btn-lg btn-success" href="https://github.com/Wonail/wocenter" target="_blank">
-                    了解 WoCenter 最新动态</a>
+            <p><a class="btn btn-lg btn-success" href="https://github.com/Wonail/wocenter_doc/blob/master/guide/zh-CN/dispatch.md" target="_blank">
+                    关于 Dispatch 调度</a>
             </p>
         </div>
 
@@ -49,12 +48,6 @@ $developerDispatch = Yii::getAlias('@'.substr($developerDispatchPath . '/' . $ro
                 或通过修改<code><?= "<?= " ?>$this->context->action->id ?></code>操作专属的<code><?= "<?= " ?>$dispatchName ?></code>调度器文件来实现具体功能：<br>
                 <code><?= "<?= " ?>$developerDispatch ?></code>
                 <?= "<?php " ?>endif; ?>
-            </p>
-        </div>
-
-        <div class="row-fluid">
-            <p class="text-muted">
-                <?= "<?= " ?>yii\helpers\Markdown::process($markdown, 'gfm')?>
             </p>
         </div>
     </div><!-- /.box-body -->

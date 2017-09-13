@@ -1,18 +1,17 @@
 <?php
 namespace wocenter\core;
 
-use wocenter\helpers\FileHelper;
-use wocenter\Wc;
 use Yii;
+use yii\base\InvalidCallException;
 use yii\base\InvalidConfigException;
 use yii\base\Object;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Inflector;
+use yii\base\UnknownPropertyException;
 
 /**
- * 系统核心服务定位器，包含系统所有核心服务
- *
- * 主要为IDE提供友好支持，也可直接\Yii::$app->get('modularityService')方式调用，但显然建立该文件相当高效便捷
+ * 系统服务定位器，主要作用有：
+ * 1. 检测服务组件是否符合WoCenter的服务类标准。
+ * 2. 支持IDE代码提示功能，方便开发。
+ * 3. 支持`Yii::trace()`调试信息。
  *
  * @property \wocenter\services\AccountService $account
  * @property \wocenter\services\ActionService $action
@@ -30,170 +29,50 @@ class ServiceLocator extends Object
 {
 
     /**
-     * 缓存所有服务类配置信息
-     */
-    const CACHE_ALL_SERVICE_CONFIG = 'allServiceConfig';
-
-    /**
-     * 如果需要自定义该值，可通过修改系统配置文件进行更改
-     * 如在main.php(yii_advanced高级模板)或web.php(yii_basic基础模板)配置文件里添加以下配置：
-     * 'container' => [
-     *      'definitions' => [
-     *          'wocenter\core\ServiceLocator' => [
-     *              'serviceNamespace' => 'app\\services',
-     *              'cacheDuration' => 86400,
-     *          ],
-     *      ]
-     *  ],
+     * 获取系统顶级服务类
      *
-     * @var string 服务类命名空间
-     */
-    public $serviceNamespace = 'wocenter\\services';
-
-    /**
-     * @var integer|false 缓存时间间隔。当为`false`时，则删除缓存数据，默认缓存`一天`
-     */
-    public $cacheDuration = 86400;
-
-    /**
-     * @var Service[] 已经实例化的服务单例
-     */
-    private $_service;
-
-    /**
-     * 根据`$serviceName`实时加载系统服务类
+     * @param string $serviceName 服务名，不带后缀`Service`，如：`passport`、`log`
      *
-     * @param string $serviceName 服务名，不带后缀`Service`
-     *
-     * @return Service[]
+     * @return Service
      * @throws InvalidConfigException
      */
     public function getService($serviceName)
     {
-        if (!isset($this->_service[$serviceName])) {
-            $service = $serviceName . 'Service';
-            $this->loadServiceConfig();
-            // 没有自定义设置服务组件，则以系统默认配置进行设置
-            if (!Yii::$app->has($service)) {
-                if (!isset($this->_allServices[$service])) {
-                    throw new InvalidConfigException("Unknown service ID: $service");
-                }
-            } // 存在自定义配置信息则递归替换系统默认的配置
-            else {
-                $components = Yii::$app->getComponents();
-                if (isset($components[$service])) {
-                    // 主要是为主服务类添加子服务配置信息
-                    $this->_allServices[$service] = array_replace_recursive($this->_allServices[$service], $components[$service]);
-                }
+        $service = $serviceName . 'Service';
+        if (!Yii::$app->has($service, true)) {
+            /** @var Service $component */
+            $component = Yii::$app->get($service);
+            if (!$component instanceof Service) {
+                throw new InvalidConfigException("The required service component `{$service}` must return an object
+                    extends `\\wocenter\\core\\Service`.");
+            } elseif ($component->getId() != $serviceName) {
+                throw new InvalidConfigException("{$component->className()}::getId() method must
+                    return the '{$serviceName}' value.");
             }
-
-            Yii::$app->set($service, $this->_allServices[$service]);
-            unset($this->_allServices[$service]);
 
             Yii::trace('Loading service: ' . $serviceName, __METHOD__);
 
-            $this->_service[$serviceName] = Yii::$app->get($service, false);
-            if (!$this->_service[$serviceName] instanceof Service) {
-                throw new InvalidConfigException("The required service component `{$service}` must return an object extends `\\wocenter\\core\\Service`.");
-            }
+            return $component;
+        } else {
+            return Yii::$app->get($service);
         }
-
-        return $this->_service[$serviceName];
     }
 
     /**
-     * 根据服务类命名空间自动获取服务目录
-     *
-     * @return bool|string
+     * @inheritdoc
      */
-    public function getServicePath()
+    public function __get($name)
     {
-        return FileHelper::normalizePath(Yii::getAlias('@' . str_replace('\\', '/', $this->serviceNamespace)));
-    }
-
-    /**
-     * @var array 系统所有服务的配置信息
-     */
-    private $_allServices = null;
-
-    /**
-     * 获取系统服务配置信息
-     *
-     * @return array
-     */
-    public function loadServiceConfig()
-    {
-        if ($this->_allServices !== null) {
-            return $this->_allServices;
+        $getter = 'get' . $name;
+        if (method_exists($this, $getter)) {
+            return $this->$getter();
+        } elseif ($service = $this->getService($name)) {
+            return $service;
+        } elseif (method_exists($this, 'set' . $name)) {
+            throw new InvalidCallException('Getting write-only property: ' . get_class($this) . '::' . $name);
+        } else {
+            throw new UnknownPropertyException('Getting unknown property: ' . get_class($this) . '::' . $name);
         }
-        $this->_allServices = Wc::getOrSet(self::CACHE_ALL_SERVICE_CONFIG, function () {
-            $allServices = [];
-            $servicePath = $this->getServicePath();
-            /**
-             * 返回格式如下
-             * $serviceFiles = [
-             *  'wocenter/services/PassportService.php', // 父级服务
-             *  'wocenter/services/passport/UcenterService.php', // 单层子服务
-             * ]
-             */
-            $serviceFiles = FileHelper::findFiles($servicePath, [
-                'except' => ['events', 'messages'],
-                'only' => ['*Service.php'], // 字符串长度为 11
-            ]);
-            $path = str_replace('\\', DIRECTORY_SEPARATOR, $this->serviceNamespace);
-            foreach ($serviceFiles as $file) {
-                $file = substr($file, strpos($file, $path) + strlen($path) + 1, -11);
-                // 存在子服务
-                if (strpos($file, DIRECTORY_SEPARATOR) !== false) {
-                    list($parent, $serviceName) = explode(DIRECTORY_SEPARATOR, $file, 2);
-                    // 子服务存在子服务
-                    if (strpos($serviceName, DIRECTORY_SEPARATOR) !== false) {
-                        // 暂不支持多层级子服务
-                        continue;
-                    } else {
-                        /**
-                         * e.g.
-                         * $serviceClass['passportService'] = [
-                         *  'class' => 'wocenter\services\PassportService', // 父级服务
-                         *  'subService' => [
-                         *      'ucenter' => 'wocenter\services\passport\UcenterService', // 单层子服务
-                         *  ]
-                         * ]
-                         */
-                        $parentServiceName = $parent . 'Service';
-                        $config = [
-                            'class' => $this->serviceNamespace . '\\' .Inflector::camelize($parentServiceName),
-                            'subService' => [
-                                strtolower($serviceName) => [
-                                    'class' => $this->serviceNamespace . '\\' .$parent . '\\' . $serviceName . 'Service',
-                                ],
-                            ],
-                        ];
-                        // 如果存在父级服务，则合并添加子服务，否则直接添加服务配置信息
-                        if (isset($allServices[$parentServiceName])) {
-                            $allServices[$parentServiceName] = ArrayHelper::merge(
-                                $allServices[$parentServiceName],
-                                $config
-                            );
-                        } else {
-                            $allServices[$parentServiceName] = $config;
-                        }
-                    }
-                } else {
-                    $serviceName = $file . 'Service';
-                    if (isset($allServices[Inflector::variablize($serviceName)])) {
-                        continue;
-                    }
-                    $allServices[Inflector::variablize($serviceName)] = [
-                        'class' => $this->serviceNamespace . '\\' .$serviceName,
-                    ];
-                }
-            }
-
-            return $allServices;
-        }, $this->cacheDuration);
-
-        return $this->_allServices;
     }
 
     /**
