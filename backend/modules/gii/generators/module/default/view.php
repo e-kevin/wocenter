@@ -44,7 +44,7 @@ $developerDispatch = Yii::getAlias('@'.substr($developerDispatchPath . '/' . $ro
                 <code><?= "<?= " ?>__FILE__ ?></code>
             </p>
             <p>
-                <?= "<?php " ?>if (is_file($developerDispatch)) : ?>
+                <?= "<?php " ?>if (is_file($developerDispatch) && !$dispatchService->getIsRunningCoreModule()) : ?>
                 或通过修改<code><?= "<?= " ?>$this->context->action->id ?></code>操作专属的<code><?= "<?= " ?>$dispatchName ?></code>调度器文件来实现具体功能：<br>
                 <code><?= "<?= " ?>$developerDispatch ?></code>
                 <?= "<?php " ?>endif; ?>

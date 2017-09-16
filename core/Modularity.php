@@ -1,6 +1,8 @@
 <?php
 namespace wocenter\core;
 
+use wocenter\Wc;
+use Yii;
 use yii\base\Module;
 
 /**

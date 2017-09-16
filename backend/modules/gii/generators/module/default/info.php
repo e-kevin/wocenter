@@ -29,9 +29,4 @@ class Info extends baseInfo
     public $developer = 'Developer';
 <?php endif; ?>
 
-    /**
-    * @inheritdoc
-    */
-    public $type = 'developer';
-
 }

@@ -1,6 +1,7 @@
 <?php
 namespace wocenter\services;
 
+use wocenter\core\ModularityInfo;
 use wocenter\core\Service;
 use wocenter\models\Module;
 use wocenter\Wc;
@@ -154,8 +155,26 @@ class ModularityService extends Service
         switch ($type) {
             case 'install':
                 $arr = Wc::getOrSet([$appId, self::CACHE_INSTALLED_MODULES], function () {
+                    /** @var Module $moduleModel */
+                    $moduleModel = Yii::createObject($this->moduleModel);
+                    $installedModule = $moduleModel::find()
+                        ->select('id, run_module')
+                        ->where(['app' => Yii::$app->id])
+                        ->indexBy('id')->asArray()->all();
+                    if (!$installedModule) {
+                        return [];
+                    }
+                    $allModuleParts = $this->getLoad()->getAllModuleConfig(true);
+                    foreach ($installedModule as $moduleId => $row) {
+                        // 运行模块不是开发者模块则不加载开发者模块
+                        if ($row['run_module'] != $moduleModel::RUN_MODULE_DEVELOPER) {
+                            unset($allModuleParts['developer'][$moduleId]);
+                        }
+                    }
+                    $allModuleParts['core'] = $this->getLoad()->filterModules($allModuleParts['core'], array_keys($installedModule));
+
                     return ArrayHelper::getColumn(
-                        $this->getInstalledModules(),
+                        array_merge($allModuleParts['core'], $allModuleParts['developer']),
                         'moduleClass'
                     );
                 }, $this->cacheDuration);
@@ -189,11 +208,14 @@ class ModularityService extends Service
     {
         /** @var Module $moduleModel */
         $moduleModel = $this->moduleModel;
-        $dbModules = $moduleModel::find()->select('id,is_system')
+        $dbModules = $moduleModel::find()
+            ->select('id,is_system,run_module,status')
             ->where(['app' => Yii::$app->id])
             ->indexBy('id')->asArray()->all();
-        $allModules = $this->getLoad()->getAllModuleConfig();
+        $allModuleParts = $this->getLoad()->getAllModuleConfig(true);
+        $allModules = array_merge($allModuleParts['core'], $allModuleParts['developer']);
         foreach ($allModules as $moduleId => &$v) {
+            // 添加模块主键
             $v['id'] = $moduleId;
             // 数据库里存在模块信息则标识模块已安装
             if (array_key_exists($v['id'], $dbModules)) {
@@ -205,10 +227,18 @@ class ModularityService extends Service
                     || in_array($v['id'], $this->coreModules);
                 // 系统模块不可卸载
                 $v['infoInstance']->canUninstall = !$v['infoInstance']->isSystem;
+                $v['status'] = $existModule['status'];
+                $v['run_module'] = $existModule['run_module'];
             } else {
                 // 数据库不存在数据则可以进行安装
                 $v['infoInstance']->canInstall = true;
+                $v['status'] = 0; // 未安装则为禁用状态
+                $v['run_module'] = -1; // 未安装则没有正在运行的模块
             }
+            // 开发者模块
+            $v['developer_module'] = isset($allModuleParts['developer'][$moduleId]);
+            // 核心模块
+            $v['core_module'] = isset($allModuleParts['core'][$moduleId]);
         }
 
         return $allModules;
@@ -225,30 +255,46 @@ class ModularityService extends Service
      */
     public function getModuleInfo($id, $onDataBase = true)
     {
-        $modules = $this->getLoad()->getAllModuleConfig();
-        if ($modules[$id] == null) {
+        $allModuleParts = $this->getLoad()->getAllModuleConfig(true);
+        $allModules = array_merge($allModuleParts['core'], $allModuleParts['developer']);
+
+        if ($allModules[$id] == null) {
             throw new NotFoundHttpException('模块不存在');
         }
+        /** @var Module $module */
+        $module = new $this->moduleModel();
         if ($onDataBase) {
-            /** @var Module $model */
-            $model = $this->moduleModel;
-            if (($model = $model::find()->where(['id' => $id, 'app' => Yii::$app->id])->one()) == null) {
+            if (($module = $module::find()->where(['id' => $id, 'app' => Yii::$app->id])->one()) == null) {
                 throw new NotFoundHttpException('模块暂未安装');
             }
-            $model->infoInstance = $modules[$id]['infoInstance'];
+            $module->infoInstance = $allModules[$id]['infoInstance'];
             // 系统模块及必须安装的模块不可卸载
-            $model->infoInstance->canUninstall = !$model->infoInstance->isSystem && !$model->is_system && !in_array($id, $this->coreModules);
+            $module->infoInstance->canUninstall = !$module->infoInstance->isSystem && !$module->is_system && !in_array($id, $this->coreModules);
         } else {
-            /** @var Module $model */
-            $model = new $this->moduleModel();
-            $model->infoInstance = $modules[$id]['infoInstance'];
-            $model->infoInstance->canInstall = true;
-            $model->id = $id;
-            $model->app = Yii::$app->id;
-            $model->is_system = $model->infoInstance->isSystem ? 1 : 0;
+            $module->infoInstance = $allModules[$id]['infoInstance'];
+            $module->infoInstance->canInstall = true;
+            $module->id = $id;
+            $module->app = Yii::$app->id;
+            $module->is_system = $module->infoInstance->isSystem ? 1 : 0;
+            $module->run_module = isset($allModuleParts['developer'][$id])
+                ? $module::RUN_MODULE_DEVELOPER
+                : $module::RUN_MODULE_CORE;
+            $module->status = 1;
         }
+        // 有效的运行模块列表
+        $validRunModuleList = [];
+        $runModuleList = $module->getRunModuleList();
+        // 开发者模块
+        if (isset($allModuleParts['developer'][$id])) {
+            $validRunModuleList[$module::RUN_MODULE_DEVELOPER] = $runModuleList[$module::RUN_MODULE_DEVELOPER];
+        }
+        // 核心模块
+        if (isset($allModuleParts['core'][$id])) {
+            $validRunModuleList[$module::RUN_MODULE_CORE] = $runModuleList[$module::RUN_MODULE_CORE];
+        }
+        $module->setValidRunModuleList($validRunModuleList);
 
-        return $model;
+        return $module;
     }
 
     /**
@@ -301,7 +347,13 @@ class ModularityService extends Service
     {
         Yii::$app->getCache()->delete([
             Yii::$app->id,
-            self::CACHE_ALL_MODULE_CONFIG
+            self::CACHE_ALL_MODULE_CONFIG,
+            true,
+        ]);
+        Yii::$app->getCache()->delete([
+            Yii::$app->id,
+            self::CACHE_ALL_MODULE_CONFIG,
+            false,
         ]);
     }
 

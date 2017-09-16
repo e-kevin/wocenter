@@ -5,6 +5,7 @@ use wocenter\core\Controller;
 use wocenter\core\Dispatch;
 use wocenter\core\Service;
 use wocenter\core\View;
+use wocenter\Wc;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\InvalidRouteException;
@@ -134,20 +135,36 @@ class DispatchService extends Service
         if ($this->theme !== null) {
             $this->getView()->themeName = $this->theme;
         }
-        // 开发者调度器目录
-        $developerDispatchPath = $this->getView()->getDeveloperThemePath($path);
-        $developerNamespace = $this->_getNamespaceByRoute($route, $developerDispatchPath);
 
-        if (!class_exists($developerNamespace)) {
-            // 系统核心调度器目录
+        // 添加对当前[运行模块]的支持，不是运行模块的调度器不加载
+        if ($this->getIsRunningCoreModule()) {
             $coreDispatchPath = $this->getView()->getCoreThemePath($path);
             $coreNamespace = $this->_getNamespaceByRoute($route, $coreDispatchPath);
-            if (class_exists($coreNamespace)) {
-                return $coreNamespace;
-            }
-        }
 
-        return $developerNamespace;
+            return $coreNamespace;
+        } else {
+            // 开发者调度器目录
+            $developerDispatchPath = $this->getView()->getDeveloperThemePath($path);
+            $developerNamespace = $this->_getNamespaceByRoute($route, $developerDispatchPath);
+            if (!class_exists($developerNamespace)) {
+                // 系统核心调度器目录
+                $coreDispatchPath = $this->getView()->getCoreThemePath($path);
+                $coreNamespace = $this->_getNamespaceByRoute($route, $coreDispatchPath);
+                if (class_exists($coreNamespace)) {
+                    return $coreNamespace;
+                }
+            }
+
+            return $developerNamespace;
+        }
+    }
+
+    /**
+     * @return boolean 是否运行核心模块
+     */
+    public function getIsRunningCoreModule()
+    {
+        return Yii::$app->controller !== null && strncmp(Yii::$app->controller->module->className(), 'wocenter', 8) == 0;
     }
 
     /**

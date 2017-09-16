@@ -5,9 +5,11 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model \wocenter\models\Module */
 /* @var $form ActiveForm */
+/* @var $validRunModuleList array */
 
 $footer = '<blockquote class="help-block">';
 $footer .= '<p>系统模块：安装后无法卸载</p>';
+$footer .= '<p>运行模块：选择哪个模块配置来运行当前模块</p>';
 if (Yii::$app->controller->action->id == 'install' && $model->infoInstance->canInstall) {
     $footer .= '<p>安装后，系统将自动同步更新所需菜单</p>';
 } else {
@@ -32,7 +34,7 @@ $footer .= '</blockquote>';
         <p class="lead"><?= $model->infoInstance->description ?></p>
         <?php
             $btn[] = Html::submitButton(Yii::t('wocenter/app',
-                (Yii::$app->controller->action->id == 'install' && $model->infoInstance->canInstall)
+                ($this->context->action->id == 'install' && $model->infoInstance->canInstall)
                     ? 'Install'
                     : 'Save'
             ), ['class' => 'btn btn-success width-200']);
@@ -47,6 +49,9 @@ $footer .= '</blockquote>';
 if (!$model->infoInstance->isSystem) {
     echo $form->field($model, 'is_system')->radioList(['否', '是']);
 }
+// 运行模块列表
+echo $form->field($model, 'run_module')->radioList($validRunModuleList);
+//echo $form->field($model, 'status')->radioList(\wocenter\libs\Constants::getStatusList());
 ?>
 
 <?php ActiveForm::end(); ?>

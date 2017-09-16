@@ -14,7 +14,7 @@ class Update extends Dispatch
 {
 
     /**
-     * @param integer $id
+     * @param string $id
      *
      * @return string|\yii\web\Response
      * @throws \yii\base\InvalidConfigException
@@ -24,6 +24,7 @@ class Update extends Dispatch
     {
         $model = Wc::$service->getModularity()->getModuleInfo($id);
         $request = Yii::$app->getRequest();
+        $validRunModuleList = $model->getValidRunModuleList();
 
         if ($request->getIsPost()) {
             if ($model->load($request->getBodyParams())) {
@@ -45,6 +46,7 @@ class Update extends Dispatch
 
         return $this->assign([
             'model' => $model,
+            'validRunModuleList' => $validRunModuleList,
         ])->display();
     }
 

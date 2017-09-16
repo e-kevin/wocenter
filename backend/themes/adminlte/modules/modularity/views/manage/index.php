@@ -5,6 +5,7 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider ArrayDataProvider */
+/* @var $runModuleList array */
 
 $headerToolbar = '';
 ?>
@@ -56,6 +57,13 @@ $column = [
         },
         'label' => '描述',
     ],
+//    [
+//        'class' => 'kartik\grid\BooleanColumn',
+//        'label' => '二次开发',
+//        'value' => function ($model) {
+//            return $model['disable_developer'];
+//        },
+//    ],
     [
         'class' => 'kartik\grid\BooleanColumn',
         'value' => function ($model) {
@@ -64,12 +72,42 @@ $column = [
         'label' => '系统模块',
     ],
     [
-        'format' => 'html',
-        'label' => '模块类型',
+        'class' => 'kartik\grid\BooleanColumn',
         'value' => function ($model) {
-            return $model['infoInstance']->type == 'core'
-                ? '<span class="text-danger">系统核心</span>'
-                : '<span class="text-info">开发者</span>';
+            return $model['core_module'];
+        },
+        'label' => '核心模块',
+    ],
+    [
+        'class' => 'kartik\grid\BooleanColumn',
+        'value' => function ($model) {
+            return $model['developer_module'];
+        },
+        'width' => 'auto',
+        'label' => '开发者模块',
+    ],
+//    [
+//        'class' => 'kartik\grid\BooleanColumn',
+//        'attribute' => 'status',
+//        'value' => function ($model) {
+//            return $model['status'];
+//        },
+//        'label' => '状态',
+//    ],
+    [
+        'format' => 'html',
+        'label' => '运行模块',
+        'value' => function ($model) use ($runModuleList) {
+            switch ($model['run_module']) {
+                case \wocenter\models\Module::RUN_MODULE_CORE:
+                    return '<span class="text-danger">' . $runModuleList[$model['run_module']] . '</span>';
+                    break;
+                case \wocenter\models\Module::RUN_MODULE_DEVELOPER:
+                    return '<span class="text-warning">' . $runModuleList[$model['run_module']] . '</span>';
+                    break;
+                default:
+                    return '未安装';
+            }
         },
     ],
     [

@@ -1,6 +1,7 @@
 <?php
 namespace wocenter\services\modularity;
 
+use wocenter\core\ModularityInfo;
 use wocenter\core\Service;
 use wocenter\helpers\ArrayHelper;
 use wocenter\helpers\FileHelper;
@@ -145,9 +146,11 @@ class LoadService extends Service
     public function getDeveloperModulePathConfig()
     {
         if ($this->_developerModulePathConfig == null) {
+            $module = $this->service->moduleModel;
             $this->_developerModulePathConfig = [
                 'path' => $this->service->getDeveloperModulePath(),
                 'namespace' => $this->service->developerModuleNamespace,
+                'module_type' => $module::RUN_MODULE_DEVELOPER,
             ];
         }
 
@@ -166,6 +169,8 @@ class LoadService extends Service
         if (!isset($config['path']) || !isset($config['namespace'])) {
             throw new InvalidConfigException('The `path` and `namespace` value must be set.');
         }
+        $module = $this->service->moduleModel;
+        $config['module_type'] = $module::RUN_MODULE_DEVELOPER; // 自动为相关的[[ModularityInfo]]添加开发者模块类型
         $this->service->clearAllModuleConfig();
         $this->_developerModulePathConfig = $config;
     }
@@ -177,9 +182,11 @@ class LoadService extends Service
      */
     public function getCoreModulePathConfig()
     {
+        $module = $this->service->moduleModel;
         return [
             'path' => $this->service->getCoreModulePath(),
             'namespace' => $this->service->coreModuleNamespace,
+            'module_type' => $module::RUN_MODULE_CORE,
         ];
     }
 
@@ -208,15 +215,20 @@ class LoadService extends Service
     /**
      * 获取所有模块配置信息，包括系统核心模块和开发者模块
      *
+     * @param boolean $returnPart 是否返回分类数组，默认不返回
+     *
      * @return array
      */
-    public function getAllModuleConfig()
+    public function getAllModuleConfig($returnPart = false)
     {
         return Wc::getOrSet([
             Yii::$app->id,
             ModularityService::CACHE_ALL_MODULE_CONFIG,
-        ], function () {
-            return array_merge($this->getCoreModuleConfig(), $this->getDeveloperModuleConfig());
+            $returnPart,
+        ], function () use ($returnPart) {
+            return $returnPart
+                ? ['core' => $this->getCoreModuleConfig(), 'developer' => $this->getDeveloperModuleConfig()]
+                : array_merge($this->getCoreModuleConfig(), $this->getDeveloperModuleConfig());
         }, $this->service->cacheDuration);
     }
 
@@ -270,9 +282,10 @@ class LoadService extends Service
                 $infoClass = $namespacePrefix . '\Info';
                 try {
                     /** @var \wocenter\core\ModularityInfo $instance */
-                    $instance = Yii::createObject($infoClass, [$module->id, [
+                    $instance = Yii::createObject($infoClass, [$module->id, $moduleConfig['module_type'], [
                         'version' => $module->version,
-                    ]]);
+                    ],
+                    ]);
                     $instance->name = $instance->name ?: $moduleFolder;
                 } catch (\Exception $e) {
                     // 不存在模块信息类则意味着该模块不接受系统模块管理

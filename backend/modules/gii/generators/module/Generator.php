@@ -3,6 +3,7 @@ namespace wocenter\backend\modules\gii\generators\module;
 
 use wocenter\core\Controller;
 use wocenter\core\View;
+use wocenter\models\Module;
 use wocenter\services\ModularityService;
 use wocenter\Wc;
 use yii\gii\CodeFile;

@@ -22,6 +22,7 @@ class Install extends Dispatch
     {
         $model = Wc::$service->getModularity()->getModuleInfo($id, false);
         $request = Yii::$app->getRequest();
+        $validRunModuleList = $model->getValidRunModuleList();
 
         if ($request->getIsPost()) {
             $model->load($request->getBodyParams());
@@ -38,6 +39,7 @@ class Install extends Dispatch
 
         return $this->assign([
             'model' => $model,
+            'validRunModuleList' => $validRunModuleList,
         ])->display();
     }
 

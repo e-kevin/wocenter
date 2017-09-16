@@ -12,14 +12,33 @@ use Yii;
  * @property string $app
  * @property integer $is_system
  * @property integer $status
+ * @property integer $run_module
+ *
+ * @property array $runModuleList 获取运行模块列表
+ * @property array $validRunModuleList 获取有效的运行模块列表
  */
 class Module extends ActiveRecord
 {
 
     /**
+     * @var integer 运行核心模块
+     */
+    const RUN_MODULE_CORE = 0;
+
+    /**
+     * @var integer 运行开发者模块
+     */
+    const RUN_MODULE_DEVELOPER = 1;
+
+    /**
      * @var \wocenter\core\ModularityInfo 实例化模块信息类
      */
     public $infoInstance;
+
+    /**
+     * @var array 有效的运行模块列表
+     */
+    protected $_validRunModuleList;
 
     /**
      * @inheritdoc
@@ -36,9 +55,10 @@ class Module extends ActiveRecord
     {
         return [
             [['id'], 'required'],
-            [['is_system', 'status'], 'integer'],
+            [['is_system', 'status', 'run_module'], 'integer'],
             [['id'], 'string', 'max' => 64],
             [['app'], 'string', 'max' => 15],
+            [['run_module'], 'in', 'range' => array_keys($this->getValidRunModuleList())],
         ];
     }
 
@@ -52,6 +72,7 @@ class Module extends ActiveRecord
             'app' => '所属应用',
             'is_system' => '系统模块',
             'status' => '状态',
+            'run_module' => '运行模块',
         ];
     }
 
@@ -72,6 +93,39 @@ class Module extends ActiveRecord
     {
         Wc::$service->getMenu()->syncMenus();
         Wc::$service->getModularity()->clearCache();
+    }
+
+    /**
+     * 获取运行模块列表
+     *
+     * @return array
+     */
+    public function getRunModuleList()
+    {
+        return [
+            self::RUN_MODULE_DEVELOPER => '开发者模块',
+            self::RUN_MODULE_CORE => '核心模块',
+        ];
+    }
+
+    /**
+     * 获取有效的运行模块列表
+     *
+     * @return array
+     */
+    public function getValidRunModuleList()
+    {
+        return $this->_validRunModuleList ?: $this->getRunModuleList();
+    }
+
+    /**
+     * 设置有效的运行模块列表
+     *
+     * @param $moduleList
+     */
+    public function setValidRunModuleList($moduleList)
+    {
+        $this->_validRunModuleList = $moduleList;
     }
 
 }

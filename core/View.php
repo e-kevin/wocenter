@@ -21,6 +21,12 @@ class View extends baseView
     public $themeName = 'basic';
 
     /**
+     * @var boolean 视图映射是否严谨，默认为`false`，即宽松模式：只要开发者目录内存在相应视图文件即可被渲染
+     * TODO 添加数据库配置
+     */
+    public $strict = false;
+
+    /**
      * @var string 开发者主题基础路径，使用别名
      */
     private $_baseThemePath;
@@ -43,14 +49,23 @@ class View extends baseView
     protected function setPathMap()
     {
         // 开发者模块路径
-        $developerModulePath = Wc::$service->getModularity()->developerModulePath;
+        $developerModulePath = Wc::$service->getModularity()->getDeveloperModulePath();
         // 系统核心模块路径
-        $coreModulePath = Wc::$service->getModularity()->coreModulePath;
+        $coreModulePath = Wc::$service->getModularity()->getCoreModulePath();
         // 路径映射从上到下依次代表优先级由高到低，只要获取到有效映射则返回结果，否则继续往下获取
         // TODO 是否则自定义[[Theme()]]类为已经获取到的映射文件做缓存？
+        // e.g. app以backend为例
+        /**
+         * 返回值请查看
+         * [多模板系统](https://github.com/Wonail/wocenter_doc/blob/master/guide/zh-CN/mutil-theme.md#%E4%BC%98%E5%85%88%E7%BA%A7)
+         */
         $config['pathMap'] = [
             '@app/views' => [
                 '@app/views',
+                $this->getDeveloperThemePath('views'),
+                $this->getCoreThemePath('views'),
+            ],
+            $this->getDeveloperThemePath('views') => [
                 $this->getDeveloperThemePath('views'),
                 $this->getCoreThemePath('views'),
             ],
@@ -65,6 +80,19 @@ class View extends baseView
                 $this->getCoreThemePath('modules'),
             ],
         ];
+        // 严谨模式
+        if ($this->strict) {
+            if (Wc::$service->getDispatch()->getIsRunningCoreModule()) {
+                $config['pathMap'][$developerModulePath] = [
+                    $this->getCoreThemePath('modules'),
+                    $developerModulePath,
+                    $this->getDeveloperThemePath('modules'),
+                ];
+                $config['pathMap'][$coreModulePath] = [
+                    $this->getCoreThemePath('modules'),
+                ];
+            }
+        }
 
         $this->theme = new Theme($config);
     }
