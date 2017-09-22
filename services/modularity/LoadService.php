@@ -57,7 +57,7 @@ class LoadService extends Service
             }
 
             return $arr;
-        }, $this->service->cacheDuration);
+        }, $this->service->cacheDuration, null, 'commonCache');
     }
 
     /**
@@ -181,7 +181,7 @@ class LoadService extends Service
             return $returnPart
                 ? ['core' => $this->getCoreModuleConfig(), 'developer' => $this->getDeveloperModuleConfig()]
                 : ArrayHelper::merge($this->getCoreModuleConfig(), $this->getDeveloperModuleConfig());
-        }, $this->service->cacheDuration);
+        }, $this->service->cacheDuration, null, 'commonCache');
     }
 
     /**

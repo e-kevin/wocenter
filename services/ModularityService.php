@@ -196,7 +196,7 @@ class ModularityService extends Service
                         array_merge($allModuleParts['core'], $allModuleParts['developer']),
                         'moduleClass'
                     );
-                }, $this->cacheDuration);
+                }, $this->cacheDuration, null, 'commonCache');
                 break;
             case 'uninstall':
                 $arr = Wc::getOrSet([$appId, self::CACHE_UNINSTALL_MODULES], function () {
@@ -209,7 +209,7 @@ class ModularityService extends Service
 
                     // 未安装的模块ID数组
                     return array_diff($existModuleIds, $installedModuleIds);
-                }, $this->cacheDuration);
+                }, $this->cacheDuration, null, 'commonCache');
                 break;
             default:
                 throw new InvalidParamException('The "type" param must be set.');
@@ -339,9 +339,9 @@ class ModularityService extends Service
     public function clearCache()
     {
         $appId = Yii::$app->id;
-        Yii::$app->getCache()->delete([$appId, self::CACHE_INSTALLED_MODULES]);
-        Yii::$app->getCache()->delete([$appId, self::CACHE_UNINSTALL_MODULES]);
-        Yii::$app->getCache()->delete([$appId, self::CACHE_MODULE_URL_RULE]);
+        Wc::cache()->delete([$appId, self::CACHE_INSTALLED_MODULES]);
+        Wc::cache()->delete([$appId, self::CACHE_UNINSTALL_MODULES]);
+        Wc::cache()->delete([$appId, self::CACHE_MODULE_URL_RULE]);
         $this->clearAllModuleConfig();
     }
 
@@ -350,12 +350,12 @@ class ModularityService extends Service
      */
     public function clearAllModuleConfig()
     {
-        Yii::$app->getCache()->delete([
+        Wc::cache()->delete([
             Yii::$app->id,
             self::CACHE_ALL_MODULE_CONFIG,
             true,
         ]);
-        Yii::$app->getCache()->delete([
+        Wc::cache()->delete([
             Yii::$app->id,
             self::CACHE_ALL_MODULE_CONFIG,
             false,

@@ -148,15 +148,19 @@ class BaseWc extends Object
      * the corresponding value in the cache will be invalidated when it is fetched via [[get()]].
      * This parameter is ignored if [[serializer]] is `false`.
      *
+     * @param string $cache cache component
+     *
      * @return mixed result of $callable execution
      */
-    public static function getOrSet($key, $callable, $duration = null, $dependency = null)
+    public static function getOrSet($key, $callable, $duration = null, $dependency = null, $cache = 'cache')
     {
+        /** @var \yii\caching\Cache $component */
+        $component = Yii::$app->get($cache);
         if ($duration === false) {
-            Yii::$app->getCache()->delete($key);
+            $component->delete($key);
         }
 
-        return Yii::$app->getCache()->getOrSet($key, $callable, $duration, $dependency);
+        return $component->getOrSet($key, $callable, $duration, $dependency);
     }
 
     /**
@@ -205,6 +209,17 @@ class BaseWc extends Object
     public static function setThrowException($throw = true)
     {
         static::$_throwException = $throw;
+    }
+
+    /**
+     * 公共缓存类，主要是缓存一些公用的数据
+     *
+     * @return \yii\caching\Cache
+     * @throws \yii\base\InvalidConfigException
+     */
+    public static function cache()
+    {
+        return Yii::$app->get('commonCache');
     }
 
 }

@@ -27,7 +27,7 @@ class ClearCache extends Dispatch
 
         Yii::$app->id = $oldAppId;
 
-        return $this->success('清理成功', Dispatch::RELOAD_PAGE);
+        $this->success('清理成功', Dispatch::RELOAD_PAGE);
     }
 
 }

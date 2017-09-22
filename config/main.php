@@ -10,6 +10,10 @@ return [
         '@wocenter' => '@vendor/wonail/wocenter',
     ],
     'components' => [
+        'commonCache' => [
+            'class' => 'yii\caching\FileCache',
+            'cachePath' => '@common/runtime/cache',
+        ],
         'notificationService' => [
             'class' => 'wocenter\services\NotificationService',
             'subService' => [
