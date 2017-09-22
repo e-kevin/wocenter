@@ -1,6 +1,7 @@
 <?php
 namespace wocenter\backend\modules\passport\events;
 
+use wocenter\backend\modules\account\models\BackendUser;
 use wocenter\events\UserEvent;
 use Yii;
 
@@ -20,6 +21,7 @@ class validateAdministrator
     public function run(UserEvent $event)
     {
         // 检测用户是否为后台管理员
+        /** @var BackendUser $admin */
         $admin = $event->identity->getBackendUsers()->one();
         if (!$admin) {
             $event->sender->message = Yii::t('wocenter/app', 'User does not exist.');

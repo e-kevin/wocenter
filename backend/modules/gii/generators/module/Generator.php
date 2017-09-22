@@ -3,8 +3,7 @@ namespace wocenter\backend\modules\gii\generators\module;
 
 use wocenter\core\Controller;
 use wocenter\core\View;
-use wocenter\models\Module;
-use wocenter\services\ModularityService;
+use wocenter\helpers\StringHelper;
 use wocenter\Wc;
 use yii\gii\CodeFile;
 use Yii;
@@ -155,9 +154,9 @@ class Generator extends \yii\gii\Generator
         $modularityService = Wc::$service->getModularity();
         $dispatchService = Wc::$service->getDispatch();
         // 开发者模块路径下的模块类名
-        $this->_moduleClass = $modularityService->developerModuleNamespace . '\\' . $this->moduleID . '\\Module';
+        $this->_moduleClass = $modularityService->getDeveloperModuleNamespace() . '\\' . $this->moduleID . '\\Module';
         // 开发者模块路径
-        $developerModulePath = $modularityService->getDeveloperModulePath() . '/' . $this->moduleID;
+        $developerModulePath = StringHelper::ns2Path($modularityService->getDeveloperModuleNamespace()) . '/' . $this->moduleID;
         $files = [];
         $this->_isCoreModule = !empty($this->getCoreModuleConfig()) ? true : false;
         // 如果为核心模块，则加载该模块相关配置信息

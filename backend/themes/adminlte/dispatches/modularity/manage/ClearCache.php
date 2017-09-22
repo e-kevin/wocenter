@@ -14,13 +14,20 @@ class ClearCache extends Dispatch
 {
 
     /**
+     * @param string $app 应用ID
+     *
      * @return string|\yii\web\Response
      */
-    public function run()
+    public function run($app = 'backend')
     {
+        $oldAppId = Yii::$app->id;
+        Yii::$app->id = $app;
+
         Wc::$service->getModularity()->clearCache();
 
-        return $this->success('清理成功', Dispatch::RELOAD_LIST);
+        Yii::$app->id = $oldAppId;
+
+        return $this->success('清理成功', Dispatch::RELOAD_PAGE);
     }
 
 }

@@ -1,7 +1,7 @@
 <?php
 namespace wocenter\backend\themes\adminlte\dispatches\operate\inviteType;
 
-use wocenter\backend\modules\account\models\Identity;
+use wocenter\models\Identity;
 use wocenter\backend\modules\data\models\UserScoreType;
 use wocenter\backend\modules\operate\models\InviteType;
 use wocenter\backend\themes\adminlte\components\Dispatch;

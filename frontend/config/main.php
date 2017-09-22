@@ -1,7 +1,15 @@
 <?php
+$captchaAction = '/passport/security/captcha'; // 验证码路由地址
 
 return [
     'components' => [
+        'user' => [
+            'identityClass' => '\wocenter\models\User',
+            'loginUrl' => ['/passport/common/login'],
+        ],
+//        'errorHandler' => [
+//            'errorAction' => 'site/error',
+//        ],
         'i18n' => [
             'translations' => [
                 'wocenter/*' => [
@@ -29,5 +37,9 @@ return [
                 '' => 'site/index',
             ],
         ],
+    ],
+    'params' => [
+        'redirect' => 'redirect', // url跳转地址参数
+        'captchaAction' => $captchaAction,
     ],
 ];

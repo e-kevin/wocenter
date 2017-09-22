@@ -1,16 +1,15 @@
 <?php
 namespace wocenter\services\modularity;
 
-use wocenter\core\ModularityInfo;
 use wocenter\core\Service;
 use wocenter\helpers\ArrayHelper;
 use wocenter\helpers\FileHelper;
+use wocenter\helpers\StringHelper;
 use wocenter\interfaces\ModularityInfoInterface;
 use wocenter\services\ModularityService;
 use wocenter\Wc;
 use Yii;
 use yii\base\Exception;
-use yii\base\InvalidConfigException;
 
 /**
  * 加载模块配置服务类
@@ -29,11 +28,6 @@ class LoadService extends Service
      * @var ModularityService 父级服务类
      */
     public $service;
-
-    /**
-     * @var array 开发者模块路径配置信息
-     */
-    protected $_developerModulePathConfig;
 
     /**
      * @inheritdoc
@@ -139,58 +133,6 @@ class LoadService extends Service
     }
 
     /**
-     * 获取开发者模块路径配置信息
-     *
-     * @return array
-     */
-    public function getDeveloperModulePathConfig()
-    {
-        if ($this->_developerModulePathConfig == null) {
-            $module = $this->service->moduleModel;
-            $this->_developerModulePathConfig = [
-                'path' => $this->service->getDeveloperModulePath(),
-                'namespace' => $this->service->developerModuleNamespace,
-                'module_type' => $module::RUN_MODULE_DEVELOPER,
-            ];
-        }
-
-        return $this->_developerModulePathConfig;
-    }
-
-    /**
-     * 设置开发者模块路径配置信息
-     *
-     * @param array $config 路径配置信息，必须包含'path'和'namespace'键名，当键值为空，则代表该路径配置信息无效
-     *
-     * @throws InvalidConfigException
-     */
-    public function setDeveloperModulePathConfig(array $config = [])
-    {
-        if (!isset($config['path']) || !isset($config['namespace'])) {
-            throw new InvalidConfigException('The `path` and `namespace` value must be set.');
-        }
-        $module = $this->service->moduleModel;
-        $config['module_type'] = $module::RUN_MODULE_DEVELOPER; // 自动为相关的[[ModularityInfo]]添加开发者模块类型
-        $this->service->clearAllModuleConfig();
-        $this->_developerModulePathConfig = $config;
-    }
-
-    /**
-     * 获取系统核心模块路径配置信息
-     *
-     * @return array
-     */
-    public function getCoreModulePathConfig()
-    {
-        $module = $this->service->moduleModel;
-        return [
-            'path' => $this->service->getCoreModulePath(),
-            'namespace' => $this->service->coreModuleNamespace,
-            'module_type' => $module::RUN_MODULE_CORE,
-        ];
-    }
-
-    /**
      * 获取系统核心模块配置信息
      *
      * @return array
@@ -198,7 +140,12 @@ class LoadService extends Service
      */
     public function getCoreModuleConfig()
     {
-        return $this->_getModuleConfig($this->getCoreModulePathConfig());
+        $module = $this->service->moduleModel;
+
+        return $this->_getModuleConfig([
+            'namespace' => $this->service->getCoreModuleNamespace(),
+            'module_type' => $module::RUN_MODULE_CORE,
+        ]);
     }
 
     /**
@@ -209,7 +156,12 @@ class LoadService extends Service
      */
     public function getDeveloperModuleConfig()
     {
-        return $this->_getModuleConfig($this->getDeveloperModulePathConfig());
+        $module = $this->service->moduleModel;
+
+        return $this->_getModuleConfig([
+            'namespace' => $this->service->getDeveloperModuleNamespace(),
+            'module_type' => $module::RUN_MODULE_DEVELOPER,
+        ]);
     }
 
     /**
@@ -228,7 +180,7 @@ class LoadService extends Service
         ], function () use ($returnPart) {
             return $returnPart
                 ? ['core' => $this->getCoreModuleConfig(), 'developer' => $this->getDeveloperModuleConfig()]
-                : array_merge($this->getCoreModuleConfig(), $this->getDeveloperModuleConfig());
+                : ArrayHelper::merge($this->getCoreModuleConfig(), $this->getDeveloperModuleConfig());
         }, $this->service->cacheDuration);
     }
 
@@ -236,6 +188,10 @@ class LoadService extends Service
      * 搜索模块目录，获取模块相关配置信息
      *
      * @param array $moduleConfig 模块配置信息
+     * [
+     *  namespace,
+     *  module_type
+     * ]
      *
      * @return array
      * [
@@ -253,7 +209,7 @@ class LoadService extends Service
         if (empty($moduleConfig)) {
             return $allModuleConfig;
         }
-        $modulePath = $moduleConfig['path'];
+        $modulePath = StringHelper::ns2Path($moduleConfig['namespace']);
         if (($moduleRootDir = @dir($modulePath))) {
             while (($moduleFolder = $moduleRootDir->read()) !== false) {
                 $currentModuleDir = $modulePath . DIRECTORY_SEPARATOR . $moduleFolder;
@@ -282,9 +238,12 @@ class LoadService extends Service
                 $infoClass = $namespacePrefix . '\Info';
                 try {
                     /** @var \wocenter\core\ModularityInfo $instance */
-                    $instance = Yii::createObject($infoClass, [$module->id, $moduleConfig['module_type'], [
-                        'version' => $module->version,
-                    ],
+                    $instance = Yii::createObject($infoClass, [
+                        $module->id,
+                        $moduleConfig['module_type'],
+                        [
+                            'version' => $module->version,
+                        ],
                     ]);
                     $instance->name = $instance->name ?: $moduleFolder;
                 } catch (\Exception $e) {
@@ -298,7 +257,7 @@ class LoadService extends Service
                 $allModuleConfig[$instance->id] = [
                     'moduleClass' => $moduleClass,
                     'infoInstance' => $instance,
-                    'migrationPath' => $migrationPath,
+                    'migrationPath' => [$migrationPath],
                 ];
             }
         }

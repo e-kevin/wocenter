@@ -3,10 +3,11 @@ namespace wocenter\backend\modules\account\models;
 
 use wocenter\backend\core\ActiveDataProvider;
 use wocenter\libs\Constants;
+use wocenter\models\Identity;
 use yii\db\ActiveQuery;
 
 /**
- * IdentitySearch represents the model behind the search form about `wocenter\backend\modules\account\models\Identity`.
+ * IdentitySearch represents the model behind the search form about `wocenter\models\Identity`.
  */
 class IdentitySearch extends Identity
 {

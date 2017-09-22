@@ -1,13 +1,14 @@
 <?php
 namespace wocenter\backend\modules\account\models;
 
+use wocenter\models\UserIdentity;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 
 /**
  * UserIdentitySearch represents the model behind the search form about
- * `wocenter\backend\modules\account\models\UserIdentity`.
+ * `wocenter\models\UserIdentity`.
  */
 class UserIdentitySearch extends UserIdentity
 {

@@ -1,12 +1,12 @@
 <?php
 namespace wocenter\backend\modules\passport\models;
 
-use wocenter\backend\core\Model;
+use wocenter\core\Model;
 use wocenter\backend\modules\system\models\Config;
-use wocenter\libs\PinYin;
 use wocenter\backend\modules\account\models\ExtendFieldUser;
 use wocenter\backend\modules\account\models\ExtendProfile;
-use wocenter\backend\modules\account\models\UserIdentity;
+use wocenter\libs\PinYin;
+use wocenter\models\UserIdentity;
 use wocenter\traits\ParseRulesTrait;
 use Yii;
 use yii\base\InvalidConfigException;

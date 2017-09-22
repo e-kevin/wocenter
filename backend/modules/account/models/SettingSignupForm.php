@@ -1,6 +1,9 @@
 <?php
 namespace wocenter\backend\modules\account\models;
 
+use wocenter\models\Identity;
+use yii\db\ActiveQuery;
+
 /**
  * 注册配置表单模型
  */
@@ -70,7 +73,7 @@ class SettingSignupForm extends SettingForm
                 ->select('id, field_name, profile_id')
                 ->with([
                     'profile' =>
-                        function ($query) {
+                        function (ActiveQuery $query) {
                             $query->select('id, profile_name');
                         },
                 ])

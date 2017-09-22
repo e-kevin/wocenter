@@ -15,15 +15,26 @@ class Uninstall extends Dispatch
 
     /**
      * @param string $id
+     * @param string $app 应用ID
+     *
+     * @throws \Exception
+     * @throws \yii\web\NotFoundHttpException
      */
-    public function run($id)
+    public function run($id, $app = 'backend')
     {
+        $oldAppId = Yii::$app->id;
+        Yii::$app->id = $app;
+
         $model = Wc::$service->getModularity()->getModuleInfo($id);
+
+        Yii::$app->id = $oldAppId;
         if ($model->infoInstance->canUninstall) {
+            // 调用模块内置卸载方法
+            if (!$model->infoInstance->uninstall()) {
+                $this->error(Wc::getErrorMessage());
+            }
             if ($model->delete()) {
-                // 调用模块内置卸载方法
-                $model->infoInstance->uninstall();
-                $this->success('卸载成功', parent::RELOAD_LIST);
+                $this->success('卸载成功', parent::RELOAD_PAGE);
             } else {
                 $this->error('卸载失败');
             }

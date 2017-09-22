@@ -1,18 +1,9 @@
 <?php
 namespace wocenter\models;
 
-use wocenter\backend\modules\account\models\ExtendFieldUser;
-use wocenter\backend\modules\account\models\UserIdentity;
-use wocenter\backend\modules\data\models\TagUser;
-use wocenter\backend\modules\log\models\ActionLog;
-use wocenter\backend\modules\log\models\UserScoreLog;
-use wocenter\backend\modules\operate\models\Invite;
-use wocenter\backend\modules\operate\models\InviteBuyLog;
-use wocenter\backend\modules\operate\models\InviteLog;
-use wocenter\backend\modules\operate\models\InviteUserInfo;
-use wocenter\backend\modules\operate\models\RankUser;
 use wocenter\behaviors\ModifyTimestampBehavior;
 use wocenter\core\ActiveRecord;
+use wocenter\backend\modules\data\models\TagUser;
 use wocenter\Wc;
 use Yii;
 use yii\base\NotSupportedException;
@@ -40,29 +31,20 @@ use wocenter\interfaces\IdentityInterface;
  *
  * @property string $password
  *
- * @property ActionLog[] $actionLogs
- * @property BackendUser[] $backendUsers
- * @property ExtendFieldUser[] $extendFieldUsers
  * @property Follow[] $whoFollows
  * @property Follow[] $followWho
- * @property Invite[] $invites
- * @property InviteBuyLog[] $inviteBuyLogs
- * @property InviteLog[] $inviteLogs
- * @property InviteUserInfo[] $inviteUserInfos
- * @property RankUser[] $rankUsers
  * @property TagUser[] $tagUsers
  * @property UserIdentity[] $userIdentities
  * @property UserProfile $userProfile
- * @property UserScoreLog[] $userScoreLogs
  *
  * 行为方法属性
  * @property boolean $modifyUpdatedAt
  * @property boolean $modifyCreatedAt
  * @property string $createdAtAttribute
  * @property string $updatedAtAttribute
- * @method ModifyTimestampBehavior createRules()
+ * @method ModifyTimestampBehavior createRules($rules)
  * @see ModifyTimestampBehavior::createRules()
- * @method ModifyTimestampBehavior createScenarios()
+ * @method ModifyTimestampBehavior createScenarios($scenarios)
  * @see ModifyTimestampBehavior::createScenarios()
  */
 class User extends ActiveRecord implements IdentityInterface
@@ -318,30 +300,6 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getActionLogs()
-    {
-        return $this->hasMany(ActionLog::className(), ['user_id' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getBackendUsers()
-    {
-        return $this->hasMany(BackendUser::className(), ['user_id' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getExtendFieldUsers()
-    {
-        return $this->hasMany(ExtendFieldUser::className(), ['uid' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getWhoFollows()
     {
         return $this->hasMany(Follow::className(), ['who_follow' => 'id']);
@@ -353,46 +311,6 @@ class User extends ActiveRecord implements IdentityInterface
     public function getFollowWho()
     {
         return $this->hasMany(Follow::className(), ['follow_who' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getInvites()
-    {
-        return $this->hasMany(Invite::className(), ['uid' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getInviteBuyLogs()
-    {
-        return $this->hasMany(InviteBuyLog::className(), ['uid' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getInviteLogs()
-    {
-        return $this->hasMany(InviteLog::className(), ['inviter_id' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getInviteUserInfos()
-    {
-        return $this->hasMany(InviteUserInfo::className(), ['uid' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getRankUsers()
-    {
-        return $this->hasMany(RankUser::className(), ['uid' => 'id']);
     }
 
     /**
@@ -421,14 +339,6 @@ class User extends ActiveRecord implements IdentityInterface
     public function getUserProfile($fields = '')
     {
         return $this->hasOne(UserProfile::className(), ['uid' => 'id'])->select($fields);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getUserScoreLogs()
-    {
-        return $this->hasMany(UserScoreLog::className(), ['uid' => 'id']);
     }
 
 }

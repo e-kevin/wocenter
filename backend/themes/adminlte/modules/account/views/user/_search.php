@@ -2,7 +2,7 @@
 use wonail\adminlte\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model wocenter\models\UserSearch */
+/* @var $model \wocenter\backend\modules\account\models\UserSearch */
 /* @var $form ActiveForm */
 /* @var $action array */
 /* @var $registerTypeList array */

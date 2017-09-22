@@ -5,8 +5,8 @@ use wocenter\core\Service;
 use wocenter\Wc;
 use wocenter\helpers\DateTimeHelper;
 use wocenter\backend\modules\action\models\Action;
-use wocenter\backend\modules\data\models\UserScoreType;
 use wocenter\backend\modules\log\models\ActionLog;
+use wocenter\backend\modules\data\models\UserScoreType;
 use wocenter\backend\modules\log\models\UserScoreLog;
 use Yii;
 use yii\base\InvalidParamException;
@@ -25,19 +25,19 @@ class LogService extends Service
     public $actionModel = '\wocenter\backend\modules\action\models\Action';
 
     /**
-     * @var string|array|callable|UserScoreType 用户积分类型模型
-     */
-    public $userScoreTypeModel = '\wocenter\backend\modules\data\models\UserScoreType';
-
-    /**
      * @var string|array|callable|ActionLog 行为日志模型
      */
     public $actionLogModel = '\wocenter\backend\modules\log\models\ActionLog';
 
     /**
-     * @var string|array|callable|UserScoreLog 用户奖罚日志模型
+     * @var string|array|callable|UserScoreType 用户积分类型模型
      */
-    public $userScoreLogModel = '\wocenter\backend\modules\log\models\UserScoreLog';
+    public $userScoreTypeModel = '\wocenter\backend\modules\data\models\UserScoreType';
+
+    /**
+     * @var string|array|callable|\wocenter\backend\modules\log\models\UserScoreLog 用户奖罚日志模型
+     */
+    public $userScoreLogModel = '\wocenter\modules\log\models\UserScoreLog';
 
     /**
      * @inheritdoc
@@ -120,6 +120,7 @@ class LogService extends Service
 
         /** @var ActionLog $actionLogModel */
         $actionLogModel = $this->actionLogModel;
+        /** @var Action $actionModel */
         $actionModel = $this->actionModel;
         $actionLogModel::deleteAll([
             'action_id' => $actionModel::find()->select('id')->where(['name' => $action])->scalar(),
@@ -150,7 +151,7 @@ class LogService extends Service
             return false;
         }
 
-        foreach ($rules as $rule) {
+        foreach ((array) $rules as $rule) {
             if ($this->_checkActionRule($rule, $modelClassName, $actionUserId)) {
                 Wc::$service->getAccount()->updateUserScore($actionUserId, $rule['rule'], $rule['type'], $logInfo);
             }
@@ -214,7 +215,7 @@ class LogService extends Service
             return false;
         }
         // 检查执行周期
-        /** @var UserScoreLog $userScoreLogModel */
+        /** @var \wocenter\backend\modules\log\models\UserScoreLog $userScoreLogModel */
         $userScoreLogModel = $this->userScoreLogModel;
         $exec_count = $userScoreLogModel::find()->where([
             'type' => $rule['type'],

@@ -1,6 +1,6 @@
 <?php
 /* @var $this yii\web\View */
-/* @var $model \wocenter\models\Module */
+/* @var $model \wocenter\backend\modules\modularity\models\Module */
 /* @var $validRunModuleList array */
 
 $this->title = '管理 ' . $model->id . ' 模块';

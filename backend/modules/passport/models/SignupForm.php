@@ -1,12 +1,12 @@
 <?php
 namespace wocenter\backend\modules\passport\models;
 
+use wocenter\models\User;
+use wocenter\models\UserIdentity;
 use wocenter\backend\modules\account\models\Identity;
-use wocenter\backend\modules\account\models\UserIdentity;
 use wocenter\backend\modules\operate\models\Invite;
 use wocenter\backend\modules\operate\models\InviteLog;
 use wocenter\backend\modules\operate\models\InviteType;
-use wocenter\models\User;
 use wocenter\Wc;
 use Yii;
 

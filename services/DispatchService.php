@@ -10,6 +10,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\InvalidRouteException;
 use yii\helpers\Inflector;
+use yii\web\Application;
 
 /**
  * 调度服务类
@@ -164,7 +165,9 @@ class DispatchService extends Service
      */
     public function getIsRunningCoreModule()
     {
-        return Yii::$app->controller !== null && strncmp(Yii::$app->controller->module->className(), 'wocenter', 8) == 0;
+        return Yii::$app->controller !== null
+            && !Yii::$app->controller->module instanceOf Application
+            && strncmp(Yii::$app->controller->module->className(), 'wocenter', 8) == 0;
     }
 
     /**

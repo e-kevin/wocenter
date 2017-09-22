@@ -4,7 +4,7 @@ use wocenter\libs\Constants;
 use wocenter\backend\core\ActiveDataProvider;
 use wocenter\helpers\DateTimeHelper;
 use wocenter\models\User;
-use wocenter\models\UserSearch;
+use \wocenter\backend\modules\account\models\UserSearch;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\View;

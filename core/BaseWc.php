@@ -93,7 +93,6 @@ class BaseWc extends Object
         Yii::$app->getSession()->setFlash('error', $message);
     }
 
-
     /**
      * 设置提示闪存信息
      *
@@ -102,6 +101,38 @@ class BaseWc extends Object
     public static function setInfoMessage($message)
     {
         Yii::$app->getSession()->setFlash('info', $message);
+    }
+
+    /**
+     * 获取警告闪存信息
+     */
+    public static function getWarningMessage()
+    {
+        return Yii::$app->getSession()->remove('warning');
+    }
+
+    /**
+     * 获取成功闪存信息
+     */
+    public static function getSuccessMessage()
+    {
+        return Yii::$app->getSession()->remove('success');
+    }
+
+    /**
+     * 获取失败闪存信息
+     */
+    public static function getErrorMessage()
+    {
+        return Yii::$app->getSession()->remove('error');
+    }
+
+    /**
+     * 获取提示闪存信息
+     */
+    public static function getInfoMessage()
+    {
+        return Yii::$app->getSession()->remove('info');
     }
 
     /**

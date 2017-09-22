@@ -524,4 +524,16 @@ class StringHelper
         }
     }
 
+    /**
+     * 命名空间转换为绝对路径
+     *
+     * @param string $namespace
+     *
+     * @return bool|string
+     */
+    public static function ns2Path($namespace)
+    {
+        return Yii::getAlias('@' . str_replace('\\', '/', $namespace));
+    }
+
 }

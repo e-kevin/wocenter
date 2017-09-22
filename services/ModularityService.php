@@ -1,9 +1,8 @@
 <?php
 namespace wocenter\services;
 
-use wocenter\core\ModularityInfo;
 use wocenter\core\Service;
-use wocenter\models\Module;
+use wocenter\backend\modules\modularity\models\Module;
 use wocenter\Wc;
 use Yii;
 use yii\base\InvalidParamException;
@@ -13,8 +12,11 @@ use yii\web\NotFoundHttpException;
 /**
  * 管理系统模块类
  *
- * @property string $coreModulePath 系统核心模块目录
- * @property string $developerModulePath 开发者模块目录
+ * @property string $coreModuleNamespace 系统核心模块命名空间
+ * @property string $developerModuleNamespace 开发者模块命名空间
+ * @property array $appModuleNamespace 各应用默认的模块命名空间
+ * @property array $coreModules 当前应用的核心模块
+ *
  * @property \wocenter\services\modularity\LoadService $load 加载模块配置服务类
  *
  * @author E-Kevin <e-kevin@qq.com>
@@ -48,6 +50,11 @@ class ModularityService extends Service
     public $cacheDuration = 86400;
 
     /**
+     * @var string|array|callable|Module 模块类
+     */
+    public $moduleModel = '\wocenter\backend\modules\modularity\models\Module';
+
+    /**
      * @var boolean 开启调试模式
      */
     public $debug = false;
@@ -58,26 +65,38 @@ class ModularityService extends Service
     public $debugModules = ['account', 'menu', 'passport', 'modularity', 'system'];
 
     /**
-     * @var array 核心模块，必须安装
+     * @var array 各应用默认的核心模块
      */
-    public $coreModules = ['account', 'action', 'data', 'log', 'menu', 'modularity', 'notification', 'operate', 'passport', 'system'];
+    protected $_appCoreModules = [
+        'backend' => ['account', 'action', 'data', 'log', 'menu', 'modularity', 'notification', 'operate', 'system', 'passport'],
+        'frontend' => [],
+        'console' => [],
+    ];
 
     /**
-     * @var string|array|callable|Module 模块类
+     * 各应用默认的模块命名空间，包括：`系统核心模块命名空间`和`开发者模块命名空间`。
+     * 应用下包含的键值有：
+     * - `core`: 系统核心模块命名空间，加载模块时系统会自动转换该命名空间为模块目录并搜索其下所有有效的模块
+     * - `developer`: 开发者模块命名空间，加载模块时系统会自动转换该命名空间为模块目录并搜索其下所有有效的模块
+     *
+     * @var array
+     * @see getAppModuleNamespace()
+     * @see setAppModuleNamespace()
      */
-    public $moduleModel = '\wocenter\models\Module';
-
-    /**
-     * @var string 系统核心模块命名空间，加载模块时系统会自动转换该命名空间为模块目录并搜索其下所有有效的模块
-     * @see getCoreModulePath()
-     */
-    public $coreModuleNamespace = 'wocenter\backend\modules';
-
-    /**
-     * @var string 开发者模块命名空间，加载模块时系统会自动转换该命名空间为模块目录并搜索其下所有有效的模块
-     * @see getDeveloperModulePath()
-     */
-    public $developerModuleNamespace = 'backend\modules';
+    protected $_appModuleNamespace = [
+        'backend' => [
+            'core' => 'wocenter\backend\modules',
+            'developer' => 'backend\modules',
+        ],
+        'frontend' => [
+            'core' => 'wocenter\frontend\modules',
+            'developer' => 'frontend\modules',
+        ],
+        'console' => [
+            'core' => 'wocenter\console\modules',
+            'developer' => 'console\modules',
+        ],
+    ];
 
     /**
      * @inheritdoc
@@ -224,7 +243,7 @@ class ModularityService extends Service
                 $v['infoInstance']->isSystem =
                     $v['infoInstance']->isSystem
                     || $existModule['is_system']
-                    || in_array($v['id'], $this->coreModules);
+                    || in_array($v['id'], $this->getCoreModules());
                 // 系统模块不可卸载
                 $v['infoInstance']->canUninstall = !$v['infoInstance']->isSystem;
                 $v['status'] = $existModule['status'];
@@ -261,16 +280,19 @@ class ModularityService extends Service
         if ($allModules[$id] == null) {
             throw new NotFoundHttpException('模块不存在');
         }
-        /** @var Module $module */
-        $module = new $this->moduleModel();
+
         if ($onDataBase) {
+            /** @var Module $module */
+            $module = $this->moduleModel;
             if (($module = $module::find()->where(['id' => $id, 'app' => Yii::$app->id])->one()) == null) {
                 throw new NotFoundHttpException('模块暂未安装');
             }
             $module->infoInstance = $allModules[$id]['infoInstance'];
             // 系统模块及必须安装的模块不可卸载
-            $module->infoInstance->canUninstall = !$module->infoInstance->isSystem && !$module->is_system && !in_array($id, $this->coreModules);
+            $module->infoInstance->canUninstall = !$module->infoInstance->isSystem && !$module->is_system && !in_array($id, $this->getCoreModules());
         } else {
+            /** @var Module $module */
+            $module = new $this->moduleModel();
             $module->infoInstance = $allModules[$id]['infoInstance'];
             $module->infoInstance->canInstall = true;
             $module->id = $id;
@@ -298,26 +320,6 @@ class ModularityService extends Service
     }
 
     /**
-     * 根据系统核心模块命名空间自动获取模块目录
-     *
-     * @return boolean|string
-     */
-    public function getCoreModulePath()
-    {
-        return Yii::getAlias('@' . str_replace('\\', '/', $this->coreModuleNamespace));
-    }
-
-    /**
-     * 根据开发者模块命名空间自动获取模块目录
-     *
-     * @return boolean|string
-     */
-    public function getDeveloperModulePath()
-    {
-        return Yii::getAlias('@' . str_replace('\\', '/', $this->developerModuleNamespace));
-    }
-
-    /**
      * 加载模块配置服务类
      *
      * @return \wocenter\services\modularity\LoadService
@@ -329,7 +331,10 @@ class ModularityService extends Service
 
     /**
      * 删除缓存
-     * - 删除所有模块缓存
+     * - 删除当前应用模块缓存
+     * - 删除已安装模块缓存
+     * - 删除已安装模块的路由规则缓存
+     * - 删除未安装模块缓存
      */
     public function clearCache()
     {
@@ -355,6 +360,91 @@ class ModularityService extends Service
             self::CACHE_ALL_MODULE_CONFIG,
             false,
         ]);
+    }
+
+    /**
+     * 获取各应用默认的模块命名空间
+     *
+     * @return array
+     */
+    public function getAppModuleNamespace()
+    {
+        return $this->_appModuleNamespace;
+    }
+
+    /**
+     * 设置指定应用默认的模块命名空间
+     * 以更改`backend`应用模块命名空间为例，可能的配置如下：
+     * [
+     *  'backend' => [
+     *      'core' => 'wocenter/backend/module',
+     *      'developer' => 'backend/module',
+     *  ]
+     * ]
+     *
+     * @param array $config 命名空间配置
+     *
+     * @return array
+     */
+    public function setAppModuleNamespace($config)
+    {
+        $this->_appModuleNamespace = array_merge($this->_appModuleNamespace, $config);
+    }
+
+    /**
+     * 获取当前应用的系统核心模块命名空间
+     *
+     * @return string
+     */
+    public function getCoreModuleNamespace()
+    {
+        return $this->_appModuleNamespace[Yii::$app->id]['core'];
+    }
+
+    /**
+     * 获取当前应用的开发者模块命名空间
+     *
+     * @return string
+     */
+    public function getDeveloperModuleNamespace()
+    {
+        return $this->_appModuleNamespace[Yii::$app->id]['developer'];
+    }
+
+    /**
+     * 获取各应用默认的核心模块
+     *
+     * @return array
+     */
+    public function getAppCoreModules()
+    {
+        return $this->_appCoreModules;
+    }
+
+    /**
+     * 设置各应用默认的核心模块
+     * 以更改`frontend`应用核心模块为例，可能的配置如下：
+     * [
+     *  'frontend' => [
+     *      'passport',
+     *  ]
+     * ]
+     *
+     * @param array $appCoreModules 核心模块配置
+     */
+    public function setAppCoreModules($appCoreModules)
+    {
+        $this->_appCoreModules = array_merge($this->_appCoreModules, $appCoreModules);
+    }
+
+    /**
+     * 获取当前应用的核心模块
+     *
+     * @return array
+     */
+    public function getCoreModules()
+    {
+        return isset($this->_appCoreModules[Yii::$app->id]) ? $this->_appCoreModules[Yii::$app->id] : [];
     }
 
 }

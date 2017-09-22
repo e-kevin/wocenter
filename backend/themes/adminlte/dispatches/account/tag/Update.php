@@ -1,49 +1,51 @@
 <?php
-namespace wocenter\backend\themes\adminlte\dispatches\data\tag;
+namespace wocenter\backend\themes\adminlte\dispatches\account\tag;
 
 use wocenter\backend\modules\data\models\Tag;
 use wocenter\backend\themes\adminlte\components\Dispatch;
+use wocenter\traits\LoadModelTrait;
 use Yii;
 
 /**
- * Class Create
+ * Class Update
  *
- * @package wocenter\backend\themes\adminlte\dispatches\data\tag
+ * @package wocenter\backend\themes\adminlte\dispatches\account\tag
  */
-class Create extends Dispatch
+class Update extends Dispatch
 {
 
+    use LoadModelTrait;
+
     /**
-     * @param integer $pid
+     * @param integer $id
      *
      * @return string|\yii\web\Response
-     */
-    public function run($pid = 0)
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\web\NotFoundHttpException
+     */public function run($id)
     {
-        $model = new Tag();
+        /** @var Tag $model */
+        $model = $this->loadModel(Tag::className(), $id);
         $request = Yii::$app->getRequest();
-
-        $model->loadDefaultValues();
-        $model->parent_id = $pid;
 
         if ($request->getIsPost()) {
             if ($model->load($request->getBodyParams()) && $model->save()) {
                 $this->success($model->message, [
                     "/{$this->controller->getUniqueId()}",
-                    'pid' => $model->parent_id ?: null,
+                    'pid' => $model->parent_id
                 ]);
             } else {
                 $this->error($model->message);
             }
         }
 
-        $breadcrumbs = $model->getBreadcrumbs($pid, '标签列表', '/data/tag/index', [], [], ['新增标签']);
+        $breadcrumbs = $model->getBreadcrumbs($model->id, '标签列表', '/account/tag/index');
 
         return $this->assign([
             'model' => $model,
             'tagList' => $model->getTreeSelectList($model->getList()),
             'breadcrumbs' => $breadcrumbs,
-            'title' => end($breadcrumbs),
+            'title' => $breadcrumbs[$model->id]['label'],
         ])->display();
     }
 

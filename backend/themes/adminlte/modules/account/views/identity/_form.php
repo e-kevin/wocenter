@@ -6,7 +6,7 @@ use wonail\adminlte\widgets\Select2;
 
 /* @var $this yii\web\View */
 /* @var $form ActiveForm */
-/* @var $model wocenter\backend\modules\account\models\Identity */
+/* @var $model wocenter\models\Identity */
 /* @var $identityGroup array */
 /* @var $profiles array */
 /* @var $modifyCreatedAt string */

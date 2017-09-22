@@ -2,9 +2,9 @@
 namespace wocenter\backend\themes\adminlte\dispatches\passport\common;
 
 use wocenter\backend\modules\passport\events\validateAdministrator;
-use wocenter\backend\modules\passport\models\LoginForm;
 use wocenter\backend\themes\adminlte\components\Dispatch;
 use wocenter\helpers\UrlHelper;
+use wocenter\backend\modules\passport\models\LoginForm;
 use Yii;
 
 /**

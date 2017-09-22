@@ -20,10 +20,10 @@ use Yii;
  *
  * 行为方法属性
  * @property string $breadcrumbParentParam
- * @method TreeBehavior getChildrenIds()
- * @method TreeBehavior getParentIds()
- * @method TreeBehavior getTreeSelectList()
- * @method TreeBehavior getBreadcrumbs()
+ * @method array getChildrenIds()
+ * @method array getParentIds()
+ * @method array getTreeSelectList($list, $root = 0)
+ * @method array getBreadcrumbs($currentPid = 0, $defaultLabel = '列表', $url = '', $urlParams = [], $appendToTop = [], $append = [])
  */
 class Tag extends ActiveRecord
 {

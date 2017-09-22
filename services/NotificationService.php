@@ -74,6 +74,8 @@ class NotificationService extends Service
                 $toUid, 0, $notifyConfig['name'], Yii::t('wocenter/app', $notifyConfig['content_key'], $params)
             );
         }
+
+        return true;
     }
 
     /**

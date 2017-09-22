@@ -1,7 +1,6 @@
 <?php
 namespace wocenter\models;
 
-use wocenter\backend\modules\account\models\Identity;
 use Yii;
 use wocenter\core\ActiveRecord;
 

@@ -1,6 +1,7 @@
 <?php
 namespace wocenter\core;
 
+use wocenter\helpers\StringHelper;
 use wocenter\Wc;
 use Yii;
 use yii\base\Theme;
@@ -49,12 +50,11 @@ class View extends baseView
     protected function setPathMap()
     {
         // 开发者模块路径
-        $developerModulePath = Wc::$service->getModularity()->getDeveloperModulePath();
+        $developerModulePath = StringHelper::ns2Path(Wc::$service->getModularity()->getDeveloperModuleNamespace());
         // 系统核心模块路径
-        $coreModulePath = Wc::$service->getModularity()->getCoreModulePath();
+        $coreModulePath = StringHelper::ns2Path(Wc::$service->getModularity()->getCoreModuleNamespace());
         // 路径映射从上到下依次代表优先级由高到低，只要获取到有效映射则返回结果，否则继续往下获取
-        // TODO 是否则自定义[[Theme()]]类为已经获取到的映射文件做缓存？
-        // e.g. app以backend为例
+        // TODO 是否自定义[[Theme()]]类为已经获取到的映射文件做缓存？
         /**
          * 返回值请查看
          * [多模板系统](https://github.com/Wonail/wocenter_doc/blob/master/guide/zh-CN/mutil-theme.md#%E4%BC%98%E5%85%88%E7%BA%A7)
@@ -98,7 +98,7 @@ class View extends baseView
     }
 
     /**
-     * 获取开发者主题基础路径，默认为当前应用下的`themes`文件夹，如：`backend/themes`
+     * 获取开发者主题基础路径，默认为当前应用下的`themes`文件夹，如：`backend/themes`、`frontend/themes`
      *
      * @return string
      */
@@ -112,7 +112,7 @@ class View extends baseView
     }
 
     /**
-     * 设置开发者主题基础路径
+     * 设置开发者主题基础路径，通常用于需要跨应用渲染视图时使用
      *
      * @param string $alias 主题別名路径
      */

@@ -28,7 +28,7 @@ class ConfigService extends Service
      * @param string $key 配置键
      * @param string $defaultValue 默认值
      *
-     * @return boolean
+     * @return mixed
      */
     public function get($key, $defaultValue = null)
     {

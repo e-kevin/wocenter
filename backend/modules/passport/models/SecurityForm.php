@@ -1,7 +1,7 @@
 <?php
 namespace wocenter\backend\modules\passport\models;
 
-use wocenter\backend\core\Model;
+use wocenter\core\Model;
 use wocenter\libs\Utils;
 use wocenter\Wc;
 use wocenter\helpers\SecurityHelper;

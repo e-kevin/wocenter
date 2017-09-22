@@ -1,8 +1,8 @@
 <?php
 namespace wocenter\backend\themes\adminlte\dispatches\passport\common;
 
-use wocenter\backend\modules\passport\models\SignupForm;
 use wocenter\backend\themes\adminlte\components\Dispatch;
+use wocenter\backend\modules\passport\models\SignupForm;
 use Yii;
 
 /**

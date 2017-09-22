@@ -1,5 +1,5 @@
 <?php
-namespace wocenter\backend\modules\data\controllers;
+namespace wocenter\backend\modules\account\controllers;
 
 use wocenter\backend\actions\DeleteOne;
 use wocenter\backend\actions\MultipleDelete;

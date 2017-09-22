@@ -1,6 +1,6 @@
 <?php
 /* @var $this yii\web\View */
-/* @var $model wocenter\backend\modules\account\models\Identity */
+/* @var $model wocenter\models\Identity */
 /* @var $identityGroup array */
 /* @var $profiles array */
 

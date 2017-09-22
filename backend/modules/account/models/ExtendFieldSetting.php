@@ -29,9 +29,9 @@ use yii\helpers\ArrayHelper;
  * @property boolean $modifyCreatedAt
  * @property string $createdAtAttribute
  * @property string $updatedAtAttribute
- * @method ModifyTimestampBehavior createRules()
+ * @method ModifyTimestampBehavior createRules($rules)
  * @see ModifyTimestampBehavior::createRules()
- * @method ModifyTimestampBehavior createScenarios()
+ * @method ModifyTimestampBehavior createScenarios($scenarios)
  * @see ModifyTimestampBehavior::createScenarios()
  */
 class ExtendFieldSetting extends ActiveRecord

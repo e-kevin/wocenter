@@ -1,8 +1,8 @@
 <?php
 namespace wocenter\backend\modules\account\controllers;
 
-use wocenter\models\User;
 use wocenter\backend\core\Controller;
+use wocenter\models\User;
 use yii\filters\VerbFilter;
 
 /**

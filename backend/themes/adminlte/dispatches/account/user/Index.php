@@ -3,7 +3,7 @@ namespace wocenter\backend\themes\adminlte\dispatches\account\user;
 
 use wocenter\backend\themes\adminlte\components\Dispatch;
 use wocenter\models\User;
-use wocenter\models\UserSearch;
+use \wocenter\backend\modules\account\models\UserSearch;
 use Yii;
 
 /**

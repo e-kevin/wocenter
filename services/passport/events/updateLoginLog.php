@@ -1,9 +1,9 @@
 <?php
 namespace wocenter\services\passport\events;
 
+use wocenter\models\UserProfile;
 use wocenter\Wc;
 use wocenter\libs\Utils;
-use wocenter\models\UserProfile;
 use Yii;
 use yii\db\Expression;
 use yii\web\UserEvent;
@@ -24,7 +24,7 @@ class updateLoginLog
     public function run(UserEvent $event)
     {
         // 记录日志操作
-        Wc::$service->getLog()->create('login', UserProfile::tableName(), $event->identity->id, $event->identity->id);
+        Wc::$service->getLog()->create('login', UserProfile::tableName(), $event->identity->getId(), $event->identity->getId());
 
         // 更新登陆次数
         Yii::$app->getDb()->createCommand()->update(UserProfile::tableName(), [
@@ -32,7 +32,7 @@ class updateLoginLog
             'last_login_time' => time(),
             'last_location' => Utils::getIpLocation(),
             'login_count' => new Expression('login_count + 1'),
-        ], ['uid' => $event->identity->id])->execute();
+        ], ['uid' => $event->identity->getId()])->execute();
     }
 
 }

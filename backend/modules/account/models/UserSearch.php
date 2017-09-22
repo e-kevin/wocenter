@@ -1,13 +1,13 @@
 <?php
-namespace wocenter\models;
+namespace wocenter\backend\modules\account\models;
 
 use wocenter\backend\core\ActiveDataProvider;
-use wocenter\backend\modules\passport\models\PassportForm;
 use wocenter\libs\Constants;
+use wocenter\backend\modules\passport\models\PassportForm;
 use yii\base\InvalidParamException;
 
 /**
- * UserSearch represents the model behind the search form about `wocenter\models\User`.
+ * UserSearch represents the model behind the search form about `wocenter\backend\modules\account\models\User`.
  */
 class UserSearch extends User
 {

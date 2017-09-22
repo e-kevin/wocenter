@@ -21,7 +21,7 @@ use yii\helpers\ArrayHelper;
  * @property string $saveTimeZone
  *
  * 具体使用方法可参考以下文件
- * @see Identity
+ * @see \wocenter\models\Identity
  *
  * @author E-Kevin <e-kevin@qq.com>
  */

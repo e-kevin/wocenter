@@ -86,7 +86,8 @@ class VerifyService extends Service
         }
         /** @var Verify $class */
         $class = $this->verifyModel;
-        if ($this->generate($identity, $class::$typeList[$type])) {
+        $typeList = $class::$typeList;
+        if ($this->generate($identity, $typeList[$type])) {
             // 发送验证码至相应终端
             switch ($type) {
                 case 'mobile':

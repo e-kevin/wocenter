@@ -7,7 +7,7 @@ $captchaAction = '/passport/security/captcha'; // 验证码路由地址
 return [
     'components' => [
         'user' => [
-            'identityClass' => '\wocenter\models\User',
+            'identityClass' => '\wocenter\backend\modules\account\models\User',
             'loginUrl' => ['/passport/common/login'],
         ],
         'errorHandler' => [

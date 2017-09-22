@@ -1,8 +1,8 @@
 <?php
 namespace wocenter\backend\modules\passport\models;
 
-use wocenter\backend\core\Model;
-use wocenter\backend\modules\account\models\UserIdentity;
+use wocenter\core\Model;
+use wocenter\models\UserIdentity;
 
 /**
  * 注册流程 - 修改头像

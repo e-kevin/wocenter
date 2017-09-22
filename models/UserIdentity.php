@@ -1,17 +1,16 @@
 <?php
-namespace wocenter\backend\modules\account\models;
+namespace wocenter\models;
 
+use wocenter\backend\modules\account\models\IdentityConfig;
 use wocenter\backend\modules\data\models\TagUser;
+use wocenter\backend\modules\data\models\UserScoreType;
 use wocenter\backend\modules\operate\models\RankUser;
+use wocenter\backend\modules\log\models\UserScoreLog;
 use wocenter\backend\modules\passport\models\LoginForm;
 use wocenter\core\ActiveRecord;
-use wocenter\backend\modules\data\models\UserScoreType;
-use wocenter\backend\modules\log\models\UserScoreLog;
 use wocenter\Wc;
 use wocenter\helpers\DateTimeHelper;
 use wocenter\libs\Utils;
-use wocenter\models\User;
-use wocenter\models\UserProfile;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -279,7 +278,8 @@ class UserIdentity extends ActiveRecord
                         'action' => $parseScore['operator'],
                         'value' => $parseScore['score'],
                         'finally_value' => isset($userScore[$scoreTypeField]) ? $userScore[$scoreTypeField] + $parseScore['score'] : 0,
-                        'remark' => $remark . ' 【' . $scoreInfos[$scoreTypeField]['name'] . $parseScore['scoreFormat'] . $scoreInfos[$scoreTypeField]['unit'] . '】',
+                        'remark' => $remark . ' 【' . $scoreInfos[$scoreTypeField]['name']
+                            . $parseScore['scoreFormat'] . $scoreInfos[$scoreTypeField]['unit'] . '】',
                         'record_id' => $this->uid,
                         'created_at' => time(),
                         'model' => self::tableName(),
@@ -291,7 +291,8 @@ class UserIdentity extends ActiveRecord
             if (!empty($update)) {
                 /* @var $class User */
                 $class = Yii::$app->getUser()->identityClass;
-                $res = Yii::$app->getDb()->createCommand('UPDATE ' . UserProfile::tableName() . ' SET ' . implode(',', $update) . ' WHERE `uid`=:uid AND `status`=:status', [
+                $res = Yii::$app->getDb()->createCommand('UPDATE ' . UserProfile::tableName() . ' SET '
+                    . implode(',', $update) . ' WHERE `uid`=:uid AND `status`=:status', [
                     ':uid' => $this->uid,
                     ':status' => $class::STATUS_ACTIVE,
                 ])->execute();

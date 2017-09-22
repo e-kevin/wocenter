@@ -1,12 +1,13 @@
 <?php
 namespace wocenter\backend\modules\passport\models;
 
-use wocenter\backend\core\Model;
-use wocenter\backend\modules\data\models\Tag;
+use wocenter\core\Model;
 use wocenter\backend\modules\data\models\TagUser;
-use wocenter\backend\modules\account\models\UserIdentity;
+use wocenter\models\UserIdentity;
+use wocenter\backend\modules\data\models\Tag;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\helpers\ArrayHelper;
 
 /**
  * 注册流程 - 填写标签
@@ -45,7 +46,7 @@ class FlowTagForm extends Model
     private $_tagIds = [];
 
     /**
-     * @var TagUser 用户已经设置的标签数据
+     * @var TagUser[] 用户已经设置的标签数据
      */
     private $_tagUser;
 
@@ -83,7 +84,7 @@ class FlowTagForm extends Model
         $this->_tagUser = TagUser::find()->where(['uid' => $this->uid])->indexby('tag_id')->all() ? : [];
         // 设置标签默认值
         if (!empty($this->_tagUser)) {
-            $this->tag = $this->_userTags = \yii\helpers\ArrayHelper::getColumn($this->_tagUser, 'tag_id');
+            $this->tag = $this->_userTags = ArrayHelper::getColumn($this->_tagUser, 'tag_id');
         }
     }
 

@@ -93,7 +93,7 @@ class MenuService extends Service
         // 获取数据库里的所有模块菜单数据，不包括用户自建数据
         $menuInDatabase = $this->getMenus('backend', [
             'created_type' => $menuModel::CREATE_TYPE_BY_MODULE,
-        ], false);
+        ]);
         $updateDbMenus = $this->_convertMenuData2Db($allInstalledMenuConfig, 0, $menuInDatabase);
         $this->_fixMenuData($menuInDatabase, $updateDbMenus);
 
@@ -233,6 +233,7 @@ class MenuService extends Service
         foreach ($menuInDatabase as $row) {
             // 配置数据里已删除，则删除数据库对应数据
             if (
+                isset($arr['menuConfig']) &&
                 !ArrayHelper::listSearch($arr['menuConfig'], [
                     'name' => $row['name'],
                     'modularity' => $row['modularity'],

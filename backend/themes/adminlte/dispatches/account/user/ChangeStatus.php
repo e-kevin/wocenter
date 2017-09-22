@@ -1,9 +1,9 @@
 <?php
 namespace wocenter\backend\themes\adminlte\dispatches\account\user;
 
-use wocenter\backend\modules\passport\models\SecurityForm;
 use wocenter\backend\themes\adminlte\components\Dispatch;
 use wocenter\models\User;
+use wocenter\backend\modules\passport\models\SecurityForm;
 use Yii;
 
 /**

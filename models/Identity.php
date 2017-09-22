@@ -1,9 +1,12 @@
 <?php
-namespace wocenter\backend\modules\account\models;
+namespace wocenter\models;
 
+use wocenter\backend\modules\account\models\ExtendProfile;
+use wocenter\backend\modules\account\models\IdentityConfig;
+use wocenter\backend\modules\account\models\IdentityGroup;
+use wocenter\backend\modules\account\models\IdentityProfile;
 use wocenter\behaviors\ModifyTimestampBehavior;
 use wocenter\core\ActiveRecord;
-use wocenter\models\UserProfile;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -36,9 +39,9 @@ use yii\helpers\ArrayHelper;
  * @property boolean $modifyCreatedAt
  * @property string $createdAtAttribute
  * @property string $updatedAtAttribute
- * @method ModifyTimestampBehavior createRules()
+ * @method ModifyTimestampBehavior createRules($rules)
  * @see ModifyTimestampBehavior::createRules()
- * @method ModifyTimestampBehavior createScenarios()
+ * @method ModifyTimestampBehavior createScenarios($scenarios)
  * @see ModifyTimestampBehavior::createScenarios()
  */
 class Identity extends ActiveRecord

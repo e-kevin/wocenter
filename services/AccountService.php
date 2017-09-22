@@ -2,15 +2,15 @@
 namespace wocenter\services;
 
 use wocenter\backend\modules\action\models\Action;
-use wocenter\backend\modules\data\models\UserScoreType;
 use wocenter\backend\modules\log\models\ActionLog;
+use wocenter\backend\modules\data\models\UserScoreType;
 use wocenter\backend\modules\log\models\UserScoreLog;
-use wocenter\core\Service;
-use wocenter\helpers\DateTimeHelper;
-use wocenter\libs\PinYin;
 use wocenter\models\Follow;
 use wocenter\models\User;
 use wocenter\models\UserProfile;
+use wocenter\core\Service;
+use wocenter\helpers\DateTimeHelper;
+use wocenter\libs\PinYin;
 use wocenter\Wc;
 use Yii;
 
@@ -21,6 +21,7 @@ use Yii;
  */
 class AccountService extends Service
 {
+
     /**
      * @var string|array|callable|User 用户模型类
      */
@@ -228,7 +229,7 @@ class AccountService extends Service
     public function queryUser($fields, $uid)
     {
         // 默认获取自己的资料
-        $uid = $uid ?: Yii::$app->getUser()->identity->id;
+        $uid = $uid ?: Yii::$app->getUser()->identity->getId();
         if (!$uid) {
             return null;
         }

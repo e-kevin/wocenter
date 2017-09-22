@@ -1,7 +1,7 @@
 <?php
 namespace wocenter\backend\modules\account\events;
 
-use wocenter\backend\modules\account\models\Identity;
+use wocenter\models\Identity;
 use wocenter\backend\modules\account\models\IdentityProfile;
 use Yii;
 use yii\db\AfterSaveEvent;

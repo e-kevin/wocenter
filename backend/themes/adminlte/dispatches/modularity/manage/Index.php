@@ -2,7 +2,7 @@
 namespace wocenter\backend\themes\adminlte\dispatches\modularity\manage;
 
 use wocenter\backend\themes\adminlte\components\Dispatch;
-use wocenter\models\Module;
+use wocenter\backend\modules\modularity\models\Module;
 use wocenter\Wc;
 use Yii;
 use yii\data\ArrayDataProvider;
@@ -16,10 +16,15 @@ class Index extends Dispatch
 {
 
     /**
+     * @param string $app 应用ID
+     *
      * @return string|\yii\web\Response
      */
-    public function run()
+    public function run($app = 'backend')
     {
+        $oldAppId = Yii::$app->id;
+        Yii::$app->id = $app;
+
         $dataProvider = new ArrayDataProvider([
             'allModels' => Wc::$service->getModularity()->getModuleList(),
             'key' => 'id',
@@ -28,9 +33,12 @@ class Index extends Dispatch
             ],
         ]);
 
+        Yii::$app->id = $oldAppId;
+
         return $this->display('index', [
             'dataProvider' => $dataProvider,
             'runModuleList' => (new Module())->getRunModuleList(),
+            'app' => $app,
         ]);
     }
 

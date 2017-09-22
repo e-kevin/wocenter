@@ -1,11 +1,12 @@
 <?php
-namespace wocenter\models;
+namespace wocenter\backend\modules\account\models;
 
 use wocenter\backend\core\ActiveDataProvider;
+use wocenter\models\User;
 use yii\db\ActiveQuery;
 
 /**
- * BackendUserSearch represents the model behind the search form about `wocenter\models\BackendUser`.
+ * BackendUserSearch represents the model behind the search form about `wocenter\backend\modules\account\models\BackendUser`.
  */
 class BackendUserSearch extends BackendUser
 {

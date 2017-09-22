@@ -1,7 +1,7 @@
 <?php
 namespace wocenter\backend\modules\passport;
 
-use wocenter\backend\core\Modularity;
+use wocenter\core\Modularity;
 
 class Module extends Modularity
 {

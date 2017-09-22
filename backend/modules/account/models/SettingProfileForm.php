@@ -1,6 +1,9 @@
 <?php
 namespace wocenter\backend\modules\account\models;
 
+use wocenter\models\Identity;
+use yii\db\ActiveQuery;
+
 /**
  * 扩展档案配置表单模型
  */
@@ -58,7 +61,7 @@ class SettingProfileForm extends SettingForm
     {
         $fieldList = [];
         $extendFields = $this->identityModel->getProfiles()->select('id, profile_name')->with([
-            'extendFieldSettings' => function ($query) {
+            'extendFieldSettings' => function (ActiveQuery $query) {
                 $query->select('id, field_name, profile_id')->indexBy('id');
             },
         ])->asArray()->indexBy('id')->all();

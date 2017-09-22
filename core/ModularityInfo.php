@@ -76,9 +76,9 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
     public $bootstrap = false;
 
     /**
-     * @var boolean 模块类型
+     * @var integer 模块类型
      */
-    private $_moduleType = false;
+    private $_moduleType;
 
     /**
      * @param string $id 模块唯一标识
@@ -151,7 +151,7 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
      */
     public function install()
     {
-
+        return true;
     }
 
     /**
@@ -187,7 +187,7 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
      */
     public function upgrade()
     {
-
+        return true;
     }
 
 }

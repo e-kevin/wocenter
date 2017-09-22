@@ -1,9 +1,10 @@
 <?php
-namespace wocenter\models;
+namespace wocenter\backend\modules\account\models;
 
 use wocenter\core\ActiveRecord;
 use wocenter\helpers\ArrayHelper;
 use wocenter\helpers\StringHelper;
+use wocenter\models\User;
 use Yii;
 
 /**

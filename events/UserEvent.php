@@ -4,7 +4,7 @@ namespace wocenter\events;
 use wocenter\core\ActiveRecord;
 use wocenter\core\Model;
 use wocenter\interfaces\IdentityInterface;
-use wocenter\models\User;
+use wocenter\backend\modules\account\models\User as BackendUser;
 
 /**
  * Class UserEvent
@@ -20,7 +20,7 @@ class UserEvent extends \yii\web\UserEvent
     public $sender;
 
     /**
-     * @var IdentityInterface|User 用户对象类
+     * @var IdentityInterface|BackendUser 用户对象类
      */
     public $identity;
 }

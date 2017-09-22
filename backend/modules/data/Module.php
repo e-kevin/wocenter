@@ -1,7 +1,7 @@
 <?php
 namespace wocenter\backend\modules\data;
 
-use wocenter\backend\core\Modularity;
+use wocenter\core\Modularity;
 
 class Module extends Modularity
 {

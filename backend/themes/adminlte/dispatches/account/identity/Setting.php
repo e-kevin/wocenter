@@ -1,7 +1,7 @@
 <?php
 namespace wocenter\backend\themes\adminlte\dispatches\account\identity;
 
-use wocenter\backend\modules\account\models\Identity;
+use wocenter\models\Identity;
 use wocenter\backend\modules\account\models\IdentityConfig;
 use wocenter\backend\modules\account\models\SettingProfileForm;
 use wocenter\backend\modules\account\models\SettingRankForm;

@@ -4,7 +4,7 @@ namespace wocenter\backend\themes\adminlte\dispatches\account\user;
 use wocenter\backend\themes\adminlte\components\Dispatch;
 use wocenter\helpers\ArrayHelper;
 use wocenter\libs\Constants;
-use wocenter\models\UserSearch;
+use \wocenter\backend\modules\account\models\UserSearch;
 use wocenter\Wc;
 use Yii;
 use yii\base\InvalidParamException;

@@ -1,13 +1,13 @@
 <?php
 namespace wocenter\backend\themes\adminlte\dispatches\passport\common;
 
-use wocenter\backend\modules\account\models\UserIdentity;
+use wocenter\models\UserIdentity;
+use wocenter\backend\themes\adminlte\components\Dispatch;
+use wocenter\models\User;
 use wocenter\backend\modules\passport\models\FlowAvatarForm;
 use wocenter\backend\modules\passport\models\FlowProfileForm;
 use wocenter\backend\modules\passport\models\FlowTagForm;
 use wocenter\backend\modules\passport\models\LoginForm;
-use wocenter\backend\themes\adminlte\components\Dispatch;
-use wocenter\models\User;
 use wocenter\Wc;
 use Yii;
 use yii\web\NotFoundHttpException;

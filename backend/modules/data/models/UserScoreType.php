@@ -117,7 +117,7 @@ class UserScoreType extends ActiveRecord
      */
     public function getUserScoreLogs()
     {
-        return $this->hasMany(UserScoreLog::className(), ['type' => 'id']);
+        return $this->hasMany(\wocenter\backend\modules\log\models\UserScoreLog::className(), ['type' => 'id']);
     }
 
 }

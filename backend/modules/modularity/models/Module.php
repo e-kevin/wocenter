@@ -1,5 +1,5 @@
 <?php
-namespace wocenter\models;
+namespace wocenter\backend\modules\modularity\models;
 
 use wocenter\core\ActiveRecord;
 use wocenter\Wc;
@@ -58,6 +58,7 @@ class Module extends ActiveRecord
             [['is_system', 'status', 'run_module'], 'integer'],
             [['id'], 'string', 'max' => 64],
             [['app'], 'string', 'max' => 15],
+            [['app'], 'in', 'range' => array_keys(Yii::$app->params['appList'])],
             [['run_module'], 'in', 'range' => array_keys($this->getValidRunModuleList())],
         ];
     }

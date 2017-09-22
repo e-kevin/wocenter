@@ -2,6 +2,7 @@
 namespace wocenter\backend\modules\account\models;
 
 use wocenter\core\ActiveRecord;
+use wocenter\models\Identity;
 use Yii;
 
 /**

@@ -1,8 +1,8 @@
 <?php
 namespace wocenter\backend\themes\adminlte\dispatches\account\admin;
 
+use wocenter\backend\modules\account\models\BackendUserSearch;
 use wocenter\backend\themes\adminlte\components\Dispatch;
-use wocenter\models\BackendUserSearch;
 use Yii;
 
 /**

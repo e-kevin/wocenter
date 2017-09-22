@@ -1,17 +1,17 @@
 <?php
 namespace wocenter\services\passport;
 
-use wocenter\backend\modules\account\models\UserIdentity;
+use wocenter\core\Service;
+use wocenter\libs\Utils;
+use wocenter\models\UserIdentity;
+use wocenter\models\UserProfile;
 use wocenter\backend\modules\passport\models\LoginForm;
 use wocenter\backend\modules\passport\models\SecurityForm;
 use wocenter\backend\modules\passport\models\SignupForm;
-use wocenter\core\Service;
-use wocenter\libs\Utils;
 use wocenter\services\passport\events\updateLoginLog;
 use wocenter\Wc;
 use wocenter\helpers\StringHelper;
 use wocenter\models\User;
-use wocenter\models\UserProfile;
 use Yii;
 use yii\base\InvalidValueException;
 use yii\helpers\Url;
@@ -391,7 +391,7 @@ class UcenterService extends Service
         $class = Yii::$app->getUser()->identityClass;
         $email = StringHelper::randString(10) . '@wocenter.com';
         if ($class::findByIdentity($email)) {
-            $this->_randEmail();
+            return $this->_randEmail();
         } else {
             return $email;
         }
@@ -408,7 +408,7 @@ class UcenterService extends Service
         $class = Yii::$app->getUser()->identityClass;
         $username = StringHelper::randString(10);
         if ($class::findByIdentity($username)) {
-            $this->_randUsername();
+            return $this->_randUsername();
         } else {
             return $username;
         }

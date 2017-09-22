@@ -3,6 +3,7 @@ namespace wocenter\backend\modules\account\models;
 
 use wocenter\behaviors\ModifyTimestampBehavior;
 use wocenter\core\ActiveRecord;
+use wocenter\models\Identity;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -19,9 +20,9 @@ use yii\helpers\ArrayHelper;
  * @property boolean $modifyCreatedAt
  * @property string $createdAtAttribute
  * @property string $updatedAtAttribute
- * @method ModifyTimestampBehavior createRules()
+ * @method ModifyTimestampBehavior createRules($rules)
  * @see ModifyTimestampBehavior::createRules()
- * @method ModifyTimestampBehavior createScenarios()
+ * @method ModifyTimestampBehavior createScenarios($scenarios)
  * @see ModifyTimestampBehavior::createScenarios()
  */
 class IdentityGroup extends ActiveRecord

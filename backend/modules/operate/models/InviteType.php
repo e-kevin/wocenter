@@ -4,7 +4,7 @@ namespace wocenter\backend\modules\operate\models;
 use wocenter\backend\modules\data\models\UserScoreType;
 use wocenter\core\ActiveRecord;
 use wocenter\helpers\ArrayHelper;
-use wocenter\backend\modules\account\models\Identity;
+use wocenter\models\Identity;
 use wocenter\helpers\DateTimeHelper;
 use wocenter\Wc;
 use Yii;

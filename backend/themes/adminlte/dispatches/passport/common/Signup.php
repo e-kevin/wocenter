@@ -2,8 +2,8 @@
 namespace wocenter\backend\themes\adminlte\dispatches\passport\common;
 
 use wocenter\backend\modules\operate\models\Invite;
-use wocenter\backend\modules\passport\models\SignupForm;
 use wocenter\backend\themes\adminlte\components\Dispatch;
+use wocenter\backend\modules\passport\models\SignupForm;
 use wocenter\Wc;
 use Yii;
 use yii\helpers\Url;

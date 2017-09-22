@@ -3,7 +3,7 @@ use wonail\adminlte\widgets\ActiveForm;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model \wocenter\models\Module */
+/* @var $model \wocenter\backend\modules\modularity\models\Module */
 /* @var $form ActiveForm */
 /* @var $validRunModuleList array */
 

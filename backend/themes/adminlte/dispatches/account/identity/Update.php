@@ -3,7 +3,7 @@ namespace wocenter\backend\themes\adminlte\dispatches\account\identity;
 
 use wocenter\backend\modules\account\events\operateIdentityProfiles;
 use wocenter\backend\modules\account\models\ExtendProfile;
-use wocenter\backend\modules\account\models\Identity;
+use wocenter\models\Identity;
 use wocenter\backend\modules\account\models\IdentityGroup;
 use wocenter\backend\themes\adminlte\components\Dispatch;
 use wocenter\traits\LoadModelTrait;

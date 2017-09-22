@@ -1,11 +1,11 @@
 <?php
 namespace wocenter\backend\modules\operate\models;
 
-use wocenter\backend\modules\account\models\Identity;
+use wocenter\models\Identity;
+use wocenter\models\User;
 use wocenter\behaviors\ModifyTimestampBehavior;
 use wocenter\core\ActiveRecord;
 use wocenter\Wc;
-use wocenter\models\User;
 use yii\helpers\ArrayHelper;
 
 /**

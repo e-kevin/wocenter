@@ -98,7 +98,7 @@ class TreeBehavior extends Behavior
     public function getTreeSelectList(array $list, $root = 0)
     {
         $list = ArrayHelper::listToTree($list, $this->pkField, $this->parentField, '_child', $root);
-        $list = $this->_toFormatTree($list, 0, $this->showTitleField);
+        $list = $this->_toFormatTree($list, 0);
 
         return $this->buildTreeOptionsToArray($list);
     }
@@ -164,7 +164,7 @@ class TreeBehavior extends Behavior
                 $tmp_ary = $val['_child'];
                 unset($val['_child']);
                 array_push($formatTree, $val);
-                $formatTree = array_merge($formatTree, $this->_toFormatTree($tmp_ary, $level + 1, $this->showTitleField));
+                $formatTree = array_merge($formatTree, $this->_toFormatTree($tmp_ary, $level + 1));
             }
         }
 
