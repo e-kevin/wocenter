@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\traits;
 
 /**
@@ -8,11 +9,13 @@ namespace wocenter\traits;
  */
 trait ParseRulesTrait
 {
-
+    
     /**
      * 解析验证规则
+     *
      * @param string $rules 验证规则 e.g. required;string,max:30;string,length:1-3
      * @param string $field 需要验证的字段
+     *
      * @return array e.g.
      * [
      *      [$field, 'required'],
@@ -45,8 +48,8 @@ trait ParseRulesTrait
                 }
             }
         }
-
+        
         return $value;
     }
-
+    
 }

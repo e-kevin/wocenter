@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\libs;
 
 /**
@@ -7,7 +8,7 @@ namespace wocenter\libs;
 
 class PinYin
 {
-
+    
     /**
      * 返回中文拼音
      */
@@ -57,7 +58,7 @@ class PinYin
             "|-11052|-11045|-11041|-11038|-11024|-11020|-11019|-11018|-11014|-10838|-10832|-10815|-10800|-10790|-10780" .
             "|-10764|-10587|-10544|-10533|-10519|-10331|-10329|-10328|-10322|-10315|-10309|-10307|-10296|-10281|-10274" .
             "|-10270|-10262|-10260|-10256|-10254";
-
+        
         $_TDataKey = explode('|', $_DataKey);
         $_TDataValue = explode('|', $_DataValue);
         $_Data = array_combine($_TDataKey, $_TDataValue);
@@ -74,10 +75,10 @@ class PinYin
             }
             $_Res .= self::_Pinyin($_P, $_Data);
         }
-
+        
         return preg_replace("/[^a-z0-9]*/", '', $_Res);
     }
-
+    
     private static function _Pinyin($_Num, $_Data)
     {
         if ($_Num > 0 && $_Num < 160) {
@@ -89,11 +90,11 @@ class PinYin
                 if ($v <= $_Num)
                     break;
             }
-
+            
             return $k;
         }
     }
-
+    
     private static function _U2_Utf8_Gb($_C)
     {
         $_String = '';
@@ -112,8 +113,8 @@ class PinYin
             $_String .= chr(0x80 | $_C >> 6 & 0x3F);
             $_String .= chr(0x80 | $_C & 0x3F);
         }
-
+        
         return iconv('UTF-8', 'GB2312', $_String);
     }
-
+    
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\libs;
 
 use yii\base\InvalidConfigException;
@@ -12,7 +13,7 @@ use yii\web\NotFoundHttpException;
  */
 class Tree
 {
-
+    
     /**
      * 获取指定模型指定主键的所有父级ID数据
      *
@@ -42,14 +43,14 @@ class Tree
             $method = __METHOD__ . '()';
             throw new NotFoundHttpException("{$modelClass::className()}()必须先通过`{$pkField}`主键获取相关数据后才能执行操作：{$method}");
         }
-
+        
         if (!$isObj) {
             $model = $modelClass::findOne([$pkField => $pk]);
         }
         if (!isset($model->$parentField)) {
             throw new InvalidConfigException("The `{$parentField}` property of model class: `{$modelClass::className()}` does not exists");
         }
-
+        
         $_parentIds = [];
         while ($model !== null) {
             if ($model->$parentField !== $rootId) {
@@ -59,10 +60,10 @@ class Tree
                 $model = null;
             }
         }
-
+        
         return $_parentIds;
     }
-
+    
     /**
      * 获取指定模型指定主键的所有子类ID数据
      *
@@ -89,20 +90,20 @@ class Tree
             $method = __METHOD__ . '()';
             throw new NotFoundHttpException("{$modelClass::className()}()必须先通过`{$pkField}`主键获取相关数据后才能执行操作：{$method}");
         }
-
+        
         $_childrenIds = [];
         $children = $modelClass::findAll([$parentField => $pk]);
         while (count($children) > 0) {
             $first = array_shift($children);
             $_childrenIds[] = $first->$pkField;
-
+            
             $next = $modelClass::findAll([$parentField => $first->$pkField]);
             if (count($next) > 0) {
                 $children = array_merge($children, $next);
             }
         }
-
+        
         return $_childrenIds;
     }
-
+    
 }

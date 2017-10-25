@@ -175,7 +175,7 @@ return [
     'The email has been registered.' => '该邮箱已经注册，请更换其他',
     'Please activate your account.' => '请激活账户后再登录系统',
     // actionService
-    'Frequent operation: Please do this after {next_action_time}.' => '操作频繁：请在 {datetime} 后再执行该操作～',
+    'Frequent operation: Please do this after {next_action_time}.' => '操作频繁：请在 {next_action_time} 后再执行该操作～',
     'In {next_action_time} you can also perform the operation {surplus_number} times!' =>
         '在 {next_action_time} 内你还可以执行该操作 {surplus_number} 次！',
     'Action limit indicator: {action} does not exist.' => '行为限制标识：{action} 不存在',

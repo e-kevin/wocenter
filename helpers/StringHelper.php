@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\helpers;
 
 use wocenter\libs\Constants;
@@ -12,7 +13,7 @@ use yii\helpers\Html;
  */
 class StringHelper
 {
-
+    
     /**
      * 字符串转换为数组，主要用于把分隔符调整到第二个参数
      *
@@ -25,7 +26,7 @@ class StringHelper
     {
         return explode($glue, $str);
     }
-
+    
     /**
      * 转换数字ID和字符串形式ID串为数组，并过滤重复和空的数据
      *
@@ -38,19 +39,19 @@ class StringHelper
         if (empty($ids)) {
             return [];
         }
-
+        
         // 转换数字ID和字符串形式ID串为数组
         if (is_numeric($ids)) {
             $ids = [$ids];
         } else if (is_string($ids)) {
             $ids = self::stringToArray($ids);
         }
-
+        
         $id_array = array_unique(array_filter(array_map('intval', $ids)));
-
+        
         return 0 == count($id_array) ? [] : $id_array;
     }
-
+    
     /**
      * 解析[下拉框,单选框,多选框]类型额外配置值
      * 格式:
@@ -76,10 +77,10 @@ class StringHelper
         } else {
             $value = $array;
         }
-
+        
         return $value;
     }
-
+    
     /**
      * 获取字符串首字母
      *
@@ -144,10 +145,10 @@ class StringHelper
             return "Y";
         if ($asc >= -11055 and $asc <= -10247)
             return "Z";
-
+        
         return '#';
     }
-
+    
     /**
      * 截取中文字符串
      *
@@ -177,10 +178,10 @@ class StringHelper
         if (strlen($slice) < strlen($str)) {
             $fix = '...';
         }
-
+        
         return $suffix ? $slice . $fix : $slice;
     }
-
+    
     /**
      * 检查字符串是否是UTF8编码
      *
@@ -219,10 +220,10 @@ class StringHelper
                 }
             }
         }
-
+        
         return true;
     }
-
+    
     /**
      * 产生随机字串，可用来自动生成密码
      * 默认长度6位 字母和数字混合 支持中文
@@ -275,10 +276,10 @@ class StringHelper
                 $str .= self::mbSubstr($chars, floor(mt_rand(0, mb_strlen($chars, 'utf-8') - 1)), 1, 'utf-8', false);
             }
         }
-
+        
         return $str;
     }
-
+    
     /**
      * 生成一定数量的随机数，并且不重复
      *
@@ -313,10 +314,10 @@ class StringHelper
             $rand[] = self::randString($length, $type);
         }
         $rand = array_slice(array_unique($rand), 0, $number);
-
+        
         return $rand;
     }
-
+    
     /**
      * 带格式生成随机字符,支持批量生成,但可能存在重复
      *
@@ -354,10 +355,10 @@ class StringHelper
             }
             $str[] = $strtemp;
         }
-
+        
         return $number == 1 ? $strtemp : $str;
     }
-
+    
     /**
      * 获取一定范围内的随机数字 位数不足补零
      *
@@ -370,8 +371,8 @@ class StringHelper
     {
         return sprintf("%0" . strlen($max) . "d", mt_rand($min, $max));
     }
-
-
+    
+    
     /**
      * 自动转换字符集 支持数组转换
      *
@@ -404,13 +405,13 @@ class StringHelper
                 if ($key != $_key)
                     unset($string[$key]);
             }
-
+            
             return $string;
         } else {
             return $string;
         }
     }
-
+    
     /**
      * 截取含有 html标签的字符串
      *
@@ -519,11 +520,11 @@ class StringHelper
             return $result . '...';
         } else {
             $replace = '<br />' . Html::a('<i class="glyphicon glyphicon-hand-right"></i>' . Yii::t('app', 'Unfinished,continue reading') . '>>', $url);
-
+            
             return $result . '...' . $replace;
         }
     }
-
+    
     /**
      * 命名空间转换为绝对路径
      *
@@ -535,5 +536,5 @@ class StringHelper
     {
         return Yii::getAlias('@' . str_replace('\\', '/', $namespace));
     }
-
+    
 }

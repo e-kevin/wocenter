@@ -1,8 +1,8 @@
 <?php
+
 namespace wocenter\services;
 
 use wocenter\core\Service;
-use Yii;
 
 /**
  * 系统服务类
@@ -13,7 +13,7 @@ use Yii;
  */
 class SystemService extends Service
 {
-
+    
     /**
      * @inheritdoc
      */
@@ -21,15 +21,15 @@ class SystemService extends Service
     {
         return 'system';
     }
-
+    
     /**
      * 系统配置服务类
      *
-     * @return \wocenter\services\system\ConfigService
+     * @return \wocenter\services\system\ConfigService|Service
      */
     public function getConfig()
     {
         return $this->getSubService('config');
     }
-
+    
 }

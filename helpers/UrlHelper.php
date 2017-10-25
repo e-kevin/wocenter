@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\helpers;
 
 /**
@@ -8,7 +9,7 @@ namespace wocenter\helpers;
  */
 class UrlHelper
 {
-
+    
     /**
      * 将URL中的参数取出来放到数组里
      *
@@ -33,10 +34,10 @@ class UrlHelper
                 $params[$item[0]] = $item[1];
             }
         }
-
+        
         return $params;
     }
-
+    
     /**
      * 将 参数数组 变回 字符串形式的参数格式
      *
@@ -56,10 +57,10 @@ class UrlHelper
                 $tmp[] = "{$name}={$value}";
             }
         }
-
+        
         return implode('&', $tmp);
     }
-
+    
     /**
      * 删除url地址里指定的参数
      *
@@ -88,10 +89,10 @@ class UrlHelper
         } else {
             $parseUrl['query'] = '';
         }
-
+        
         return $format ? ($parseUrl['path'] . $parseUrl['query']) : $parseUrl;
     }
-
+    
     /**
      * 解析url地址，返回的query请求参数为数组格式
      *
@@ -110,8 +111,8 @@ class UrlHelper
             }
             $parseUrl['query'] = self::convertUrlQuery($parseUrl['query']);
         }
-
+        
         return $parseUrl;
     }
-
+    
 }

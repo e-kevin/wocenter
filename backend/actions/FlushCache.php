@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\backend\actions;
 
 use RecursiveDirectoryIterator;
@@ -17,12 +18,12 @@ use yii\caching\Cache;
  */
 class FlushCache extends Action
 {
-
+    
     /**
      * @var integer 页面停留时间
      */
     public $waitSecond = 3;
-
+    
     /**
      * Recursive flush all app cache
      *
@@ -61,10 +62,10 @@ class FlushCache extends Action
                     '';
             }
         }
-
+        
         return $message;
     }
-
+    
     /**
      * Flush webroot/assets/
      *
@@ -98,16 +99,16 @@ class FlushCache extends Action
         $message .= $hasErrors ?
             '<p>' . Yii::t('wocenter/app', 'Some assets are not flushed.') . '</p>' :
             '<p>' . Yii::t('wocenter/app', 'Assets are flushed.') . '</p>';
-
+        
         return $message;
     }
-
+    
     public function run()
     {
         $message = $this->flushCache();
         $message .= $this->flushAssets();
-
+        
         return $this->controller->success($message, '', $this->waitSecond);
     }
-
+    
 }

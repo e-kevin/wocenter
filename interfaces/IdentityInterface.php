@@ -1,15 +1,15 @@
 <?php
+
 namespace wocenter\interfaces;
 
 /**
  * 用户认证接口类
  *
- * @package wocenter\interfaces
  * @author E-Kevin <e-kevin@qq.com>
  */
 interface IdentityInterface extends \yii\web\IdentityInterface
 {
-
+    
     /**
      * 激活状态
      */
@@ -26,7 +26,7 @@ interface IdentityInterface extends \yii\web\IdentityInterface
      * 锁定状态
      */
     const STATUS_LOCKED = -3;
-
+    
     /**
      * 根据用户标识查询用户信息
      *

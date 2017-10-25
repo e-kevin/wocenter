@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\traits;
 
 use Yii;
@@ -12,7 +13,7 @@ use yii\web\NotFoundHttpException;
  */
 trait LoadModelTrait
 {
-
+    
     /**
      * 根据模型主键获取相关数据，如果数据不存在，则抛出400异常
      *
@@ -41,8 +42,8 @@ trait LoadModelTrait
         if (!empty($config)) {
             Yii::configure($model, $config);
         }
-
+        
         return $model;
     }
-
+    
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\services;
 
 use wocenter\core\Service;
@@ -7,7 +8,6 @@ use wocenter\helpers\DateTimeHelper;
 use wocenter\backend\modules\action\models\Action;
 use wocenter\backend\modules\log\models\ActionLog;
 use wocenter\backend\modules\data\models\UserScoreType;
-use wocenter\backend\modules\log\models\UserScoreLog;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\base\InvalidValueException;
@@ -23,22 +23,22 @@ class LogService extends Service
      * @var string|array|callable|Action 行为模型
      */
     public $actionModel = '\wocenter\backend\modules\action\models\Action';
-
+    
     /**
      * @var string|array|callable|ActionLog 行为日志模型
      */
     public $actionLogModel = '\wocenter\backend\modules\log\models\ActionLog';
-
+    
     /**
      * @var string|array|callable|UserScoreType 用户积分类型模型
      */
     public $userScoreTypeModel = '\wocenter\backend\modules\data\models\UserScoreType';
-
+    
     /**
      * @var string|array|callable|\wocenter\backend\modules\log\models\UserScoreLog 用户奖罚日志模型
      */
     public $userScoreLogModel = '\wocenter\modules\log\models\UserScoreLog';
-
+    
     /**
      * @inheritdoc
      */
@@ -46,7 +46,7 @@ class LogService extends Service
     {
         return 'log';
     }
-
+    
     /**
      * 记录行为日志，并执行该行为的规则
      *
@@ -65,7 +65,7 @@ class LogService extends Service
         if ($this->disabled) {
             return $this->_status;
         }
-
+        
         // 查询行为，判断是否存在
         /** @var Action $actionModel */
         $actionModel = $this->actionModel;
@@ -77,10 +77,10 @@ class LogService extends Service
         } elseif ($actionInfo['status'] != 1) {
             // 如果行为被禁用，则终止后续操作
             $this->_info = Yii::t('wocenter/app', 'Action: {action} is disabled.', ['action' => $action]);
-
+            
             return $this->_status;
         }
-
+        
         // 添加日志
         /** @var ActionLog $actionLog */
         $actionLog = new $this->actionLogModel();
@@ -93,15 +93,15 @@ class LogService extends Service
         ];
         $actionLog->load($data, '');
         $this->_status = $actionLog->save(false);
-
+        
         // 执行行为规则
         if ($this->_status && !empty($actionInfo['rule'])) {
             $this->_executeAction($actionInfo['rule'], $modelClassName, $actionUserId, $actionLog->getAttributes());
         }
-
+        
         return $this->_status;
     }
-
+    
     /**
      * 删除记录行为日志
      *
@@ -117,7 +117,7 @@ class LogService extends Service
         if (empty($action) || empty($modelClassName)) {
             throw new InvalidParamException(Yii::t('wocenter/app', 'Empty parameters.'));
         }
-
+        
         /** @var ActionLog $actionLogModel */
         $actionLogModel = $this->actionLogModel;
         /** @var Action $actionModel */
@@ -129,7 +129,7 @@ class LogService extends Service
             'record_id' => $recordId,
         ]);
     }
-
+    
     /**
      * 执行行为规则
      *
@@ -150,16 +150,16 @@ class LogService extends Service
         if (empty($rules)) {
             return false;
         }
-
-        foreach ((array) $rules as $rule) {
+        
+        foreach ((array)$rules as $rule) {
             if ($this->_checkActionRule($rule, $modelClassName, $actionUserId)) {
                 Wc::$service->getAccount()->updateUserScore($actionUserId, $rule['rule'], $rule['type'], $logInfo);
             }
         }
-
+        
         return true;
     }
-
+    
     /**
      * 解析行为规则
      *
@@ -178,7 +178,7 @@ class LogService extends Service
         if (empty($rules)) {
             return;
         }
-
+        
         $tmp = [];
         foreach (unserialize($rules) as $key => &$rule) {
             foreach (explode(',', $rule) as $fields) {
@@ -197,7 +197,7 @@ class LogService extends Service
         $rules = $tmp;
         unset($tmp);
     }
-
+    
     /**
      * 判断行为规则是否可以执行
      *
@@ -224,9 +224,9 @@ class LogService extends Service
         ])->andWhere('created_at >= :created_at', [
             ':created_at' => DateTimeHelper::getTimeAgo($rule['cycle'], DateTimeHelper::HOUR),
         ])->count();
-
+        
         // 如果执行记录次数大于最大执行次数，则跳过执行
         return $exec_count < $rule['max'];
     }
-
+    
 }

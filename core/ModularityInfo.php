@@ -1,97 +1,27 @@
 <?php
+
 namespace wocenter\core;
 
 use wocenter\interfaces\ModularityInfoInterface;
-use yii\base\InvalidConfigException;
-use yii\base\Object;
 
 /**
- * 基础模块信息类
- *
- * @property boolean $moduleType 模块类型
+ * 基础模块信息实现类
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
-abstract class ModularityInfo extends Object implements ModularityInfoInterface
+class ModularityInfo extends Extension implements ModularityInfoInterface
 {
-
-    /**
-     * @var string 模块唯一标识
-     */
-    private $_id;
-
-    /**
-     * @var string 模块版本
-     */
-    public $version;
-
-    /**
-     * @var string 模块名
-     */
-    public $name;
-
-    /**
-     * @var string 模块描述
-     */
-    public $description;
-
-    /**
-     * @var string 模块网址
-     */
-    public $url;
-
-    /**
-     * @var string 开发者
-     */
-    public $developer = 'WoCenter';
-
-    /**
-     * @var string 开发者网站
-     */
-    public $webSite;
-
-    /**
-     * @var string 开发者邮箱
-     */
-    public $email = 'e-kevin@qq.com';
-
-    /**
-     * @var boolean 是否系统模块
-     */
-    public $isSystem = false;
-
-    /**
-     * @var boolean 是否可安装
-     */
-    public $canInstall = false;
-
-    /**
-     * @var boolean 是否可卸载
-     */
-    public $canUninstall = false;
-
+    
     /**
      * @var boolean 是否启用bootstrap
      */
     public $bootstrap = false;
-
+    
     /**
-     * @var integer 模块类型
+     * @var string 数据库迁移路径
      */
-    private $_moduleType;
-
-    /**
-     * @param string $id 模块唯一标识
-     * @param boolean $moduleType 是否存在二次开发
-     * @param array $config
-     */
-    public function __construct($id, $moduleType, $config = [])
-    {
-        $this->_id = $id;
-        $this->_moduleType = $moduleType;
-        parent::__construct($config);
-    }
-
+    private $_migrationPath;
+    
     /**
      * 模块菜单信息
      *
@@ -107,20 +37,18 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
      *      或不是规则的路由地址，如系统默认为父级菜单赋值的`javascript:;`情况时，必须明确该菜单所属模块，否则系统不会同步更新到菜单
      *      数据库里。
      *  - `url`: 简写的url地址，可以是系统已经配置了的路由映射地址，默认为`javascript:;`
-     *  - `full_url`: 完整的菜单url地址，默认为`javascript:;`
      *  - `show_on_menu`: 是否显示该菜单，默认不显示
      *  - `description`: 菜单描述
      *  - `items`: 子类菜单配置数组
      *
      * @see \wocenter\backend\modules\account\Info::getMenus()
-     * @see \wocenter\backend\modules\core\Info
      * @return array
      */
     public function getMenus()
     {
         return [];
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -128,66 +56,20 @@ abstract class ModularityInfo extends Object implements ModularityInfoInterface
     {
         return [];
     }
-
+    
     /**
      * @inheritdoc
      */
-    public function getId()
+    public function getMigrationPath()
     {
-        return $this->_id;
+        return $this->_migrationPath;
     }
-
-    /**
-     * @return boolean 模块类型
-     * @see \wocenter\models\Module常量 [RUN_MODULE_DEVELOPER, RUN_MODULE_CORE]
-     */
-    public function getModuleType()
-    {
-        return $this->_moduleType;
-    }
-
+    
     /**
      * @inheritdoc
      */
-    public function install()
+    public function setMigrationPath($migrationPath)
     {
-        return true;
+        $this->_migrationPath = $migrationPath;
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function uninstall()
-    {
-        if ($this->beforeUninstall()) {
-            $this->afterUninstall();
-        }
-
-        return true;
-    }
-
-    /**
-     * 卸载模块前执行
-     */
-    protected function beforeUninstall()
-    {
-        return true;
-    }
-
-    /**
-     * 卸载模块后执行
-     */
-    protected function afterUninstall()
-    {
-        $this->canUninstall = false;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function upgrade()
-    {
-        return true;
-    }
-
 }

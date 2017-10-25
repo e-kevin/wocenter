@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\helpers;
 
 /**
@@ -8,7 +9,7 @@ namespace wocenter\helpers;
  */
 class SecurityHelper
 {
-
+    
     /**
      * 保密邮箱地址
      *
@@ -20,10 +21,10 @@ class SecurityHelper
     {
         list($first, $second) = explode('@', $str);
         $a = strlen($first) - 3;
-
+        
         return preg_replace('|(?<=.{1})(.{' . $a . '}).*?|', str_pad('', $a, '*'), $first, 1) . '@' . $second;
     }
-
+    
     /**
      * 保密手机号
      *
@@ -36,10 +37,10 @@ class SecurityHelper
         if (!empty($str)) {
             return preg_replace('|(?<=.{3})(.{4}).*?|', str_pad('', 4, '*'), $str, 1);
         }
-
+        
         return $str;
     }
-
+    
     /**
      * 保密字符串
      *
@@ -52,10 +53,10 @@ class SecurityHelper
         $str_len = strlen($str);
         $start = 6 < $str_len ? intval($str_len / 5) : $str_len - 4;
         $end = $str_len - $start * 3;
-
+        
         return preg_replace('|(?<=.{' . $start . '})(.{' . $end . '}).*?|', str_pad('', $end, '*'), $str, 1);
     }
-
+    
     public static function hash($message, $salt = "wocenter")
     {
         $s01 = $message . $salt;
@@ -63,10 +64,10 @@ class SecurityHelper
         $s03 = sha1($s01) . md5($s02) . $salt;
         $s04 = $salt . md5($s03) . $salt . $s02;
         $s05 = $salt . sha1($s04) . md5($s04) . crc32($salt . $s04);
-
+        
         return md5($s05);
     }
-
+    
     /**
      * 系统解密方法
      *
@@ -86,7 +87,7 @@ class SecurityHelper
         $data = base64_decode($data);
         $expire = substr($data, 0, 10);
         $data = substr($data, 10);
-
+        
         if ($expire > 0 && $expire < time()) {
             return '';
         }
@@ -94,7 +95,7 @@ class SecurityHelper
         $len = strlen($data);
         $l = strlen($key);
         $char = $str = '';
-
+        
         for ($i = 0; $i < $len; $i++) {
             if ($x == $l) {
                 $x = 0;
@@ -102,7 +103,7 @@ class SecurityHelper
             $char .= substr($key, $x, 1);
             $x++;
         }
-
+        
         for ($i = 0; $i < $len; $i++) {
             if (ord(substr($data, $i, 1)) < ord(substr($char, $i, 1))) {
                 $str .= chr((ord(substr($data, $i, 1)) + 256) - ord(substr($char, $i, 1)));
@@ -110,10 +111,10 @@ class SecurityHelper
                 $str .= chr(ord(substr($data, $i, 1)) - ord(substr($char, $i, 1)));
             }
         }
-
+        
         return base64_decode($str);
     }
-
+    
     /**
      * 系统加密方法
      *
@@ -131,7 +132,7 @@ class SecurityHelper
         $len = strlen($data);
         $l = strlen($key);
         $char = '';
-
+        
         for ($i = 0; $i < $len; $i++) {
             if ($x == $l) {
                 $x = 0;
@@ -139,14 +140,14 @@ class SecurityHelper
             $char .= substr($key, $x, 1);
             $x++;
         }
-
+        
         $str = sprintf('%010d', $expire ? $expire + time() : 0);
-
+        
         for ($i = 0; $i < $len; $i++) {
             $str .= chr(ord(substr($data, $i, 1)) + (ord(substr($char, $i, 1))) % 256);
         }
-
+        
         return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($str));
     }
-
+    
 }

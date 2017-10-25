@@ -1,9 +1,9 @@
 <?php
+
 namespace wocenter\console;
 
 /**
  * Class Migration
- * @package wocenter\core
  */
 class Migration extends \yii\db\Migration
 {
@@ -11,19 +11,19 @@ class Migration extends \yii\db\Migration
      * @var string the table options
      */
     protected $tableOptions = '';
-
+    
     /**
      * @inheritdoc
      */
     public function init()
     {
         parent::init();
-
+        
         if ($this->db->driverName === 'mysql') {
             $this->tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
     }
-
+    
     /**
      * 设置表注释
      *
@@ -35,7 +35,7 @@ class Migration extends \yii\db\Migration
     {
         return $comment !== '' ? ' COMMENT = ' . $this->db->quoteValue($comment) : '';
     }
-
+    
     /**
      * 设置外键约束
      *
@@ -45,5 +45,5 @@ class Migration extends \yii\db\Migration
     {
         $this->execute('SET foreign_key_checks = ' . (int)$check . ';');
     }
-
+    
 }

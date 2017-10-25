@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\widgets;
 
 use kartik\datetime\DateTimePicker as kvDateTimePicker;
@@ -11,7 +12,7 @@ use yii\helpers\ArrayHelper;
  */
 class DateTimePicker extends kvDateTimePicker
 {
-
+    
     /**
      * The date format, combination of p, P, h, hh, i, ii, s, ss, d, dd, m, mm, M, MM, yy, yyyy.
      * - p : meridian in lower case ('am' or 'pm') - according to locale file
@@ -35,7 +36,7 @@ class DateTimePicker extends kvDateTimePicker
      * @var string
      */
     public $format = 'Y-m-d H:i:s';
-
+    
     /**
      * weekStart
      * Day of the week start. 0 (Sunday) to 6 (Saturday)
@@ -43,7 +44,7 @@ class DateTimePicker extends kvDateTimePicker
      * @var integer
      */
     public $weekStart = 0;
-
+    
     /**
      * The earliest date that may be selected; all earlier dates will be disabled.
      * '1901-12-14 04:45:52'的时间戳为 -2147483648，mysql int类型保存的范围从 -2^31 (-2,147,483,648) 到 2^31 – 1 (2,147,483,647)
@@ -52,14 +53,14 @@ class DateTimePicker extends kvDateTimePicker
      * @var string
      */
     public $startDate = '1901-12-14 04:45:52';
-
+    
     /**
      * The latest date that may be selected; all later dates will be disabled.
      *
      * @var string
      */
     public $endDate = null;
-
+    
     /**
      * Days of the week that should be disabled. Values are 0 (Sunday) to 6 (Saturday). Multiple values should be
      * comma-separated. Example: disable weekends: '0,6' or [0,6].
@@ -67,14 +68,14 @@ class DateTimePicker extends kvDateTimePicker
      * @var string|array
      */
     public $daysOfWeekDisabled = [];
-
+    
     /**
      * Whether or not to close the datetimepicker immediately when a date is selected.
      *
      * @var boolean
      */
     public $autoclose = true;
-
+    
     /**
      * The view that the datetimepicker should show when it is opened. Accepts values of :
      * - 0 or 'hour' for the hour view
@@ -86,7 +87,7 @@ class DateTimePicker extends kvDateTimePicker
      * @var string|integer
      */
     public $startView = 2;
-
+    
     /**
      * The lowest view that the datetimepicker should show.
      * - 0 or 'hour' for the hour view
@@ -98,7 +99,7 @@ class DateTimePicker extends kvDateTimePicker
      * @var string|integer
      */
     public $minView = 0;
-
+    
     /**
      * The highest view that the datetimepicker should show.
      * - 0 or 'hour' for the hour view
@@ -110,7 +111,7 @@ class DateTimePicker extends kvDateTimePicker
      * @var string|integer
      */
     public $maxView = 4;
-
+    
     /**
      * If true or "linked", displays a "Today" button at the bottom of the datetimepicker to select the current date.
      * If true, the "Today" button will only move the current date into view;
@@ -119,21 +120,21 @@ class DateTimePicker extends kvDateTimePicker
      * @var boolean|string
      */
     public $todayBtn = true;
-
+    
     /**
      * If true, highlights the current date.
      *
      * @var boolean
      */
     public $todayHighlight = true;
-
+    
     /**
      * Whether or not to allow date navigation by arrow keys.
      *
      * @var boolean
      */
     public $keyboardNavigation = true;
-
+    
     /**
      * Whether or not to force parsing of the input value when the picker is closed.
      * That is, when an invalid date is left in the input field by the user, the picker will forcibly parse that value,
@@ -142,18 +143,18 @@ class DateTimePicker extends kvDateTimePicker
      * @var boolean
      */
     public $forceParse = true;
-
+    
     public $showMeridian = false;
-
+    
     /**
      * The increment used to build the hour view. A preset is created for each minuteStep minutes.
      *
      * @var integer
      */
     public $minuteStep = 5;
-
+    
     public $pluginOptions = [];
-
+    
     public function init()
     {
         $this->pluginOptions = ArrayHelper::merge([
@@ -173,8 +174,8 @@ class DateTimePicker extends kvDateTimePicker
             'showMeridian' => $this->showMeridian,
             'minuteStep' => $this->minuteStep,
         ], $this->pluginOptions);
-
+        
         parent::init();
     }
-
+    
 }

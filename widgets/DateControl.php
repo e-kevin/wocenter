@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\widgets;
 
 use kartik\datecontrol\DateControl as baseDateControl;
@@ -11,14 +12,14 @@ use wocenter\behaviors\ModifyTimestampBehavior;
  */
 class DateControl extends baseDateControl
 {
-
+    
     public function init()
     {
         $this->initConfigByBehavior();
-
+        
         parent::init();
     }
-
+    
     /**
      * 如果存在模型且模型拥有\wocenter\behaviors\ModifyTimestampBehavior行为，则根据行为配置来初始化一些相关参数
      */
@@ -36,5 +37,5 @@ class DateControl extends baseDateControl
             $this->saveTimezone = $modifyTimestampBehavior->saveTimeZone;
         }
     }
-
+    
 }

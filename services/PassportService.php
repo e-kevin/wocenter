@@ -1,8 +1,8 @@
 <?php
+
 namespace wocenter\services;
 
 use wocenter\core\Service;
-use Yii;
 
 /**
  * 通行证服务类
@@ -15,7 +15,7 @@ use Yii;
  */
 class PassportService extends Service
 {
-
+    
     /**
      * @inheritdoc
      */
@@ -23,35 +23,35 @@ class PassportService extends Service
     {
         return 'passport';
     }
-
+    
     /**
      * 获取认证中心子服务类
      *
-     * @return \wocenter\services\passport\UcenterService
+     * @return \wocenter\services\passport\UcenterService|Service
      */
     public function getUcenter()
     {
         return $this->getSubService('ucenter');
     }
-
+    
     /**
      * 获取验证中心子服务类
      *
-     * @return \wocenter\services\passport\VerifyService
+     * @return \wocenter\services\passport\VerifyService|Service
      */
     public function getVerify()
     {
         return $this->getSubService('verify');
     }
-
+    
     /**
      * 规则验证服务类
      *
-     * @return \wocenter\services\passport\ValidationService
+     * @return \wocenter\services\passport\ValidationService|Service
      */
     public function getValidation()
     {
         return $this->getSubService('validation');
     }
-
+    
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\core;
 
 use wocenter\traits\ExtendModelTrait;
@@ -11,7 +12,7 @@ use yii\base\Model as baseModel;
  */
 class Model extends baseModel
 {
-
+    
     use ExtendModelTrait;
-
+    
 }

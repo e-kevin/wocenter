@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\behaviors;
 
 use wocenter\core\ActiveRecord;
@@ -19,42 +20,42 @@ use yii\web\NotFoundHttpException;
  */
 class TreeBehavior extends Behavior
 {
-
+    
     /**
      * @var string 下拉选项需要显示的标题字段
      */
     public $showTitleField = 'name';
-
+    
     /**
      * @var string 下拉选项的值字段
      */
     public $showPkField = 'id';
-
+    
     /**
      * @var string 菜单主键字段，用于获取相关父级或子级菜单数据，通常是当前模型类的主键字段
      */
     public $pkField = 'id';
-
+    
     /**
      * @var string 菜单父级字段
      */
     public $parentField = 'parent_id';
-
+    
     /**
      * @var string 面包屑url父级参数名
      */
     public $breadcrumbParentParam = 'pid';
-
+    
     /**
      * @var string TAB大小
      */
     public $tabSize = "&nbsp;&nbsp;&nbsp;&nbsp;";
-
+    
     /**
      * @var integer 菜单层级
      */
     private $_level;
-
+    
     /**
      * 获取菜单层级
      *
@@ -64,7 +65,7 @@ class TreeBehavior extends Behavior
     {
         return $this->_level;
     }
-
+    
     /**
      * 设置菜单层级
      *
@@ -74,7 +75,7 @@ class TreeBehavior extends Behavior
     {
         $this->_level = $value;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -86,7 +87,7 @@ class TreeBehavior extends Behavior
         }
         parent::attach($owner);
     }
-
+    
     /**
      * 获取树型下拉菜单选项列表
      *
@@ -99,10 +100,10 @@ class TreeBehavior extends Behavior
     {
         $list = ArrayHelper::listToTree($list, $this->pkField, $this->parentField, '_child', $root);
         $list = $this->_toFormatTree($list, 0);
-
+        
         return $this->buildTreeOptionsToArray($list);
     }
-
+    
     /**
      * 生成树型下拉选项数据
      *
@@ -134,13 +135,13 @@ class TreeBehavior extends Behavior
                     }
                 }
             }
-
+            
             $options[$row[$this->showPkField]] = $row[$this->showTitleField];
         }
-
+        
         return $options;
     }
-
+    
     /**
      * 格式化菜单列表数据
      *
@@ -155,7 +156,7 @@ class TreeBehavior extends Behavior
         foreach ($list as $val) {
             $tmp_str = str_repeat($this->tabSize, $level);
             $tmp_str .= "└&nbsp;";
-
+            
             $val['level'] = intval($level);
             $val[$this->showTitleField] = $level == 0 ? $val[$this->showTitleField] : $tmp_str . $val[$this->showTitleField];
             if (!array_key_exists('_child', $val)) {
@@ -167,10 +168,10 @@ class TreeBehavior extends Behavior
                 $formatTree = array_merge($formatTree, $this->_toFormatTree($tmp_ary, $level + 1));
             }
         }
-
+        
         return $formatTree;
     }
-
+    
     /**
      * 获取面包屑导航
      *
@@ -201,7 +202,7 @@ class TreeBehavior extends Behavior
                     $this->parentField,
                 ])->where([$this->pkField => $currentPid])->one();
             }
-
+            
             // 当前模型数据的所有父级数据
             $parentIds = $self->getParentIds();
             if (!empty($parentIds)) {
@@ -219,7 +220,7 @@ class TreeBehavior extends Behavior
             // 包含自身面包屑
             $breadcrumbs[$self->{$this->pkField}] = $self->{$this->showTitleField};
         }
-
+        
         // 格式化面包屑
         foreach ($breadcrumbs as $id => &$title) {
             $arr = [];
@@ -233,20 +234,20 @@ class TreeBehavior extends Behavior
             }
             $title = $arr;
         }
-
+        
         // 添加自定义面包屑在已有面包屑后面
         if ($append) {
             $breadcrumbs = ArrayHelper::merge($breadcrumbs, $append);
         }
-
+        
         // 添加自定义面包屑在所有面包屑前端
         if ($appendToTop) {
             $breadcrumbs = ArrayHelper::merge($appendToTop, $breadcrumbs);
         }
-
+        
         return $breadcrumbs;
     }
-
+    
     /**
      * 格式化面包屑导航数据
      *
@@ -263,15 +264,15 @@ class TreeBehavior extends Behavior
                 $format = ArrayHelper::merge($format, $this->_toFormatBreadcrumbs($val['_child']));
             }
         }
-
+        
         return $format;
     }
-
+    
     /**
      * @var array 父级ID数据
      */
     private $_parentIds;
-
+    
     /**
      * 获取当前模型所有父级ID数据
      *
@@ -291,10 +292,10 @@ class TreeBehavior extends Behavior
                 $this->_parentIds = Tree::getParentIds($this->owner, 0, $this->pkField, $this->parentField, $rootId);
             }
         }
-
+        
         return $this->_parentIds;
     }
-
+    
     /**
      * 获取缓存内的所有父级ID数据
      *
@@ -310,7 +311,7 @@ class TreeBehavior extends Behavior
             $method = __METHOD__ . '()';
             throw new NotFoundHttpException("{$model->className()}()必须先通过`{$this->pkField}`主键获取相关数据后才能执行操作：{$method}");
         }
-
+        
         $_parentIds = [];
         $all = $this->owner->getAll();
         while (!empty($model)) {
@@ -318,22 +319,22 @@ class TreeBehavior extends Behavior
             if ($model[$this->parentField] !== $rootId) {
                 array_unshift($_parentIds, $model[$this->parentField]);
                 $model = ArrayHelper::listSearch($all, [
-                    $this->pkField => $model[$this->parentField]
+                    $this->pkField => $model[$this->parentField],
                 ]);
                 $model = isset($model[0]) ? $model[0] : [];
             } else {
                 $model = [];
             }
         }
-
+        
         return $_parentIds;
     }
-
+    
     /**
      * @var array 子类ID数据
      */
     private $_childrenIds;
-
+    
     /**
      * 获取当前模型所有子类ID数据
      *
@@ -351,10 +352,10 @@ class TreeBehavior extends Behavior
                 $this->_childrenIds = Tree::getChildrenIds($this->owner, 0, $this->pkField, $this->parentField);
             }
         }
-
+        
         return $this->_childrenIds;
     }
-
+    
     /**
      * 获取缓存内的所有子类ID数据
      *
@@ -367,29 +368,29 @@ class TreeBehavior extends Behavior
             $method = __METHOD__ . '()';
             throw new NotFoundHttpException("{$this->owner->className()}()必须先通过`{$this->pkField}`主键获取相关数据后才能执行操作：{$method}");
         }
-
+        
         $_childrenIds = [];
         $all = $this->owner->getAll();
         if ($all) {
             $children = ArrayHelper::listSearch($all, [
-                $this->parentField => $this->owner->{$this->pkField}
+                $this->parentField => $this->owner->{$this->pkField},
             ]);
             while (count($children) > 0) {
                 $first = array_shift($children);
                 $_childrenIds[] = (int)$first[$this->pkField];
-
+                
                 $next = ArrayHelper::listSearch($all, [
-                    $this->parentField => $first[$this->pkField]
+                    $this->parentField => $first[$this->pkField],
                 ]);
                 if (count($next) > 0) {
                     $children = array_merge($children, $next);
                 }
             }
         }
-
+        
         return $_childrenIds;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -399,7 +400,7 @@ class TreeBehavior extends Behavior
             ActiveRecord::EVENT_BEFORE_DELETE => 'hasChildren',
         ];
     }
-
+    
     /**
      * 检测当前模型是否拥有子类数据
      *
@@ -412,5 +413,5 @@ class TreeBehavior extends Behavior
             $event->isValid = false;
         }
     }
-
+    
 }

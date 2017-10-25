@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\core;
 
 use wocenter\traits\ExtendModelTrait;
@@ -11,9 +12,9 @@ use yii\db\ActiveRecord as baseActiveRecord;
  */
 class ActiveRecord extends baseActiveRecord
 {
-
+    
     use ExtendModelTrait;
-
+    
     /**
      * @inheritdoc
      */
@@ -22,7 +23,7 @@ class ActiveRecord extends baseActiveRecord
         parent::afterDelete();
         $this->clearCache();
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -31,13 +32,13 @@ class ActiveRecord extends baseActiveRecord
         parent::afterSave($insert, $changedAttributes);
         $this->clearCache();
     }
-
+    
     /**
      * 清除缓存
      */
     public function clearCache()
     {
-
+    
     }
     
 }

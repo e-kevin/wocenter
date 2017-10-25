@@ -1,9 +1,9 @@
 <?php
+
 namespace wocenter\services\system;
 
 use wocenter\backend\modules\system\models\Config;
 use wocenter\core\Service;
-use Yii;
 use yii\helpers\Json;
 
 /**
@@ -13,7 +13,7 @@ use yii\helpers\Json;
  */
 class ConfigService extends Service
 {
-
+    
     /**
      * @inheritdoc
      */
@@ -21,7 +21,7 @@ class ConfigService extends Service
     {
         return 'config';
     }
-
+    
     /**
      * 获取系统配置信息
      *
@@ -34,7 +34,7 @@ class ConfigService extends Service
     {
         return Config::getValue($key, $defaultValue);
     }
-
+    
     /**
      * 获取指定标识的额外配置值
      *
@@ -46,7 +46,7 @@ class ConfigService extends Service
     {
         return Config::getExtra($key);
     }
-
+    
     /**
      * 获取看板配置
      *
@@ -69,8 +69,8 @@ class ConfigService extends Service
                 break;
             }
         }
-
+        
         return $res;
     }
-
+    
 }

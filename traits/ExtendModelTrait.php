@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\traits;
 
 use wocenter\behaviors\getMessageBehavior;
@@ -7,24 +8,24 @@ use wocenter\behaviors\getMessageBehavior;
  * Class ExtendModelTrait
  * 拓展\wocenter\core\Model, \wocenter\core\ActiveRecord类
  *
- * @property boolean $setThrowException
+ * @property boolean $throwException
  * @author E-Kevin <e-kevin@qq.com>
  */
 trait ExtendModelTrait
 {
-
+    
     /**
      * @var string $message 反馈消息
      */
     public $message = '';
-
+    
     /**
      * 抛出异常
      *
      * @var boolean
      */
     protected $_throwException;
-
+    
     /**
      * @inheritdoc
      */
@@ -34,7 +35,7 @@ trait ExtendModelTrait
             getMessageBehavior::className(),
         ];
     }
-
+    
     /**
      * 获取是否允许抛出异常
      *
@@ -44,7 +45,7 @@ trait ExtendModelTrait
     {
         return $this->_throwException;
     }
-
+    
     /**
      * 设置是否允许抛出异常，默认允许抛出异常
      *
@@ -55,8 +56,8 @@ trait ExtendModelTrait
     public function setThrowException($throw = true)
     {
         $this->_throwException = $throw;
-
+        
         return $this;
     }
-
+    
 }

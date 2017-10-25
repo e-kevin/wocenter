@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\core;
 
 use wocenter\traits\DispatchTrait;
@@ -12,7 +13,7 @@ use yii\web\Controller as baseController;
  */
 class Controller extends baseController
 {
-
+    
     use DispatchTrait;
-
+    
 }

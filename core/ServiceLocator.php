@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\core;
 
 use Yii;
@@ -15,19 +16,18 @@ use yii\base\UnknownPropertyException;
  *
  * @property \wocenter\services\AccountService $account
  * @property \wocenter\services\ActionService $action
- * @property \wocenter\services\DispatchService $dispatch
  * @property \wocenter\services\LogService $log
  * @property \wocenter\services\MenuService $menu
- * @property \wocenter\services\ModularityService $modularity
  * @property \wocenter\services\NotificationService $notification
  * @property \wocenter\services\PassportService $passport
  * @property \wocenter\services\SystemService $system
+ * @property \wocenter\services\ExtensionService $extension
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
 class ServiceLocator extends Object
 {
-
+    
     /**
      * 获取系统顶级服务类
      *
@@ -49,15 +49,15 @@ class ServiceLocator extends Object
                 throw new InvalidConfigException("{$component->className()}::getId() method must
                     return the '{$serviceName}' value.");
             }
-
+            
             Yii::trace('Loading service: ' . $serviceName, __METHOD__);
-
+            
             return $component;
         } else {
             return Yii::$app->get($service);
         }
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -74,7 +74,7 @@ class ServiceLocator extends Object
             throw new UnknownPropertyException('Getting unknown property: ' . get_class($this) . '::' . $name);
         }
     }
-
+    
     /**
      * 用户管理服务类
      *
@@ -84,17 +84,7 @@ class ServiceLocator extends Object
     {
         return $this->getService('account');
     }
-
-    /**
-     * 模块管理服务类
-     *
-     * @return \wocenter\services\ModularityService
-     */
-    public function getModularity()
-    {
-        return $this->getService('modularity');
-    }
-
+    
     /**
      * 系统服务类
      *
@@ -104,7 +94,7 @@ class ServiceLocator extends Object
     {
         return $this->getService('system');
     }
-
+    
     /**
      * 行为管理服务类
      *
@@ -114,7 +104,7 @@ class ServiceLocator extends Object
     {
         return $this->getService('action');
     }
-
+    
     /**
      * 日志管理服务类
      *
@@ -124,17 +114,7 @@ class ServiceLocator extends Object
     {
         return $this->getService('log');
     }
-
-    /**
-     * 调度服务类
-     *
-     * @return \wocenter\services\DispatchService
-     */
-    public function getDispatch()
-    {
-        return $this->getService('dispatch');
-    }
-
+    
     /**
      * 系统通知服务类
      *
@@ -144,7 +124,7 @@ class ServiceLocator extends Object
     {
         return $this->getService('notification');
     }
-
+    
     /**
      * 系统通行证服务类
      *
@@ -154,7 +134,7 @@ class ServiceLocator extends Object
     {
         return $this->getService('passport');
     }
-
+    
     /**
      * 菜单管理服务类
      *
@@ -164,5 +144,15 @@ class ServiceLocator extends Object
     {
         return $this->getService('menu');
     }
-
+    
+    /**
+     * 系统扩展服务类
+     *
+     * @return \wocenter\services\ExtensionService
+     */
+    public function getExtension()
+    {
+        return $this->getService('extension');
+    }
+    
 }

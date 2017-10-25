@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\behaviors;
 
 use Exception;
@@ -20,7 +21,7 @@ use yii\base\Behavior;
  */
 class getMessageBehavior extends Behavior
 {
-
+    
     /**
      * @inheritdoc
      */
@@ -30,7 +31,7 @@ class getMessageBehavior extends Behavior
             Model::EVENT_AFTER_VALIDATE => 'afterValidate',
         ];
     }
-
+    
     /**
      * @throws Exception
      */
@@ -62,5 +63,5 @@ class getMessageBehavior extends Behavior
             }
         }
     }
-
+    
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\behaviors;
 
 use Yii;
@@ -13,26 +14,26 @@ use yii\web\Cookie;
  */
 class CheckLanguageBehavior extends Behavior
 {
-
+    
     public $languageParam = '_lang';
-
+    
     /**
      * @inheritdoc
      */
     public function events()
     {
         return [
-            Application::EVENT_BEFORE_REQUEST => 'checkLanguage'
+            Application::EVENT_BEFORE_REQUEST => 'checkLanguage',
         ];
     }
-
+    
     public function checkLanguage()
     {
         $request = Yii::$app->getRequest();
         if ($request->get($this->languageParam)) {
             // By passing a parameter to change the language
             Yii::$app->language = htmlspecialchars($request->get($this->languageParam));
-
+            
             // get the cookie collection (yii\web\CookieCollection) from the "response" component
             $cookies = Yii::$app->getResponse()->getCookies();
             // add a new cookie to the response to be sent
@@ -50,5 +51,5 @@ class CheckLanguageBehavior extends Behavior
             Yii::$app->language = $lang[0];
         }
     }
-
+    
 }

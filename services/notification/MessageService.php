@@ -1,8 +1,8 @@
 <?php
+
 namespace wocenter\services\notification;
 
 use wocenter\core\Service;
-use Yii;
 
 /**
  * 系统消息服务类
@@ -11,7 +11,7 @@ use Yii;
  */
 class MessageService extends Service
 {
-
+    
     /**
      * @inheritdoc
      */
@@ -19,7 +19,7 @@ class MessageService extends Service
     {
         return 'message';
     }
-
+    
     /**
      * 发送私信
      *
@@ -34,5 +34,5 @@ class MessageService extends Service
     {
         return true;
     }
-
+    
 }

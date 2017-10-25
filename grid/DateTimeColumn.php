@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\grid;
 
 use yii\grid\DataColumn;
@@ -6,9 +7,9 @@ use yii\helpers\ArrayHelper;
 
 class DateTimeColumn extends DataColumn
 {
-
+    
     public $format = 'datetime';
-
+    
     public function getDataCellValue($model, $key, $index)
     {
         if ($this->value !== null) {
@@ -22,8 +23,8 @@ class DateTimeColumn extends DataColumn
             // 不存在则显示返回null，主要是用于更正时间日期的显示，因为时间为0时同样会被格式化
             return ArrayHelper::getValue($model, $this->attribute) ?: null;
         }
-
+        
         return null;
     }
-
+    
 }

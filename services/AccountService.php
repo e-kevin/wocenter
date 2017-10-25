@@ -1,13 +1,14 @@
 <?php
+
 namespace wocenter\services;
 
+use wocenter\backend\modules\account\models\User;
 use wocenter\backend\modules\action\models\Action;
 use wocenter\backend\modules\log\models\ActionLog;
 use wocenter\backend\modules\data\models\UserScoreType;
 use wocenter\backend\modules\log\models\UserScoreLog;
-use wocenter\models\Follow;
-use wocenter\models\User;
-use wocenter\models\UserProfile;
+use wocenter\backend\modules\account\models\Follow;
+use wocenter\backend\modules\account\models\UserProfile;
 use wocenter\core\Service;
 use wocenter\helpers\DateTimeHelper;
 use wocenter\libs\PinYin;
@@ -21,12 +22,12 @@ use Yii;
  */
 class AccountService extends Service
 {
-
+    
     /**
      * @var string|array|callable|User 用户模型类
      */
     public $userModel;
-
+    
     /**
      * @inheritdoc
      */
@@ -34,21 +35,21 @@ class AccountService extends Service
     {
         return 'account';
     }
-
+    
     /**
      * @inheritdoc
      */
     public function init()
     {
         parent::init();
-
+        
         if ($this->userModel == null) {
             $this->userModel = Yii::$app->getUser()->identityClass;
         }
-
+        
         $this->userModel = Yii::createObject($this->userModel);
     }
-
+    
     /**
      * 获取用户信息
      *
@@ -65,7 +66,7 @@ class AccountService extends Service
         if ($user == null) {
             return null;
         }
-
+        
         return [
             $user['id'],
             $user['username'],
@@ -73,7 +74,7 @@ class AccountService extends Service
             $user['mobile'],
         ];
     }
-
+    
     /**
      * 获取多个用户信息
      *
@@ -98,7 +99,7 @@ class AccountService extends Service
 //
 //        return $users ?: -2002;    // 用户不存在
 //    }
-
+    
     /**
      * 计算用户资料完整度
      *
@@ -115,10 +116,10 @@ class AccountService extends Service
                 $countProfile++;
             }
         }
-
+        
         return $countProfile * 10;
     }
-
+    
     /**
      * 操作用户积分、威望、贡献等数据
      *
@@ -142,7 +143,7 @@ class AccountService extends Service
         if (!in_array($scoreType, [UserScoreType::TYPE_JIFEN, UserScoreType::TYPE_WEIWANG, UserScoreType::TYPE_GONGXIANG])) {
             return false;
         }
-
+        
         $scoreTypeField = 'score_' . $scoreType;
         $parseScore = UserScoreType::parseScore($score);
         // 执行积分操作
@@ -152,7 +153,7 @@ class AccountService extends Service
             ':uid' => $uid,
             ':status' => $class::STATUS_ACTIVE,
         ])->execute();
-
+        
         // 积分操作成功后记录积分变动日志
         if ($res) {
             if (is_int($actionLog)) {
@@ -192,10 +193,10 @@ class AccountService extends Service
             $UserScoreLog->record_id = $actionLog['record_id'];
             $UserScoreLog->save(false);
         }
-
+        
         return $res;
     }
-
+    
     /**
      * 检测用户UID是否可用
      *
@@ -208,10 +209,10 @@ class AccountService extends Service
         if (empty($uid) || $uid < 0) {
             return false;
         }
-
+        
         return true;
     }
-
+    
     /**
      * 查询用户缓存数据
      * 支持的字段有
@@ -233,17 +234,17 @@ class AccountService extends Service
         if (!$uid) {
             return null;
         }
-
+        
         // 如果fields不是数组，则返回值也不是数组
         if (!is_array($fields)) {
             $result = $this->queryUser([$fields], $uid);
-
+            
             return $result ? $result[$fields] : null;
         }
-
+        
         // 无需缓存的字段
         $noCache = ['icons_html', 'level', 'is_followed', 'is_following'];
-
+        
         // 查询缓存，过滤掉已缓存的字段
         $cachedFields = [];
         $cacheResult = [];
@@ -258,22 +259,22 @@ class AccountService extends Service
                 $cachedFields[] = $field;
             }
         }
-
+        
         // 去除已经缓存的字段
         $fields = array_diff($fields, $cachedFields);
-
+        
         // 获取两张用户表格中的所有字段
         $User = new User();
         $UserProfile = new UserProfile();
         $userFields = array_keys($User->getAttributes());
         $userProfileFields = array_keys($UserProfile->getAttributes());
-
+        
         // 分析每个表分别要读取哪些字段
         $avatarFields = ['avatar30', 'avatar50', 'avatar100', 'avatar200'];
         $avatarFields = array_intersect($avatarFields, $fields);
         $userFields = array_intersect($userFields, $fields);
         $userProfileFields = array_intersect($userProfileFields, $fields);
-
+        
         // 获取每个表需要查询的字段结果
         $result = [];
         $userResult = [];
@@ -284,19 +285,19 @@ class AccountService extends Service
         if ($userProfileFields) {
             $userProfileResult = $UserProfile->find()->where(['uid' => $uid])->select($userProfileFields)->asArray()->one();
         }
-
+        
         // 读取用户名拼音
         if (in_array('pinyin', $fields)) {
             $result['pinyin'] = PinYin::Pinyin($userProfileResult['realname']);
         }
-
+        
         // 获取用户签名
         if (in_array('signature', $fields)) {
             if ($userProfileResult['signature'] == '') {
                 $result['signature'] = '暂无个人签名';
             }
         }
-
+        
         // 粉丝数、关注数
         if (in_array('fans', $fields)) {
             $result['fans'] = (new Follow())->find()->where(['follow_who' => $uid])->count();
@@ -304,7 +305,7 @@ class AccountService extends Service
         if (in_array('following', $fields)) {
             $result['following'] = (new Follow())->find()->where(['who_follow' => $uid])->count();
         }
-
+        
         // 我是否关注$uid、自己是否被$uid关注
         if (in_array('is_following', $fields)) {
             $result['is_following'] = (new Follow())->find()->where([
@@ -318,11 +319,11 @@ class AccountService extends Service
                 'who_follow' => $uid,
             ])->one() ? true : false;
         }
-
+        
         // ↑↑↑ 新增字段应该写在在这行注释以上 ↑↑↑
         // 合并结果，不包括缓存
         $result = array_merge($userProfileResult ?: [], $userResult ?: [], $result);
-
+        
         // 写入缓存
         foreach ($result as $field => $value) {
             if (in_array($field, $noCache)) {
@@ -331,28 +332,28 @@ class AccountService extends Service
             if (!in_array($field, ['rank_link', 'icons_html', 'space_link', 'expand_info'])) {
                 $value = str_replace('"', '', $value);   //TODO 数据处理
             }
-
+            
             $result[$field] = $value;
             $this->setUserDataWithCache($uid, $field, str_replace('"', '', $value));
         }
-
+        
         // 合并结果，包括缓存
         $result = array_merge($result, $cacheResult);
-
+        
         // 返回结果
         return $result;
     }
-
+    
     protected function getUserDataWithCache($uid, $field)
     {
         return Yii::$app->getCache()->get("query_user_{$uid}_{$field}");
     }
-
+    
     protected function setUserDataWithCache($uid, $field, $value)
     {
         return Yii::$app->getCache()->set("query_user_{$uid}_{$field}", $value, 1800);
     }
-
+    
     public function clearUserData($uid, $field)
     {
         if (is_array($field)) {
@@ -363,5 +364,5 @@ class AccountService extends Service
             Yii::$app->getCache()->delete("query_user_{$uid}_{$field}");
         }
     }
-
+    
 }

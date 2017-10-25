@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\helpers;
 
 use yii\helpers\ArrayHelper as baseArrayHelper;
@@ -10,7 +11,7 @@ use yii\helpers\ArrayHelper as baseArrayHelper;
  */
 class ArrayHelper extends baseArrayHelper
 {
-
+    
     /**
      * 数组转换为字符串，主要用于把分隔符调整到第二个参数
      *
@@ -23,7 +24,7 @@ class ArrayHelper extends baseArrayHelper
     {
         return implode($glue, $arr);
     }
-
+    
     /**
      * 不区分大小写的in_array实现
      *
@@ -50,10 +51,10 @@ class ArrayHelper extends baseArrayHelper
             }
             continue;
         }
-
+        
         return false;
     }
-
+    
     /**
      * 浏览器友好的变量输出
      *
@@ -85,13 +86,13 @@ class ArrayHelper extends baseArrayHelper
         }
         if ($echo) {
             echo($output);
-
+            
             return null;
         } else {
             return $output;
         }
     }
-
+    
     /**
      * 把返回的数据集转换成Tree
      *
@@ -126,10 +127,10 @@ class ArrayHelper extends baseArrayHelper
                 }
             }
         }
-
+        
         return $tree;
     }
-
+    
     /**
      * 将listToTree的树还原成列表
      *
@@ -155,10 +156,10 @@ class ArrayHelper extends baseArrayHelper
                 $list = self::listSortBy($list, $order, 'asc');
             }
         }
-
+        
         return $list;
     }
-
+    
     /**
      * 在数据列表中搜索
      *
@@ -180,7 +181,7 @@ class ArrayHelper extends baseArrayHelper
         if (is_string($condition)) {
             parse_str($condition, $condition);
         }
-
+        
         // 返回的结果集合
         $resultSet = [];
         foreach ($list as $key => $data) {
@@ -230,10 +231,10 @@ class ArrayHelper extends baseArrayHelper
                 $resultSet[] = &$list[$key];
             }
         }
-
+        
         return $resultSet;
     }
-
+    
     /**
      * 对查询结果集进行排序
      *
@@ -248,11 +249,11 @@ class ArrayHelper extends baseArrayHelper
     {
         if (is_array($list)) {
             $refer = $resultSet = [];
-
+            
             foreach ($list as $i => $data) {
                 $refer[$i] = &$data[$field];
             }
-
+            
             switch ($sortBy) {
                 // 正向排序
                 case 'asc':
@@ -270,11 +271,11 @@ class ArrayHelper extends baseArrayHelper
             foreach ($refer as $key => $val) {
                 $resultSet[] = &$list[$key];
             }
-
+            
             return $resultSet;
         }
-
+        
         return false;
     }
-
+    
 }

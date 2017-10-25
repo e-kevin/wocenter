@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\backend\core;
 
 use wocenter\Wc;

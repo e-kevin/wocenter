@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\backend\core;
 
 use wocenter\core\Controller as baseController;
@@ -12,14 +13,14 @@ use Yii;
  */
 class Controller extends baseController
 {
-
+    
     /**
      * @inheritdoc
      */
     public function init()
     {
         parent::init();
-
+        
         if (Yii::$app->getUser()->getIsGuest()) {
             if (Wc::$service->getSystem()->getConfig()->get('LOGIN_REMIND')) {
                 $this->error('身份验证信息已过期，正在跳转至登录页面~', $this->getLoginUrl(), 1);
@@ -29,7 +30,7 @@ class Controller extends baseController
             }
         }
     }
-
+    
     /**
      * 获取登陆地址
      *
@@ -45,8 +46,8 @@ class Controller extends baseController
             $request->getUrl() :
             $request->getReferrer() // 不跳转至post操作的地址
         );
-
+        
         return $loginUrl;
     }
-
+    
 }

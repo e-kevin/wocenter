@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\core;
 
 use Closure;
@@ -11,17 +12,16 @@ use yii\helpers\VarDumper;
 /**
  * Class BaseWc
  *
- * @package wocenter\core
  * @author E-Kevin <e-kevin@qq.com>
  */
 class BaseWc extends Object
 {
-
+    
     /**
      * @var ServiceLocator 服务类实例，用于调用系统服务
      */
     public static $service;
-
+    
     /**
      * Wc constructor.
      *
@@ -33,10 +33,10 @@ class BaseWc extends Object
     public function __construct(ServiceLocator $service, $config = [])
     {
         self::$service = $service;
-
+        
         parent::__construct($config);
     }
-
+    
     /**
      * 输出调试信息
      *
@@ -47,7 +47,7 @@ class BaseWc extends Object
     {
         Yii::info(VarDumper::dumpAsString($var), $category);
     }
-
+    
     /**
      * 浏览器友好的变量输出
      *
@@ -62,7 +62,7 @@ class BaseWc extends Object
     {
         return ArrayHelper::dump($arr, $echo, $label, $strict);
     }
-
+    
     /**
      * 设置警告闪存信息
      *
@@ -72,7 +72,7 @@ class BaseWc extends Object
     {
         Yii::$app->getSession()->setFlash('warning', $message);
     }
-
+    
     /**
      * 设置成功闪存信息
      *
@@ -82,7 +82,7 @@ class BaseWc extends Object
     {
         Yii::$app->getSession()->setFlash('success', $message);
     }
-
+    
     /**
      * 设置错误闪存信息
      *
@@ -92,7 +92,7 @@ class BaseWc extends Object
     {
         Yii::$app->getSession()->setFlash('error', $message);
     }
-
+    
     /**
      * 设置提示闪存信息
      *
@@ -102,7 +102,7 @@ class BaseWc extends Object
     {
         Yii::$app->getSession()->setFlash('info', $message);
     }
-
+    
     /**
      * 获取警告闪存信息
      */
@@ -110,7 +110,7 @@ class BaseWc extends Object
     {
         return Yii::$app->getSession()->remove('warning');
     }
-
+    
     /**
      * 获取成功闪存信息
      */
@@ -118,7 +118,7 @@ class BaseWc extends Object
     {
         return Yii::$app->getSession()->remove('success');
     }
-
+    
     /**
      * 获取失败闪存信息
      */
@@ -126,7 +126,7 @@ class BaseWc extends Object
     {
         return Yii::$app->getSession()->remove('error');
     }
-
+    
     /**
      * 获取提示闪存信息
      */
@@ -134,7 +134,7 @@ class BaseWc extends Object
     {
         return Yii::$app->getSession()->remove('info');
     }
-
+    
     /**
      * 扩展[[Yii::$app->getCache()->getOrSet()]]该方法，当`$duration`为`false`时先删除缓存再缓存执行数据结果
      *
@@ -159,10 +159,10 @@ class BaseWc extends Object
         if ($duration === false) {
             $component->delete($key);
         }
-
+        
         return $component->getOrSet($key, $callable, $duration, $dependency);
     }
-
+    
     /**
      * 支持抛出模型类（Model|ActiveRecord）验证错误的事务操作
      *
@@ -180,17 +180,17 @@ class BaseWc extends Object
         self::setThrowException();
         $result = Yii::$app->getDb()->transaction($callback, $isolationLevel);
         self::setThrowException(false);
-
+        
         return $result;
     }
-
+    
     /**
      * 抛出异常，默认不抛出
      *
      * @var boolean
      */
     protected static $_throwException = false;
-
+    
     /**
      * 获取是否允许抛出异常
      *
@@ -200,7 +200,7 @@ class BaseWc extends Object
     {
         return static::$_throwException;
     }
-
+    
     /**
      * 设置是否允许抛出异常，默认为`true`(允许)
      *
@@ -210,7 +210,7 @@ class BaseWc extends Object
     {
         static::$_throwException = $throw;
     }
-
+    
     /**
      * 公共缓存类，主要是缓存一些公用的数据
      *
@@ -221,5 +221,5 @@ class BaseWc extends Object
     {
         return Yii::$app->get('commonCache');
     }
-
+    
 }

@@ -1,10 +1,11 @@
 <?php
+
 namespace wocenter\services\passport;
 
 use wocenter\core\Service;
 use wocenter\Wc;
 use wocenter\helpers\StringHelper;
-use wocenter\models\Verify;
+use wocenter\backend\modules\system\models\Verify;
 use Yii;
 
 /**
@@ -14,12 +15,12 @@ use Yii;
  */
 class VerifyService extends Service
 {
-
+    
     /**
      * @var string|array|callable|Verify 验证码模型类
      */
-    public $verifyModel = '\wocenter\models\Verify';
-
+    public $verifyModel = '\wocenter\backend\modules\system\models\Verify';
+    
     /**
      * @inheritdoc
      */
@@ -27,17 +28,17 @@ class VerifyService extends Service
     {
         return 'verify';
     }
-
+    
     /**
      * @inheritdoc
      */
     public function init()
     {
         parent::init();
-
+        
         $this->verifyModel = Yii::createObject($this->verifyModel);
     }
-
+    
     /**
      * 发送验证码
      *
@@ -60,7 +61,7 @@ class VerifyService extends Service
                 break;
             default:
                 $this->_info = Yii::t('wocenter/app', 'Validate failure.');
-
+                
                 return $this->_status;
         }
         // 如果是在注册页面触发，则触发者为`系统`
@@ -72,16 +73,16 @@ class VerifyService extends Service
             $userInfo = Wc::$service->getAccount()->info($identity);
             if ($userInfo == null) {
                 $this->_info = Yii::t('wocenter/app', 'User does not exist.');
-
+                
                 return $this->_status;
             }
             $actionUser = $userInfo[0];
         }
-
+        
         $actionService = Wc::$service->getAction();
         if ($actionService->checkLimit($sendType, $this->verifyModel->tableName(), $actionUser) == false) {
             $this->_info = $actionService->getInfo();
-
+            
             return $this->_status;
         }
         /** @var Verify $class */
@@ -105,15 +106,15 @@ class VerifyService extends Service
             }
             // 记录日志
             Wc::$service->getLog()->create($sendType, $this->verifyModel->tableName(), $this->verifyModel->id, $actionUser);
-
+            
             return $this->_status;
         } else {
             $this->_info = Yii::t('wocenter/app', 'Failed to generate verification code.');
-
+            
             return $this->_status;
         }
     }
-
+    
     /**
      * 生成验证码
      *
@@ -131,10 +132,10 @@ class VerifyService extends Service
             'type' => $type,
             'code' => StringHelper::randString(6, 1), // 验证码,
         ], '');
-
+        
         return $this->verifyModel->save(false);
     }
-
+    
     /**
      * 验证验证码
      *
@@ -152,10 +153,10 @@ class VerifyService extends Service
         } else {
             $this->_status = true;
         }
-
+        
         return $this->_status;
     }
-
+    
     /**
      * 删除验证码
      *
@@ -168,5 +169,5 @@ class VerifyService extends Service
     {
         return $this->verifyModel->deleteAll(['identity' => $identity, 'code' => $code]) ? true : false;
     }
-
+    
 }

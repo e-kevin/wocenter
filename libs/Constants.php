@@ -1,8 +1,9 @@
 <?php
+
 namespace wocenter\libs;
 
 use wocenter\helpers\ArrayHelper;
-use wocenter\models\User;
+use wocenter\interfaces\IdentityInterface;
 use Yii;
 
 /**
@@ -12,22 +13,22 @@ use Yii;
  */
 class Constants
 {
-
+    
     /**
      * @var integer 不限
      */
     const UNLIMITED = 999;
-
+    
     /**
      * @var integer 链接打开方式：当前窗口
      */
     const TARGET_SELF = 0;
-
+    
     /**
      * @var integer 链接打开方式：新建窗口
      */
     const TARGET_BLANK = 1;
-
+    
     /**
      * 获取`是`，`否`列表
      *
@@ -35,9 +36,12 @@ class Constants
      */
     public static function getYesOrNoList()
     {
-        return [Yii::t('wocenter/app', 'No'), Yii::t('wocenter/app', 'Yes')];
+        return [
+            Yii::t('wocenter/app', 'No'),
+            Yii::t('wocenter/app', 'Yes'),
+        ];
     }
-
+    
     /**
      * 获取`是`，`否`值
      *
@@ -49,7 +53,7 @@ class Constants
     {
         return ArrayHelper::getValue(static::getYesOrNoList(), $key);
     }
-
+    
     /**
      * 获取状态列表
      *
@@ -57,9 +61,12 @@ class Constants
      */
     public static function getStatusList()
     {
-        return [Yii::t('wocenter/app', 'Disable'), Yii::t('wocenter/app', 'Enable')];
+        return [
+            Yii::t('wocenter/app', 'Disable'),
+            Yii::t('wocenter/app', 'Enable'),
+        ];
     }
-
+    
     /**
      * 获取状态值
      *
@@ -71,7 +78,7 @@ class Constants
     {
         return ArrayHelper::getValue(static::getStatusList(), $key);
     }
-
+    
     /**
      * 获取窗口打开列表
      *
@@ -81,10 +88,10 @@ class Constants
     {
         return [
             self::TARGET_SELF => Yii::t('wocenter/app', 'Target self'),
-            self::TARGET_BLANK => Yii::t('wocenter/app', 'Target blank')
+            self::TARGET_BLANK => Yii::t('wocenter/app', 'Target blank'),
         ];
     }
-
+    
     /**
      * 获取窗口打开值
      *
@@ -96,7 +103,7 @@ class Constants
     {
         return ArrayHelper::getValue(static::getOpenTargetList(), $key);
     }
-
+    
     /**
      * 获取性别列表
      *
@@ -104,9 +111,13 @@ class Constants
      */
     public static function getGenderList()
     {
-        return [Yii::t('wocenter/app', 'Secrecy'), Yii::t('wocenter/app', 'Male'), Yii::t('wocenter/app', 'Female')];
+        return [
+            Yii::t('wocenter/app', 'Secrecy'),
+            Yii::t('wocenter/app', 'Male'),
+            Yii::t('wocenter/app', 'Female'),
+        ];
     }
-
+    
     /**
      * 获取性别值
      *
@@ -118,7 +129,7 @@ class Constants
     {
         return ArrayHelper::getValue(static::getGenderList(), $key);
     }
-
+    
     /**
      * 获取可见性列表
      *
@@ -126,9 +137,12 @@ class Constants
      */
     public static function getVisibleList()
     {
-        return [Yii::t('wocenter/app', 'Hidden'), Yii::t('wocenter/app', 'Display')];
+        return [
+            Yii::t('wocenter/app', 'Hidden'),
+            Yii::t('wocenter/app', 'Display'),
+        ];
     }
-
+    
     /**
      * 获取可见值
      *
@@ -140,7 +154,7 @@ class Constants
     {
         return ArrayHelper::getValue(static::getVisibleList(), $key);
     }
-
+    
     /**
      * 获取用户状态列表
      *
@@ -149,13 +163,13 @@ class Constants
     public static function getUserStatusList()
     {
         return [
-            User::STATUS_FORBIDDEN => Yii::t('wocenter/app', 'User disabled status'),
-            User::STATUS_ACTIVE => Yii::t('wocenter/app', 'User active status'),
-            User::STATUS_LOCKED => Yii::t('wocenter/app', 'User locked status'),
-            User::STATUS_DELETED => Yii::t('wocenter/app', 'User deleted status'),
+            IdentityInterface::STATUS_FORBIDDEN => Yii::t('wocenter/app', 'User disabled status'),
+            IdentityInterface::STATUS_ACTIVE => Yii::t('wocenter/app', 'User active status'),
+            IdentityInterface::STATUS_LOCKED => Yii::t('wocenter/app', 'User locked status'),
+            IdentityInterface::STATUS_DELETED => Yii::t('wocenter/app', 'User deleted status'),
         ];
     }
-
+    
     /**
      * 获取用户状态值
      *
@@ -167,5 +181,5 @@ class Constants
     {
         return ArrayHelper::getValue(self::getUserStatusList(), $key);
     }
-
+    
 }

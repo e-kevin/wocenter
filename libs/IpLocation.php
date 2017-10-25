@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\libs;
 
 /**
@@ -7,35 +8,35 @@ namespace wocenter\libs;
  */
 class IpLocation
 {
-
+    
     /**
      * QQWry.Dat文件指针
      *
      * @var resource
      */
     private $fp;
-
+    
     /**
      * 第一条IP记录的偏移地址
      *
      * @var int
      */
     private $firstip;
-
+    
     /**
      * 最后一条IP记录的偏移地址
      *
      * @var int
      */
     private $lastip;
-
+    
     /**
      * IP记录的总条数（不包含版本信息记录）
      *
      * @var int
      */
     private $totalip;
-
+    
     /**
      * 构造函数，打开 UTFWry.Dat 文件并初始化类中的信息
      *
@@ -50,7 +51,7 @@ class IpLocation
             $this->totalip = ($this->lastip - $this->firstip) / 7;
         }
     }
-
+    
     /**
      * 返回读取的长整型数
      *
@@ -61,9 +62,10 @@ class IpLocation
     {
         //将读取的little-endian编码的4个字节转化为长整型数
         $result = unpack('Vlong', fread($this->fp, 4));
+        
         return $result['long'];
     }
-
+    
     /**
      * 返回读取的3个字节的长整型数
      *
@@ -74,14 +76,17 @@ class IpLocation
     {
         //将读取的little-endian编码的3个字节转化为长整型数
         $result = unpack('Vlong', fread($this->fp, 3) . chr(0));
+        
         return $result['long'];
     }
-
+    
     /**
      * 返回压缩后可进行比较的IP地址
      *
      * @access private
+     *
      * @param string $ip
+     *
      * @return string
      */
     private function packip($ip)
@@ -90,12 +95,14 @@ class IpLocation
         // 这时intval将Flase转化为整数-1，之后压缩成big-endian编码的字符串
         return pack('N', intval(ip2long($ip)));
     }
-
+    
     /**
      * 返回读取的字符串
      *
      * @access private
+     *
      * @param string $data
+     *
      * @return string
      */
     private function getstring($data = "")
@@ -105,9 +112,10 @@ class IpLocation
             $data .= $char;             // 将读取的字符连接到给定字符串之后
             $char = fread($this->fp, 1);
         }
+        
         return $data;
     }
-
+    
     /**
      * 返回地区信息
      *
@@ -130,14 +138,17 @@ class IpLocation
                 $area = $this->getstring($byte);
                 break;
         }
+        
         return $area;
     }
-
+    
     /**
      * 根据所给 IP 地址或域名返回所在地区信息
      *
      * @access public
+     *
      * @param string $ip
+     *
      * @return array
      */
     public function getlocation($ip = '')
@@ -172,7 +183,7 @@ class IpLocation
                 }
             }
         }
-
+        
         //获取查找到的IP地理位置信息
         fseek($this->fp, $findip);
         $location['beginip'] = long2ip($this->getlong());   // 用户IP所在范围的开始地址
@@ -215,9 +226,10 @@ class IpLocation
         if (trim($location['area']) == 'CZ88.NET') {
             $location['area'] = '';
         }
+        
         return $location;
     }
-
+    
     /**
      * 析构函数，用于在页面执行结束后自动关闭打开的文件。
      *
@@ -229,5 +241,5 @@ class IpLocation
         }
         $this->fp = 0;
     }
-
+    
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\services\notification;
 
 use wocenter\core\Service;
@@ -11,7 +12,7 @@ use Yii;
  */
 class EmailService extends Service
 {
-
+    
     /**
      * @inheritdoc
      */
@@ -19,7 +20,7 @@ class EmailService extends Service
     {
         return 'email';
     }
-
+    
     /**
      * 发送邮件
      *
@@ -41,5 +42,5 @@ class EmailService extends Service
             ->setSubject($subject)
             ->send();
     }
-
+    
 }

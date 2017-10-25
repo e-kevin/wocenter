@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\helpers;
 
 use Yii;
@@ -12,7 +13,7 @@ use yii\helpers\FormatConverter;
  */
 class DateTimeHelper
 {
-
+    
     const HOUR = 0;
     const MINUTE = 1;
     const SECOND = 2;
@@ -20,7 +21,7 @@ class DateTimeHelper
     const MONTH = 4;
     const DAY = 5;
     const WEEK = 6;
-
+    
     /**
      * 获取时间单位列表
      *
@@ -38,7 +39,7 @@ class DateTimeHelper
             self::WEEK => Yii::t('wocenter/app', 'Week'),
         ];
     }
-
+    
     /**
      * 获取时间单位值
      *
@@ -50,7 +51,7 @@ class DateTimeHelper
     {
         return ArrayHelper::getValue(static::getTimeUnitList(), $key);
     }
-
+    
     /**
      * 标准化格式时间戳
      *
@@ -71,10 +72,10 @@ class DateTimeHelper
         if (strncmp($format, 'php:', 4) === 0) {
             $format = substr($format, 4);
         }
-
+        
         return date($format, $timestamp);
     }
-
+    
     /**
      * 格式化为友好时间格式
      *
@@ -87,34 +88,34 @@ class DateTimeHelper
         if ($timestamp == null) {
             return 'N/A';
         }
-
+        
         // 获取当前时间戳
         $currentTime = time();
-
+        
         // 获取当天0点时间戳
         $todayZero = strtotime('today');
-
+        
         // 获取昨天时间戳
         $yesterday = strtotime('-1 day', $todayZero);
-
+        
         // 获取前天时间戳
         $beforeYesterday = strtotime('-1 day', $yesterday);
-
+        
         // 获取明天0点时间戳
         $tomorrow = strtotime('+1 day', $todayZero);
-
+        
         // 获取后天0点时间戳
         $afterTomorrow = strtotime('+1 day', $tomorrow);
-
+        
         // 获取一天的时间戳
         $oneDayTimestamp = 3600 * 24;
-
+        
         //当年时间戳
         $yearDiff = $currentTime - strtotime("-1 year");
-
+        
         // 时间差
         $timeDiff = $currentTime - $timestamp;
-
+        
         switch (true) {
             case $timestamp >= $afterTomorrow && $timestamp < $afterTomorrow + $oneDayTimestamp :
                 return Yii::t('wocenter/app', 'The day after tomorrow {time}', ['time' => date('H:i', $timestamp)]);
@@ -138,7 +139,7 @@ class DateTimeHelper
                 }
         }
     }
-
+    
     /**
      * 根据时间单位，比较两个时间差。即$timestamp距离$time(默认为当前时间)已过多久
      *
@@ -178,10 +179,10 @@ class DateTimeHelper
             default:
                 $result = $time - $timestamp;
         }
-
+        
         return $result;
     }
-
+    
     /**
      * 根据时间单位，获取一个给定时间的未来时间戳。即$timestamp后$time的时间戳
      *
@@ -222,10 +223,10 @@ class DateTimeHelper
             default:
                 $result = $time + $timestamp;
         }
-
+        
         return $result;
     }
-
+    
     /**
      * 解析并返回PHP DateTime能够理解的时间日期格式
      *
@@ -250,5 +251,5 @@ class DateTimeHelper
             throw new InvalidConfigException("Error parsing '{$type}' format.");
         }
     }
-
+    
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\libs;
 
 use wocenter\Wc;
@@ -13,7 +14,7 @@ use yii\db\Query;
  */
 class Utils
 {
-
+    
     /**
      * 是否超级管理员
      *
@@ -26,10 +27,10 @@ class Utils
         if (empty($uid)) {
             $uid = Yii::$app->getUser()->getIdentity()->getId();
         }
-
+        
         return in_array($uid, (array)Yii::$app->params['superAdmin']);
     }
-
+    
     /**
      * 获取客户端IP地址
      *
@@ -44,7 +45,7 @@ class Utils
         static $ip = null;
         if ($ip !== null)
             return $ip[$type];
-
+        
         if ($adv) {
             if (isset($_SERVER['HTTP_X_REAL_FORWARDED_FOR'])) {
                 $ip = $_SERVER['HTTP_X_REAL_FORWARDED_FOR'];
@@ -65,10 +66,10 @@ class Utils
         // IP地址合法验证
         $long = sprintf("%u", ip2long($ip));
         $ip = $long ? [$ip, $long] : ['0.0.0.0', 0];
-
+        
         return $ip[$type];
     }
-
+    
     /**
      * 获取客户端IP地址信息
      *
@@ -81,17 +82,17 @@ class Utils
         if ($last_ip) {    //如果获取到客户端IP，则获取其物理位置
             $Ip = new IpLocation(); // 实例化类
             $location = $Ip->getlocation($last_ip); // 获取某个IP地址所在的位置
-
+            
             if ($location['country'] && $location['country'] != 'CZ88.NET')
                 $last_location .= $location['country'];
-
+            
             if ($location['area'] && $location['area'] != 'CZ88.NET')
                 $last_location .= ' ' . $location['area'];
         }
-
+        
         return $last_location;
     }
-
+    
     /**
      * 格式化字节大小
      *
@@ -105,10 +106,10 @@ class Utils
         $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
         for ($i = 0; $size >= 1024 && $i < 5; $i++)
             $size /= 1024;
-
+        
         return round($size, 2) . $delimiter . $units[$i];
     }
-
+    
     /**
      * Example:
      *
@@ -138,14 +139,14 @@ class Utils
             'totalCount' => $query->count(),
             'defaultPageSize' => $defaultPageSize,
         ]);
-
+        
         $result = $query->offset($pagination->offset)
             ->limit($pagination->limit)
             ->all();
-
+        
         return ['pages' => $pagination, 'result' => $result];
     }
-
+    
     /**
      * 根据场景动态显示验证码
      *
@@ -161,8 +162,8 @@ class Utils
         } else {
             $openVerifyType = explode(',', $openVerifyType);
         }
-
+        
         return in_array($scenario ?: Yii::$app->controller->action->id, $openVerifyType);
     }
-
+    
 }

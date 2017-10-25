@@ -1,22 +1,24 @@
 <?php
+
 namespace wocenter\services\passport;
 
 use wocenter\core\Service;
 use wocenter\libs\Utils;
-use wocenter\models\UserIdentity;
-use wocenter\models\UserProfile;
+use wocenter\backend\modules\account\models\UserIdentity;
+use wocenter\backend\modules\account\models\UserProfile;
 use wocenter\backend\modules\passport\models\LoginForm;
 use wocenter\backend\modules\passport\models\SecurityForm;
 use wocenter\backend\modules\passport\models\SignupForm;
 use wocenter\services\passport\events\updateLoginLog;
 use wocenter\Wc;
 use wocenter\helpers\StringHelper;
-use wocenter\models\User;
+use wocenter\backend\modules\account\models\BaseUser;
 use Yii;
 use yii\base\InvalidValueException;
 use yii\helpers\Url;
 use wocenter\interfaces\IdentityInterface;
 use yii\web\NotFoundHttpException;
+use yii\web\User;
 
 /**
  * 认证中心服务类
@@ -25,12 +27,12 @@ use yii\web\NotFoundHttpException;
  */
 class UcenterService extends Service
 {
-
+    
     /**
-     * @var User 已经认证的用户对象
+     * @var BaseUser 已经认证的用户对象
      */
     private $_user;
-
+    
     /**
      * @inheritdoc
      */
@@ -38,7 +40,7 @@ class UcenterService extends Service
     {
         return 'ucenter';
     }
-
+    
     /**
      * 登陆用户
      *
@@ -63,18 +65,18 @@ class UcenterService extends Service
                 // 执行注册流程
                 $this->_info = LoginForm::NEED_STEP;
                 $this->_status = false;
-
+                
                 return $this->_status;
             }
         } else {
             return $this->_status;
         }
     }
-
+    
     /**
      * 无密码用户快速登录认证
      *
-     * @param string|User $identity 验证标识 username、email、mobile
+     * @param string|BaseUser $identity 验证标识 username、email、mobile
      * @param integer $rememberMe 记住我，默认不记住
      *
      * @return boolean true：登录成功 false - 登录失败
@@ -84,20 +86,20 @@ class UcenterService extends Service
         if (!$identity instanceof IdentityInterface) {
             $identity = $this->getUser($identity);
         }
-
+        
         // todo 增加对不同系统的验证，如日后的Account账户系统不论用户状态如何均可登录，前台和后台则受配置约束
         // 关闭登录许可则验证用户是否已经激活
         if (Wc::$service->getSystem()->getConfig()->get('NEED_ACTIVE') == 0 && !$identity->is_active) {
             $this->_info = Yii::t('wocenter/app', 'Please activate your account.');
-
+            
             return false;
         }
-
-        Yii::$app->getUser()->on(\yii\web\User::EVENT_AFTER_LOGIN, [new updateLoginLog(), 'run']);
-
+        
+        Yii::$app->getUser()->on(User::EVENT_AFTER_LOGIN, [new updateLoginLog(), 'run']);
+        
         return Yii::$app->getUser()->login($identity, $rememberMe);
     }
-
+    
     /**
      * 注册用户
      *
@@ -111,23 +113,23 @@ class UcenterService extends Service
      * @return boolean `true`: 注册成功，通过[[getData()]]方法返回用户数据数组[id, username, email, mobile, created_at]
      * @throws NotFoundHttpException
      */
-    public function signup($username, $password, $email = null, $mobile = null, $autoGenerate = false, $createdBy = User::CREATED_BY_USER)
+    public function signup($username, $password, $email = null, $mobile = null, $autoGenerate = false, $createdBy = BaseUser::CREATED_BY_USER)
     {
         $class = Yii::$app->getUser()->identityClass;
-        /* @var $model User */
+        /* @var $model BaseUser */
         $model = new $class();
         $actionService = Wc::$service->getAction();
         if (!$autoGenerate && !$actionService->checkLimit('register', $model::tableName())) {
             $this->_info = $actionService->getInfo();
-
+            
             return $this->_status;
         }
-
+        
         $model->username = $username ?: $this->_randUsername(); // 如果username为空，则生成默认用户名
         $model->password = $password;
         $model->email = $email;
         $model->mobile = $mobile;
-
+        
         if (!$autoGenerate) {
             // 已经通过验证则自动激活账户
             $registerSwitch = explode(',', Wc::$service->getSystem()->getConfig()->get('REGISTER_SWITCH'));
@@ -162,28 +164,32 @@ class UcenterService extends Service
         } else {
             $model->created_by = $model::CREATED_BY_SYSTEM;
         }
-
-        // 注册成功
-        if ($model->save(false)) {
-            $this->afterSignup($model->attributes, $autoGenerate);
-            $this->_status = true;
-            $this->_data = [
-                $model->id,
-                $model->username,
-                $model->email,
-                $model->mobile,
-                $model->created_at,
-            ];
-
-            return $this->_status;
-        } else {
-            // 注册失败
-            $this->_info = Yii::t('wocenter/app', 'Signup failure.');
-
-            return $this->_status;
-        }
+        
+        $this->_status = Wc::transaction(function () use ($model, $autoGenerate) {
+            // 注册成功
+            if ($model->save(false)) {
+                $this->afterSignup($model->attributes, $autoGenerate);
+                $this->_status = true;
+                $this->_data = [
+                    $model->id,
+                    $model->username,
+                    $model->email,
+                    $model->mobile,
+                    $model->created_at,
+                ];
+                
+                return $this->_status;
+            } // 注册失败
+            else {
+                $this->_info = Yii::t('wocenter/app', 'Signup failure.');
+                
+                return false;
+            }
+        });
+        
+        return $this->_status;
     }
-
+    
     /**
      * 注册成功后执行
      *
@@ -200,12 +206,12 @@ class UcenterService extends Service
             'reg_time' => $attributes['created_at'],
             'status' => $attributes['status'],
         ])->execute();
-
+        
         // 记录操作日志
-        /* @var $class User */
+        /* @var $class BaseUser */
         $class = Yii::$app->getUser()->identityClass;
         Wc::$service->getLog()->create('register', $class::tableName(), $attributes['id']);
-
+        
         if (!$autoGenerate) {
             /**
              * 邮箱验证类型
@@ -227,16 +233,16 @@ class UcenterService extends Service
                     ], true),
                 ]);
             }
-
+            
             // todo 发送欢迎邮件
             if (Wc::$service->getSystem()->getConfig()->get('SEND_REGISTER_WELCOME')) {
 //                Wc::$service->getNotification()->sendNotify('register_welcome', $attributes['username']);
             }
         }
-
+        
         // todo 添加默认邀请码
     }
-
+    
     /**
      * 退出登录
      */
@@ -244,7 +250,7 @@ class UcenterService extends Service
     {
         return Yii::$app->getUser()->logout();
     }
-
+    
     /**
      * 初始化用户密码，默认为 123456
      *
@@ -254,12 +260,12 @@ class UcenterService extends Service
      */
     public function initPassword($identity)
     {
-        /** @var User $class */
+        /** @var BaseUser $class */
         $class = Yii::$app->getUser()->identityClass;
         $userModel = $class::findOne($identity);
         if ($userModel == null) {
-            $this->_info = Yii::t('wocenter/app', 'User does not exist.');
-
+            $this->_info = Yii::t('wocenter/app', 'BaseUser does not exist.');
+            
             return $this->_status;
         }
         $actionService = Wc::$service->getAction();
@@ -276,10 +282,10 @@ class UcenterService extends Service
         } else {
             $this->_info = $actionService->getInfo();
         }
-
+        
         return $this->_status;
     }
-
+    
     /**
      * 验证用户状态信息
      *
@@ -295,7 +301,7 @@ class UcenterService extends Service
     {
         // 获取用户数据
         $user = $this->getUser($identity);
-
+        
         switch ($user->status) {
             case $user::STATUS_ACTIVE:
                 $this->verifyCurrentUser($password, $user);
@@ -319,39 +325,39 @@ class UcenterService extends Service
                 }
                 break;
             case $user::STATUS_FORBIDDEN:
-                $this->_info = Yii::t('wocenter/app', 'User is disabled.');
+                $this->_info = Yii::t('wocenter/app', 'BaseUser is disabled.');
                 break;
             default:
-                $this->_info = Yii::t('wocenter/app', 'User status exception.');
+                $this->_info = Yii::t('wocenter/app', 'BaseUser status exception.');
                 break;
         }
-
+        
         return $this->_status;
     }
-
+    
     /**
      * 验证指定用户（默认为当前登录用户）密码是否正确，用于确认用户身份
      *
      * @param string $password 用户密码
-     * @param User|null $user 用户对象
+     * @param BaseUser|null $user 用户对象
      *
      * @return boolean
      * `true`: 验证成功，[[$this->getData()]]可获取用户详情对象
      * `false`: 验证失败，[[$this->getInfo()]]可获取错误信息提示
      * @throws NotFoundHttpException
      */
-    public function verifyCurrentUser($password, User $user = null)
+    public function verifyCurrentUser($password, BaseUser $user = null)
     {
         // 默认为当前登录用户
         if ($user === null) {
             $user = Yii::$app->getUser()->getIdentity();
         }
         if ($user === null) {
-            $this->_info = Yii::t('wocenter/app', 'User does not exist.');
-
+            $this->_info = Yii::t('wocenter/app', 'BaseUser does not exist.');
+            
             return $this->_status;
         }
-
+        
         // 密码验证成功
         if (Wc::$service->getPassport()->getValidation()->validatePassword($password, $user->password_hash)) {
             Wc::$service->getLog()->create('validate_password', $user->tableName(), $user->id, $user->id);
@@ -363,13 +369,13 @@ class UcenterService extends Service
             if ($actionService->checkLimit('error_password', $user->tableName(), $user->id, $user->id)) {
                 Wc::$service->getLog()->create('error_password', $user->tableName(), $user->id, $user->id);
             }
-
+            
             $this->_info = $actionService->getInfo();
         }
-
+        
         return $this->_status;
     }
-
+    
     /**
      * 生成随机用户
      *
@@ -379,7 +385,7 @@ class UcenterService extends Service
     {
         return $this->signup($this->_randUsername(), StringHelper::randString(10), $this->_randEmail(), null, true);
     }
-
+    
     /**
      * 生成随机邮箱地址
      *
@@ -396,7 +402,7 @@ class UcenterService extends Service
             return $email;
         }
     }
-
+    
     /**
      * 生成随机用户名
      *
@@ -413,17 +419,17 @@ class UcenterService extends Service
             return $username;
         }
     }
-
+    
     /**
      * 根据验证标识 username、email、mobile 查找用户，该方法同时验证该用户模型是否合法
      * 如果需要自定义该用户模型类，可配置Yii::$app->getUser()->identityClass属性
      *
      * @param string|integer $identity 验证标识 [username,email,mobile]
      *
-     * @return IdentityInterface|User
+     * @return IdentityInterface|BaseUser
      * @throws InvalidValueException
      * @throws NotFoundHttpException
-     * @see yii\web\User::identityClass
+     * @see yii\web\BaseUser::identityClass
      */
     public function getUser($identity)
     {
@@ -436,13 +442,13 @@ class UcenterService extends Service
                     throw new InvalidValueException("$class::findByIdentity() must return an object implementing `\\wocenter\\interfaces\\IdentityInterface`.");
                 }
             } else {
-                throw new NotFoundHttpException(Yii::t('wocenter/app', 'User does not exist.'));
+                throw new NotFoundHttpException(Yii::t('wocenter/app', 'BaseUser does not exist.'));
             }
         }
-
+        
         return $this->_user;
     }
-
+    
     /**
      * 解析用户标识，返回标识类型
      *
@@ -462,8 +468,8 @@ class UcenterService extends Service
         } else {
             $param = 'username';
         }
-
+        
         return $param;
     }
-
+    
 }

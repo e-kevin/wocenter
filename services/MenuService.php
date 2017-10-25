@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\services;
 
 use wocenter\backend\modules\menu\models\Menu;
@@ -14,17 +15,17 @@ use Yii;
  */
 class MenuService extends Service
 {
-
+    
     /**
      * @var string|array|callable|Menu 菜单类
      */
     public $menuModel = '\wocenter\backend\modules\menu\models\Menu';
-
+    
     /**
      * @var integer|false 缓存时间间隔。当为`false`时，则删除缓存数据，默认缓存`一天`
      */
     public $cacheDuration = 86400;
-
+    
     /**
      * @inheritdoc
      */
@@ -32,7 +33,7 @@ class MenuService extends Service
     {
         return 'menu';
     }
-
+    
     /**
      * 根据查询条件获取指定（单个或多个）分类的菜单数据
      *
@@ -50,7 +51,7 @@ class MenuService extends Service
             return $menus;
         }
     }
-
+    
     /**
      * 根据查询条件和$filterCategory指标 [获取 || 不获取] 指定分类（单个或多个）的菜单数据
      *
@@ -75,36 +76,48 @@ class MenuService extends Service
                 ],
             ], $condition)
         );
-
+        
         return $menus ? ArrayHelper::index($menus, 'id', 'category_id') : [];
     }
-
+    
     /**
      * 同步所有已安装模块的菜单项，此处不获取缓存中的菜单项
      *
-     * @return boolean
+     * @param array $menus 需要同步的菜单数据，默认为空，即同步所有已经安装模块的菜单数据
+     *
+     * @return bool
      */
-    public function syncMenus()
+    public function syncMenus($menus = [])
     {
         /** @var Menu $menuModel */
         $menuModel = $this->menuModel;
-        // 获取已经安装的模块菜单配置信息
-        $allInstalledMenuConfig = Wc::$service->getModularity()->getLoad()->getMenus();
-        // 获取数据库里的所有模块菜单数据，不包括用户自建数据
+        // 获取菜单配置信息
+        $allMenuConfig = ArrayHelper::merge(
+            Wc::$service->getExtension()->getModularity()->getMenus(), // 模块菜单
+            Wc::$service->getExtension()->getController()->getMenus(), // 模块功能扩展菜单
+            $menus
+        );
+        // 获取数据库里的所有菜单数据，不包括用户自建数据
         $menuInDatabase = $this->getMenus('backend', [
-            'created_type' => $menuModel::CREATE_TYPE_BY_MODULE,
+            'created_type' => [
+                'in',
+                [
+                    $menuModel::CREATE_TYPE_BY_MODULE,
+                    $menuModel::CREATE_TYPE_BY_EXTENSION,
+                ],
+            ],
         ]);
-        $updateDbMenus = $this->_convertMenuData2Db($allInstalledMenuConfig, 0, $menuInDatabase);
+        $updateDbMenus = $this->_convertMenuData2Db($allMenuConfig, 0, $menuInDatabase);
         $this->_fixMenuData($menuInDatabase, $updateDbMenus);
-
+        
         // 操作数据库
         $this->_updateMenus($updateDbMenus);
         // 删除菜单缓存
         $this->clearCache();
-
+        
         return true;
     }
-
+    
     /**
      * 初始化菜单配置数据，用于补全修正菜单数组。可用字段必须存在于$this->menuModel数据表里
      *
@@ -120,7 +133,7 @@ class MenuService extends Service
             $menus['modularity'] = $modularity[0];
         }
         $menus['category_id'] = Yii::$app->id;
-        $menus['created_type'] = Menu::CREATE_TYPE_BY_MODULE;
+        $menus['created_type'] = isset($menus['created_type']) ? $menus['created_type'] : Menu::CREATE_TYPE_BY_MODULE;
         $menus['show_on_menu'] = isset($menus['show_on_menu']) ? 1 : 0;
         $menus['alias_name'] = isset($menus['alias_name']) ? $menus['alias_name'] : $menus['name'];
         $menus['sort_order'] = isset($menus['sort_order']) ? $menus['sort_order'] : 0;
@@ -132,7 +145,7 @@ class MenuService extends Service
             }
         }
     }
-
+    
     /**
      * 转换菜单数据，用以插入数据库
      *
@@ -149,18 +162,17 @@ class MenuService extends Service
             return [];
         }
         $arr = [];
-
+        
         /** @var Menu $menuModel */
         $menuModel = $this->menuModel;
         foreach ($menus as $row) {
             $this->_initMenuConfig($row);
-
             // 排除没有设置归属模块的数据以及中断该数据的子数据
             // todo 改为系统日志记录该错误或抛出系统异常便于更正?
             if (empty($row['modularity'])) {
                 continue;
             }
-
+            
             $items = ArrayHelper::remove($row, 'items', []);
             $row['parent_id'] = $parentId;
             $arr['menuConfig'][] = $row;
@@ -170,7 +182,7 @@ class MenuService extends Service
                 'url' => $row['url'],
                 'parent_id' => $row['parent_id'],
             ];
-
+            
             if (!empty($items) // 存在子级菜单配置数据
                 || $row['parent_id'] == 0 // 菜单为顶级菜单
             ) {
@@ -193,7 +205,7 @@ class MenuService extends Service
                     }
                 }
             }
-
+            
             // 数据库里存在数据
             if (
                 ($data = ArrayHelper::listSearch($menuInDatabase, $condition, true)) ||
@@ -218,10 +230,10 @@ class MenuService extends Service
                 $menuInDatabase[] = $row;
             }
         }
-
+        
         return $arr;
     }
-
+    
     /**
      * 对比数据库已有数据，修正待写入数据库的菜单数据
      *
@@ -245,7 +257,7 @@ class MenuService extends Service
             }
         }
     }
-
+    
     /**
      * 更新所有模块菜单
      *
@@ -270,7 +282,7 @@ class MenuService extends Service
             }
         }
     }
-
+    
     /**
      * 删除缓存
      */
@@ -280,5 +292,29 @@ class MenuService extends Service
         $menuModel = Yii::createObject($this->menuModel);
         $menuModel->clearCache();
     }
-
+    
+    /**
+     * 格式化菜单配置数据，主要把键值`name`转换成键名，方便使用\yii\helpers\ArrayHelper::merge合并相同键名的数组到同一分组下
+     *
+     * @param array $menus 菜单数据
+     *
+     * @return array
+     */
+    public function formatMenuConfig($menus)
+    {
+        $arr = [];
+        if (empty($menus)) {
+            return $arr;
+        }
+        foreach ($menus as $key => $menu) {
+            $key = isset($menu['name']) ? $menu['name'] : $key;
+            $arr[$key] = $menu;
+            if (isset($menu['items'])) {
+                $arr[$key]['items'] = $this->formatMenuConfig($menu['items']);
+            }
+        }
+        
+        return $arr;
+    }
+    
 }

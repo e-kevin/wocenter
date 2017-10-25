@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\behaviors;
 
 use wocenter\helpers\DateTimeHelper;
@@ -21,27 +22,27 @@ use yii\helpers\ArrayHelper;
  * @property string $saveTimeZone
  *
  * 具体使用方法可参考以下文件
- * @see \wocenter\models\Identity
+ * @see \wocenter\backend\modules\account\models\Identity
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
 class ModifyTimestampBehavior extends TimestampBehavior
 {
-
+    
     /**
      * @var boolean 是否允许自定义更新[[$updatedAtAttribute]]字段值，默认为`false` - 不允许。
      * 默认配置时，行为将根据[[$attributes]]属性配置处理相关时间日期字段值。如果未自定义[[$attributes]]值，
      * 则每次新建数据或更新数据时，[[$updatedAtAttribute]]属性值都会被赋予当前时间戳。
      */
     public $modifyUpdatedAt = false;
-
+    
     /**
      * @var boolean 是否允许自定义更新[[$createdAtAttribute]]字段值，默认为`false` - 不允许。
      * 默认配置时，行为将根据[[$attributes]]属性配置处理相关时间日期字段值。如果未自定义[[$attributes]]值，
      * 则每次新建数据时，[[$createdAtAttribute]]属性值都会被赋予当前时间戳。
      */
     public $modifyCreatedAt = false;
-
+    
     /**
      * @var string [[$createdAtAttribute]]属性使用哪个小部件显示，默认为`DateControl::FORMAT_DATETIME`，可用值有
      * [[DateControl::FORMAT_DATETIME]], [[DateControl::FORMAT_DATE]], [[DateControl::FORMAT_TIME]]或
@@ -50,7 +51,7 @@ class ModifyTimestampBehavior extends TimestampBehavior
      * @see kartik\datecontrol\DateControl
      */
     public $createdAtDisplayType = DateControl::FORMAT_DATETIME;
-
+    
     /**
      * @var string [[$updatedAtAttribute]]属性使用哪个小部件显示，默认为`DateControl::FORMAT_DATETIME`，可用值有
      * [[DateControl::FORMAT_DATETIME]], [[DateControl::FORMAT_DATE]], [[DateControl::FORMAT_TIME]]或
@@ -59,7 +60,7 @@ class ModifyTimestampBehavior extends TimestampBehavior
      * @see kartik\datecontrol\DateControl
      */
     public $updatedAtDisplayType = DateControl::FORMAT_DATETIME;
-
+    
     /**
      * @var string [[$updateAtAttribute]]属性的显示格式，支持php和ICU时间日期格式
      * 当该值未设置时，默认根据[[$updatedAtDisplayType]]值从[[$_displayFormats]]数组里获取数据
@@ -71,7 +72,7 @@ class ModifyTimestampBehavior extends TimestampBehavior
      * ```
      */
     public $updatedAtDisplayFormat;
-
+    
     /**
      * @var string [[$createdAtAttribute]]属性的显示格式，支持php和ICU时间日期格式
      * 当该值未设置时，默认根据[[$createdAtDisplayType]]值从[[$_displayFormats]]数组里获取数据
@@ -83,7 +84,7 @@ class ModifyTimestampBehavior extends TimestampBehavior
      * ```
      */
     public $createdAtDisplayFormat;
-
+    
     /**
      * @var string [[$updateAtAttribute]]属性的保存格式，支持php和ICU时间日期格式
      * 当该值未设置时，默认根据[[$updatedAtDisplayType]]值从[[$_saveFormats]]数组里获取数据
@@ -96,7 +97,7 @@ class ModifyTimestampBehavior extends TimestampBehavior
      * ```
      */
     public $updatedAtSaveFormat;
-
+    
     /**
      * @var string [[$createdAtAttribute]]属性的显示格式，支持php和ICU时间日期格式
      * 当该值未设置时，默认根据[[$createdAtDisplayType]]值从[[$_saveFormats]]数组里获取数据
@@ -109,12 +110,12 @@ class ModifyTimestampBehavior extends TimestampBehavior
      * ```
      */
     public $createdAtSaveFormat;
-
+    
     /**
      * @var string 使用哪个小部件显示时间日期选项，行为会根据该值自动添加相应的验证规则
      */
     public $dateTimeWidget = '\wocenter\widgets\DateControl';
-
+    
     /**
      * @var array 时间日期默认显示格式。当[[$updatedAtDisplayFormat]]或[[$createdAtDisplayFormat]]未设置时，将默认根据
      * [[$createdAtDisplayType]]或[[$updatedAtDisplayType]]值获取相关数据
@@ -124,7 +125,7 @@ class ModifyTimestampBehavior extends TimestampBehavior
         DateControl::FORMAT_TIME => 'php:H:i:s a',
         DateControl::FORMAT_DATETIME => 'php:Y-m-d H:i:s',
     ];
-
+    
     /**
      * @var array 时间日期默认显示格式。当[[$updatedAtSaveFormat]]或[[$createdAtSaveFormat]]未设置时，将默认根据
      * [[$createdAtDisplayType]]或[[$updatedAtDisplayType]]值获取相关数据
@@ -134,7 +135,7 @@ class ModifyTimestampBehavior extends TimestampBehavior
         DateControl::FORMAT_TIME => 'php:H:U',
         DateControl::FORMAT_DATETIME => 'php:U',
     ];
-
+    
     /**
      * @inheritdoc
      */
@@ -146,7 +147,7 @@ class ModifyTimestampBehavior extends TimestampBehavior
         ) {
             return;
         }
-
+        
         if (!empty($this->attributes[$event->name])) {
             $attributes = (array)$this->attributes[$event->name];
             $value = $this->getValue($event);
@@ -162,7 +163,7 @@ class ModifyTimestampBehavior extends TimestampBehavior
             }
         }
     }
-
+    
     /**
      * 创建验证规则
      * 根据配置自动添加$this->createdAtAttribute和$this->updatedAtAttribute属性的验证规则，同时滤掉该行为的其他规则
@@ -213,10 +214,10 @@ class ModifyTimestampBehavior extends TimestampBehavior
                 }
             }
         }
-
+        
         return ArrayHelper::merge($modelRules, $rules);
     }
-
+    
     /**
      * 添加规则
      *
@@ -267,7 +268,7 @@ class ModifyTimestampBehavior extends TimestampBehavior
                 break;
         }
     }
-
+    
     /**
      * 创建场景
      * 根据配置自动添加$this->createdAtAttribute和$this->updatedAtAttribute属性字段，
@@ -296,10 +297,10 @@ class ModifyTimestampBehavior extends TimestampBehavior
                 }
                 break;
         }
-
+        
         return $modelScenarios;
     }
-
+    
     /**
      * 获取指定时间日期属性的显示格式，行为会按照以下序列获取相关值
      *
@@ -335,17 +336,17 @@ class ModifyTimestampBehavior extends TimestampBehavior
                 $format = $this->_displayFormats[$type];
             }
         }
-
+        
         if (strpos($format, 'php:') === false) {
             $format = DateTimeHelper::parseFormat($format, $type);
         }
-
+        
         return $returnArray ? [
             'format' => $format,
             'type' => $type,
         ] : $format;
     }
-
+    
     /**
      * 获取指定时间日期属性的保存格式，行为会按照以下序列获取相关值
      *
@@ -374,7 +375,7 @@ class ModifyTimestampBehavior extends TimestampBehavior
                 throw new InvalidConfigException("The property `{$attribute}` does not exists.`");
                 break;
         }
-
+        
         if (empty($format)) {
             if (!empty(Yii::$app->params['dateControlSave'][$type])) {
                 $format = Yii::$app->params['dateControlSave'][$type];
@@ -382,22 +383,22 @@ class ModifyTimestampBehavior extends TimestampBehavior
                 $format = $this->_saveFormats[$type];
             }
         }
-
+        
         if (strpos($format, 'php:') === false) {
             $format = DateTimeHelper::parseFormat($format, $type);
         }
-
+        
         return $returnArray ? [
             'format' => $format,
             'type' => $type,
         ] : $format;
     }
-
+    
     /**
      * @var string DateControl 小部件会按此时区格式化显示时间日期
      */
     private $_displayTimeZone;
-
+    
     /**
      * DateControl 小部件会按此时区格式化显示时间日期
      *
@@ -412,10 +413,10 @@ class ModifyTimestampBehavior extends TimestampBehavior
                 $this->_displayTimeZone = Yii::$app->getTimeZone();
             }
         }
-
+        
         return $this->_displayTimeZone;
     }
-
+    
     /**
      * @param string $displayTimeZone
      */
@@ -423,12 +424,12 @@ class ModifyTimestampBehavior extends TimestampBehavior
     {
         $this->_displayTimeZone = $displayTimeZone;
     }
-
+    
     /**
      * @var string DateControl 小部件会按此时区保存时间日期
      */
     private $_saveTimeZone;
-
+    
     /**
      * DateControl 小部件会按此时区保存时间日期
      *
@@ -443,10 +444,10 @@ class ModifyTimestampBehavior extends TimestampBehavior
                 $this->_saveTimeZone = Yii::$app->getTimeZone();
             }
         }
-
+        
         return $this->_saveTimeZone;
     }
-
+    
     /**
      * @param string $saveTimeZone
      */
@@ -454,5 +455,5 @@ class ModifyTimestampBehavior extends TimestampBehavior
     {
         $this->_saveTimeZone = $saveTimeZone;
     }
-
+    
 }

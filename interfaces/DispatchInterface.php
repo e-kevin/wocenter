@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\interfaces;
 
 use yii\web\Request;
@@ -6,28 +7,26 @@ use yii\web\Response;
 
 /**
  * 系统调度接口类
- *
- * @package wocenter\interfaces
  * @author E-Kevin <e-kevin@qq.com>
  */
 interface DispatchInterface
 {
-
+    
     /**
      * 刷新列表数据操作符，由JS处理
      */
     const RELOAD_LIST = 'js:reload-list';
-
+    
     /**
      * 刷新页面操作符，由JS处理
      */
     const RELOAD_PAGE = 'js:reload-page';
-
+    
     /**
      * 刷新整个页面操作符，由JS处理
      */
     const RELOAD_FULL_PAGE = 'js:reload-full-page';
-
+    
     /**
      * 操作成功后返回结果至客户端
      *
@@ -40,7 +39,7 @@ interface DispatchInterface
      * @return mixed
      */
     public function success($message = '', $jumpUrl = '', $data = []);
-
+    
     /**
      * 操作失败后返回结果至客户端
      *
@@ -53,7 +52,7 @@ interface DispatchInterface
      * @return mixed
      */
     public function error($message = '', $jumpUrl = '', $data = []);
-
+    
     /**
      * 显示页面
      *
@@ -63,7 +62,7 @@ interface DispatchInterface
      * @return Response
      */
     public function display($view = null, $assign = []);
-
+    
     /**
      * 保存视图模板文件赋值数据
      *
@@ -73,7 +72,7 @@ interface DispatchInterface
      * @return $this
      */
     public function assign($key, $value = null);
-
+    
     /**
      * 是否全页面加载
      *
@@ -82,5 +81,5 @@ interface DispatchInterface
      * @return boolean
      */
     public function isFullPageLoad($request = null);
-
+    
 }

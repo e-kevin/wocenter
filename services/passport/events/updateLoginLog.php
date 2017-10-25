@@ -1,7 +1,8 @@
 <?php
+
 namespace wocenter\services\passport\events;
 
-use wocenter\models\UserProfile;
+use wocenter\backend\modules\account\models\UserProfile;
 use wocenter\Wc;
 use wocenter\libs\Utils;
 use Yii;
@@ -15,7 +16,7 @@ use yii\web\UserEvent;
  */
 class updateLoginLog
 {
-
+    
     /**
      * 更新用户登录记录
      *
@@ -25,7 +26,7 @@ class updateLoginLog
     {
         // 记录日志操作
         Wc::$service->getLog()->create('login', UserProfile::tableName(), $event->identity->getId(), $event->identity->getId());
-
+        
         // 更新登陆次数
         Yii::$app->getDb()->createCommand()->update(UserProfile::tableName(), [
             'last_login_ip' => Utils::getClientIp(),
@@ -34,5 +35,5 @@ class updateLoginLog
             'login_count' => new Expression('login_count + 1'),
         ], ['uid' => $event->identity->getId()])->execute();
     }
-
+    
 }

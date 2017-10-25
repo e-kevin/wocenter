@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\validators;
 
 use Yii;
@@ -42,14 +43,14 @@ class DateControlValidator extends NumberValidator
      * 当该值为`null`时，将被赋予[[min]]值
      */
     public $minString = '1901-12-14 04:45:52';
-
+    
     /**
      * @inheritdoc
      */
     public function init()
     {
         parent::init();
-
+        
         $this->integerOnly = true; // 时间戳必须是整数型
         if ($this->maxString === null) {
             $this->maxString = (string)$this->max;
@@ -58,7 +59,7 @@ class DateControlValidator extends NumberValidator
             $this->minString = (string)$this->min;
         }
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -67,7 +68,7 @@ class DateControlValidator extends NumberValidator
         $timestamp = $model->$attribute;
         if (is_array($timestamp) || (is_object($timestamp) && !method_exists($timestamp, '__toString'))) {
             $this->addError($model, $attribute, $this->message);
-
+            
             return;
         } elseif (!preg_match($this->integerPattern, StringHelper::normalizeNumber($timestamp))) {
             $this->addError($model, $attribute, $this->message);
@@ -77,7 +78,7 @@ class DateControlValidator extends NumberValidator
             $this->addError($model, $attribute, $this->tooBig, ['max' => $this->maxString]);
         }
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -96,21 +97,21 @@ class DateControlValidator extends NumberValidator
             return null;
         }
     }
-
+    
     /**
      * @inheritdoc
      */
     public function getClientOptions($model, $attribute)
     {
         $label = $model->getAttributeLabel($attribute);
-
+        
         $options = [
             'pattern' => new JsExpression($this->integerOnly ? $this->integerPattern : $this->numberPattern),
             'message' => Yii::$app->getI18n()->format($this->message, [
                 'attribute' => $label,
             ], Yii::$app->language),
         ];
-
+        
         if ($this->min !== null) {
             // ensure numeric value to make javascript comparison equal to PHP comparison
             // https://github.com/yiisoft/yii2/issues/3118
@@ -132,8 +133,8 @@ class DateControlValidator extends NumberValidator
         if ($this->skipOnEmpty) {
             $options['skipOnEmpty'] = 1;
         }
-
+        
         return $options;
     }
-
+    
 }

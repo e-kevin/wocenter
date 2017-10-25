@@ -1,11 +1,12 @@
 <?php
+
 namespace wocenter\services;
 
 use wocenter\backend\modules\action\models\Action;
 use wocenter\backend\modules\action\models\ActionLimit;
 use wocenter\backend\modules\log\models\ActionLog;
 use wocenter\core\Service;
-use wocenter\models\User;
+use wocenter\backend\modules\account\models\BaseUser;
 use wocenter\Wc;
 use wocenter\helpers\DateTimeHelper;
 use wocenter\libs\Utils;
@@ -19,22 +20,22 @@ use yii\web\NotFoundHttpException;
  */
 class ActionService extends Service
 {
-
+    
     /**
      * @var boolean 检测限制行为是否通过，默认为通过
      */
     protected $_status = true;
-
+    
     /**
      * @var array 参数
      */
     private $_params = [];
-
+    
     /**
      * @var array 行为限制信息
      */
     private $_limitInfo;
-
+    
     /**
      * @inheritdoc
      */
@@ -42,7 +43,7 @@ class ActionService extends Service
     {
         return 'action';
     }
-
+    
     /**
      * 检测行为限制
      *
@@ -69,25 +70,25 @@ class ActionService extends Service
                 'action' => $action,
             ]));
         }
-
+        
         // 设置参数
         $this->setParams($modelClassName, $actionUserId, $recordId);
-
+        
         // 排序惩罚
         $this->_sortPunish();
-
+        
         // 解析提示语模板
         $this->_parseContent();
-
+        
         // 初始化提醒消息
         $this->_initRemindMessage();
-
+        
         // 执行惩罚
         $this->_executePunish();
-
+        
         return $this->_status;
     }
-
+    
     /**
      * 设置参数
      *
@@ -124,7 +125,7 @@ class ActionService extends Service
             // 获取该行为在有效周期内最后一条日志的记录时间，如果不存在，表示该日志为生成
             $end_log_time = $count_action_log > 0 ? $action_log[$count_action_log - 1]['created_at'] : null;
         }
-
+        
         // 设置参数
         $this->_params = [
             // 触发行为的用户ID
@@ -143,7 +144,7 @@ class ActionService extends Service
             'next_action_time' => DateTimeHelper::getAfterTime($this->_limitInfo['timestamp'], $this->_limitInfo['time_unit'], $begin_log_time),
         ];
     }
-
+    
     /**
      * 初始化提醒消息
      */
@@ -161,7 +162,7 @@ class ActionService extends Service
                 break;
         }
     }
-
+    
     /**
      * 频次结束后的提示语
      */
@@ -171,7 +172,7 @@ class ActionService extends Service
         // 频次结束后标识行为限制不通过，直接终止后续操作
         $this->_status = false;
     }
-
+    
     /**
      * 锁定账户，频次结束后执行，且只执行一次
      */
@@ -181,17 +182,17 @@ class ActionService extends Service
         if (!Wc::$service->getSystem()->getConfig()->get('USER_LOCK_OPEN') || in_array($this->_params['user_id'], [1, null])) {
             return;
         }
-        /* @var User $class */
+        /* @var BaseUser $class */
         $class = Yii::$app->getUser()->identityClass;
         // 添加锁定日志记录
         Wc::$service->getLog()->create('lock_user', $class::tableName(), $this->_params['user_id'], $this->_params['user_id']);
-
+        
         // 系统级别锁定
         Yii::$app->getDb()->createCommand('UPDATE ' . $class::tableName() . ' SET status=:status WHERE id=:uid', [
             ':uid' => $this->_params['user_id'],
             ':status' => $class::STATUS_LOCKED,
         ])->execute();
-
+        
         // 发送系统通知
         if ($this->_limitInfo['send_notification']) {
             Wc::$service->getNotification()->sendNotify('user_lock', $this->_params['user_id'], [
@@ -201,7 +202,7 @@ class ActionService extends Service
             ]);
         }
     }
-
+    
     /**
      * 登出系统
      */
@@ -209,15 +210,15 @@ class ActionService extends Service
     {
         Wc::$service->getPassport()->getUcenter()->logout();
     }
-
+    
     /**
      * 封锁IP
      */
     protected function lockIp()
     {
-
+    
     }
-
+    
     /**
      * 解析提示语模板
      * 支持变量{timestamp}、{time_unit}、{surplus_number}、{time}、{url}、{next_action_time}::已格式化
@@ -239,7 +240,7 @@ class ActionService extends Service
         $message_list = ['warning_message', 'remind_message', 'finish_message'];
         // 生成模板变量
         $content_data = $this->_generateTemplateData();
-
+        
         // 替换准备提示内容变量
         if (in_array($messageType, $message_list) && !empty($this->_limitInfo[$messageType])) {
             if (preg_match_all('/\{(\S+?)\}/', $this->_limitInfo[$messageType], $match)) {
@@ -260,7 +261,7 @@ class ActionService extends Service
                 'surplus_number' => $content_data['surplus_number'],
             ]);
     }
-
+    
     /**
      * 生成模板变量
      *
@@ -285,7 +286,7 @@ class ActionService extends Service
 //        $data['user'] = $this->_params['user_id'] == 1 ?
 //            '系统' :
 //            Wc::$service->getAccount()->queryUser('username', $this->_params['user_id']);
-
+        
         switch (true) {
             case $this->_params['surplus_number'] <= 0:
                 // 处罚包含【锁定账号】则获取相关数据
@@ -303,7 +304,7 @@ class ActionService extends Service
                     $this->_data['lock_time_unit'] = $lockUserInfo['time_unit']; // 锁定时间单位
                     $this->_data['lock_expire_time'] = DateTimeHelper::getAfterTime($lockUserInfo['timestamp'],
                         $lockUserInfo['time_unit'], $this->_params['end_log_time']); // 锁定过期时间戳
-
+                    
                     $data['lock_time'] = $this->_data['lock_time'];
                     $data['lock_time_unit'] = $this->_data['lock_time_unit'];
                     $data['lock_expire_time'] = DateTimeHelper::timeFormat($this->_data['lock_expire_time'], 'Y-m-d H:i:s');
@@ -321,10 +322,10 @@ class ActionService extends Service
                 }
                 break;
         }
-
+        
         return $data;
     }
-
+    
     /**
      * 排序惩罚
      */
@@ -340,7 +341,7 @@ class ActionService extends Service
         $this->_limitInfo['punish'] = $tmp;
         unset($tmp);
     }
-
+    
     /**
      * 执行惩罚
      */
@@ -354,22 +355,22 @@ class ActionService extends Service
             }
         }
     }
-
+    
     /**
      * 获取执行结果信息
      */
     public function getInfo()
     {
         $operation = $this->getOperation();
-
+        
         return $this->_info . ($operation && $this->_params['surplus_number'] > 0
-            ? Yii::t('wocenter/app', 'After the number of times will automatically run the following: {operations}', [
-                'operations' => $operation,
-            ])
-            : ''
-        );
+                ? Yii::t('wocenter/app', 'After the number of times will automatically run the following: {operations}', [
+                    'operations' => $operation,
+                ])
+                : ''
+            );
     }
-
+    
     /**
      * 获取执行结果数据
      *
@@ -385,10 +386,10 @@ class ActionService extends Service
         $this->_data['next_action_time'] = $this->_params['next_action_time'];
         // 处罚方式
         $this->_data['operations'] = $this->getOperation(true);
-
+        
         return $this->_data;
     }
-
+    
     /**
      * 获取可以操作的惩罚处理，主要是翻译处罚名字
      *
@@ -402,8 +403,8 @@ class ActionService extends Service
         foreach ($this->_limitInfo['punish'] as $opt) {
             $tmp[] = ActionLimit::$punishList[$opt];
         }
-
+        
         return $returnArray ? $tmp : implode(',', $tmp);
     }
-
+    
 }

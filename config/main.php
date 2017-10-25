@@ -39,18 +39,6 @@ return [
                 'config' => ['class' => 'wocenter\services\system\ConfigService'],
             ],
         ],
-        'dispatchService' => [
-            'class' => 'wocenter\services\DispatchService',
-            'subService' => [
-                'create' => ['class' => 'wocenter\services\dispatch\CreateService'],
-            ],
-        ],
-        'modularityService' => [
-            'class' => 'wocenter\services\ModularityService',
-            'subService' => [
-                'load' => ['class' => 'wocenter\services\modularity\LoadService'],
-            ],
-        ],
         'menuService' => [
             'class' => 'wocenter\services\MenuService',
         ],
@@ -59,6 +47,15 @@ return [
         ],
         'accountService' => [
             'class' => 'wocenter\services\AccountService',
+        ],
+        'extensionService' => [
+            'class' => 'wocenter\services\ExtensionService',
+            'subService' => [
+                'controller' => ['class' => 'wocenter\services\extension\ControllerService'],
+                'modularity' => ['class' => 'wocenter\services\extension\ModularityService'],
+                'load' => ['class' => 'wocenter\services\extension\LoadService'],
+                'theme' => ['class' => 'wocenter\services\extension\ThemeService'],
+            ],
         ],
     ],
 ];

@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\services\passport;
 
 use wocenter\core\Service;
@@ -14,7 +15,7 @@ use yii\validators\EmailValidator;
  */
 class ValidationService extends Service
 {
-
+    
     /**
      * @inheritdoc
      */
@@ -22,7 +23,7 @@ class ValidationService extends Service
     {
         return 'validation';
     }
-
+    
     /**
      * 验证邮件地址后缀的正确性
      *
@@ -38,10 +39,10 @@ class ValidationService extends Service
         if ($email_suffix && in_array($matches['0'], explode(',', $email_suffix))) {
             return false;
         }
-
+        
         return true;
     }
-
+    
     /**
      * 检测邮箱是否被禁止使用
      *
@@ -53,7 +54,7 @@ class ValidationService extends Service
     {
         return true;
     }
-
+    
     /**
      * 检测用户名是否包含系统保留字段
      *
@@ -65,7 +66,7 @@ class ValidationService extends Service
     {
         return ArrayHelper::inArrayCase($username, Wc::$service->getSystem()->getConfig()->get('FILTER_NICKNAME')) ? false : true;
     }
-
+    
     /**
      * 检测用户名是否被禁用
      *
@@ -77,7 +78,7 @@ class ValidationService extends Service
     {
         return true;
     }
-
+    
     /**
      * 检测手机是否被禁止使用
      *
@@ -89,7 +90,7 @@ class ValidationService extends Service
     {
         return true;
     }
-
+    
     /**
      * 检测手机是否合法
      *
@@ -101,7 +102,7 @@ class ValidationService extends Service
     {
         return preg_match('/^((13[0-9])|147|(15[0-35-9])|180|(18[2-9]))[0-9]{8}$/A', $mobile);
     }
-
+    
     /**
      * 检测邮箱地址是否合法
      *
@@ -113,7 +114,7 @@ class ValidationService extends Service
     {
         return (new EmailValidator())->validate($email);
     }
-
+    
     /**
      * Validates password
      *
@@ -126,5 +127,5 @@ class ValidationService extends Service
     {
         return Yii::$app->getSecurity()->validatePassword($password, $passwordHash);
     }
-
+    
 }

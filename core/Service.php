@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\core;
 
 use Yii;
@@ -17,42 +18,42 @@ use yii\base\Object;
  */
 abstract class Service extends Object implements ServiceInterface
 {
-
+    
     /**
      * @var Service 当前服务的父级服务，默认为null，即当前服务为父级服务
      */
     public $service;
-
+    
     /**
      * @var boolean 是否禁用服务类功能，默认不禁用
      */
     public $disabled = false;
-
+    
     /**
      * @var Service[] 已经实例化的子服务单例
      */
     private $_subService;
-
+    
     /**
      * @var mixed 服务类相关信息
      */
     protected $_info = '';
-
+    
     /**
      * @var mixed 服务类相关数据
      */
     protected $_data = '';
-
+    
     /**
      * @var boolean 服务类执行状态结果，默认为false
      */
     protected $_status = false;
-
+    
     /**
      * @inheritdoc
      */
     abstract public function getId();
-
+    
     /**
      * 获取子服务
      *
@@ -62,7 +63,7 @@ abstract class Service extends Object implements ServiceInterface
      *
      * @param string $serviceName 子服务名，不带后缀`Service`
      *
-     * @return Service
+     * @return Service|Object|null
      * @throws InvalidConfigException
      */
     protected function getSubService($serviceName)
@@ -73,15 +74,15 @@ abstract class Service extends Object implements ServiceInterface
                 Yii::$app->set($uniqueName, array_merge((array)$this->_subService[$serviceName], [
                     'service' => $this,
                 ]));
-
+                
                 $this->_subService[$serviceName] = Yii::$app->get($uniqueName);
                 if (!$this->_subService[$serviceName] instanceof Service) {
                     throw new InvalidConfigException("The required sub service component `{$uniqueName}` must return
                     an object extends `\\wocenter\\core\\Service`.");
                 }
-
+                
                 Yii::trace('Loading sub service: ' . $uniqueName, __METHOD__);
-
+                
                 return $this->_subService[$serviceName];
             } else {
                 throw new InvalidConfigException("The required sub service component `{$uniqueName}` is not found.");
@@ -90,7 +91,7 @@ abstract class Service extends Object implements ServiceInterface
             return Yii::$app->get($uniqueName);
         }
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -98,7 +99,7 @@ abstract class Service extends Object implements ServiceInterface
     {
         $this->_subService = $config;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -106,7 +107,7 @@ abstract class Service extends Object implements ServiceInterface
     {
         return $this->_info;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -114,7 +115,7 @@ abstract class Service extends Object implements ServiceInterface
     {
         return $this->_data;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -126,5 +127,5 @@ abstract class Service extends Object implements ServiceInterface
             'data' => $this->getData(),
         ];
     }
-
+    
 }

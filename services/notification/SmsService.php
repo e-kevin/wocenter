@@ -1,8 +1,8 @@
 <?php
+
 namespace wocenter\services\notification;
 
 use wocenter\core\Service;
-use Yii;
 
 /**
  * 短信服务类
@@ -11,7 +11,7 @@ use Yii;
  */
 class SmsService extends Service
 {
-
+    
     /**
      * @inheritdoc
      */
@@ -19,7 +19,7 @@ class SmsService extends Service
     {
         return 'sms';
     }
-
+    
     /**
      * 发送短信
      * todo 添加手机发送短信功能
@@ -38,5 +38,5 @@ class SmsService extends Service
     {
         return true;
     }
-
+    
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace wocenter\core;
 
 use wocenter\traits\ApplicationTrait;
@@ -11,7 +12,7 @@ use yii\web\Application as baseApplication;
  */
 class Application extends baseApplication
 {
-
+    
     use ApplicationTrait;
-
+    
 }
