@@ -3,7 +3,7 @@
 namespace wocenter\behaviors;
 
 use Exception;
-use wocenter\backend\core\Model;
+use wocenter\core\Model;
 use wocenter\core\ActiveRecord;
 use wocenter\helpers\ArrayHelper;
 use wocenter\Wc;

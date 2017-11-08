@@ -21,7 +21,6 @@ interface ServiceInterface
      * @param string|array|callable $config 子服务配置信息
      *
      * @see \yii\BaseYii::createObject()
-     * @see \wocenter\core\ServiceLocator::loadServiceConfig()
      */
     public function setSubService($config);
     

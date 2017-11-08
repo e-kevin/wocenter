@@ -63,7 +63,7 @@ trait DispatchTrait
         parent::init();
         
         $class = new \ReflectionClass($this);
-        if (($pos = strrpos($class->getNamespaceName(), '\\')) !== false) {
+        if ($this->dispatchNamespacePrefix == null && ($pos = strrpos($class->getNamespaceName(), '\\')) !== false) {
             $this->dispatchNamespacePrefix = substr($class->getNamespaceName(), 0, $pos) . '\\themes\\' . $this->getView()->getThemeName() . '\\dispatches';
         }
         
@@ -259,6 +259,7 @@ trait DispatchTrait
             if (in_array($id, $dispatchMap) || isset($dispatchMap[$id])) {
                 if (isset($dispatchMap[$id]) && !empty($dispatchMap[$id])) {
                     $config = $dispatchMap[$id];
+                    // 调度配置为数组
                     if (is_array($config)) {
                         $dispatchOptions = ArrayHelper::remove($config, 'dispatchOptions', []);
                         // 调度配置包含`class`键名则直接使用`class`创建调度器

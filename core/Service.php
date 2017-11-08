@@ -2,8 +2,8 @@
 
 namespace wocenter\core;
 
-use Yii;
 use wocenter\interfaces\ServiceInterface;
+use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\Object;
 
@@ -20,7 +20,7 @@ abstract class Service extends Object implements ServiceInterface
 {
     
     /**
-     * @var Service 当前服务的父级服务，默认为null，即当前服务为父级服务
+     * @var Service 当前服务的父级服务，默认为null，即当前服务为顶级服务
      */
     public $service;
     
@@ -30,7 +30,7 @@ abstract class Service extends Object implements ServiceInterface
     public $disabled = false;
     
     /**
-     * @var Service[] 已经实例化的子服务单例
+     * @var Service[]|array 已经实例化的子服务单例
      */
     private $_subService;
     
@@ -57,9 +57,10 @@ abstract class Service extends Object implements ServiceInterface
     /**
      * 获取子服务
      *
-     * 该方法不设为`public`类型，目的在于规范代码，使服务方法对IDE提供友好支持。故所属的子服务类必须以`public`类型新建方法获取，
-     * 具体可参考[[\wocenter\services\PassportService::getUcenter()]]等调用子服务类方法的设置
-     * @see \wocenter\services\PassportService::getUcenter()
+     * 该方法不设为`public`类型，目的在于规范代码，使服务方法对IDE提供友好支持。故所属的子服务类必须以`public`
+     * 类型新建方法获取，具体可参考[[\wocenter\backend\modules\extension\services\ExtensionService::getLoad()]]
+     * 等调用子服务类方法的设置。
+     * @see \wocenter\backend\modules\extension\services\ExtensionService::getLoad()
      *
      * @param string $serviceName 子服务名，不带后缀`Service`
      *
@@ -68,27 +69,23 @@ abstract class Service extends Object implements ServiceInterface
      */
     protected function getSubService($serviceName)
     {
-        $uniqueName = $this->getId() . '/' . $serviceName;
-        if (!Yii::$app->has($uniqueName, true)) {
-            if (isset($this->_subService[$serviceName])) {
-                Yii::$app->set($uniqueName, array_merge((array)$this->_subService[$serviceName], [
-                    'service' => $this,
-                ]));
-                
-                $this->_subService[$serviceName] = Yii::$app->get($uniqueName);
-                if (!$this->_subService[$serviceName] instanceof Service) {
-                    throw new InvalidConfigException("The required sub service component `{$uniqueName}` must return
-                    an object extends `\\wocenter\\core\\Service`.");
-                }
-                
-                Yii::trace('Loading sub service: ' . $uniqueName, __METHOD__);
-                
-                return $this->_subService[$serviceName];
-            } else {
-                throw new InvalidConfigException("The required sub service component `{$uniqueName}` is not found.");
-            }
+        if ($this->_subService[$serviceName] instanceof Service) {
+            return $this->_subService[$serviceName];
+        } elseif (!isset($this->_subService[$serviceName])) {
+            throw new InvalidConfigException("The {$this->getId()}Service required sub service component `{$serviceName}` is not found.");
         } else {
-            return Yii::$app->get($uniqueName);
+            $uniqueName = $this->getId() . '/' . $serviceName;
+            $this->_subService[$serviceName] = Yii::createObject(array_merge($this->_subService[$serviceName], [
+                'service' => $this,
+            ]));
+            if (!$this->_subService[$serviceName] instanceof Service) {
+                throw new InvalidConfigException("The required sub service component `{$uniqueName}` must return
+                    an object extends `\\wocenter\\core\\Service`.");
+            }
+    
+            Yii::trace('Loading sub service: ' . $uniqueName, __METHOD__);
+    
+            return $this->_subService[$serviceName];
         }
     }
     

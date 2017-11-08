@@ -2,90 +2,46 @@
 
 namespace wocenter\traits;
 
-use wocenter\Wc;
 use Yii;
-use yii\base\Module;
-use yii\web\UrlManager;
+use yii\base\Exception;
+use yii\base\InvalidConfigException;
+use yii\web\Application;
 
 /**
  * Class ApplicationTrait
  * 扩展Application，为WoCenter构建运行所需条件
  *
- * @method UrlManager getUrlManager()
- * @method boolean hasModule($id)
- * @method void setModule($id, $module)
- * @method Module|null getModule($id, $load = true)
- *
  * @author E-Kevin <e-kevin@qq.com>
  */
 trait ApplicationTrait
 {
-
+    
     /**
      * @inheritdoc
      */
-    public function init()
+    public function preInit(&$config)
     {
+        if ($this instanceof Application) {
+            try {
+                parent::preInit($config);
+                // 检查是否已经配置扩展服务
+                if (!isset($config['components']['extensionService'])) {
+                    throw new InvalidConfigException('The "extensionService" component for the Application is required.');
+                }
+            } catch (Exception $e) {
+                echo nl2br($e->getMessage());
+                exit(1);
+            }
+        } else {
+            parent::preInit($config);
+            // 检查是否已经配置扩展服务
+            if (!isset($config['components']['extensionService'])) {
+                throw new InvalidConfigException('The "extensionService" component for the Application is required.');
+            }
+        }
+        
         // 创建Wc实例
         Yii::$container->get('Wc');
-
-        $this->loadExtensionAliases();
-        $this->loadEnableModules();
-        $this->loadControllers();
-        $this->loadUrlRule();
-        $this->loadBootstrap();
-        
-        parent::init();
-    }
-    
-    /**
-     * 加载扩展别名
-     */
-    protected function loadExtensionAliases()
-    {
-        Wc::$service->getExtension()->getLoad()->loadAliases();
-    }
-    
-    /**
-     * 加载系统模块
-     *
-     * @throws \yii\base\InvalidConfigException
-     */
-    protected function loadEnableModules()
-    {
-        foreach (Wc::$service->getExtension()->getModularity()->getInstalledConfig() as $moduleId => $config) {
-            if (!$this->hasModule($moduleId)) {
-                $this->setModule($moduleId, $config);
-            }
-        }
-    }
-    
-    /**
-     * 加载应用控制器扩展
-     */
-    protected function loadControllers()
-    {
-        foreach (Wc::$service->getExtension()->getController()->getAppInstalledConfig() as $controllerId => $config) {
-            if (!isset($this->controllerMap[$controllerId])) {
-                $this->controllerMap[$controllerId] = $config;
-            }
-        }
-    }
-    
-    /**
-     * 加载系统模块路由规则
-     */
-    protected function loadUrlRule()
-    {
-        $this->getUrlManager()->addRules(Wc::$service->getExtension()->getModularity()->getUrlRules());
-    }
-    
-    /**
-     * 加载需要启用bootstrap的模块
-     */
-    protected function loadBootstrap()
-    {
-        $this->bootstrap = array_merge($this->bootstrap, Wc::$service->getExtension()->getModularity()->getBootstraps());
     }
     
 }

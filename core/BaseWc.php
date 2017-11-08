@@ -32,7 +32,7 @@ class BaseWc extends Object
      */
     public function __construct(ServiceLocator $service, $config = [])
     {
-        self::$service = $service;
+        static::$service = $service;
         
         parent::__construct($config);
     }
