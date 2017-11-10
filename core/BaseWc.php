@@ -5,9 +5,9 @@ namespace wocenter\core;
 use Closure;
 use wocenter\helpers\ArrayHelper;
 use Yii;
-use yii\base\Object;
-use yii\caching\Dependency;
-use yii\helpers\VarDumper;
+use yii\{
+    base\Object, caching\Dependency, helpers\VarDumper
+};
 
 /**
  * Class BaseWc
@@ -60,7 +60,7 @@ class BaseWc extends Object
      */
     public static function dump($arr, $echo = true, $label = null, $strict = true)
     {
-        return ArrayHelper::dump($arr, $echo, $label, $strict);
+        ArrayHelper::dump($arr, $echo, $label, $strict);
     }
     
     /**
@@ -214,7 +214,7 @@ class BaseWc extends Object
     /**
      * 公共缓存类，主要是缓存一些公用的数据
      *
-     * @return \yii\caching\Cache
+     * @return \yii\caching\Cache|object|null
      * @throws \yii\base\InvalidConfigException
      */
     public static function cache()

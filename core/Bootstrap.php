@@ -4,9 +4,9 @@ namespace wocenter\core;
 
 use wocenter\Wc;
 use Yii;
-use yii\base\Application;
-use yii\base\BootstrapInterface;
-use yii\helpers\ArrayHelper;
+use yii\{
+    base\Application, base\BootstrapInterface, helpers\ArrayHelper
+};
 
 /**
  * Class Bootstrap

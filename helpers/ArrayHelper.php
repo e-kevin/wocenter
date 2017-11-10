@@ -20,7 +20,7 @@ class ArrayHelper extends baseArrayHelper
      *
      * @return string
      */
-    public static function arrayToString($arr, $glue = ',')
+    public static function arrayToString($arr, $glue = ','): string
     {
         return implode($glue, $arr);
     }
@@ -29,7 +29,7 @@ class ArrayHelper extends baseArrayHelper
      * 不区分大小写的in_array实现
      *
      * @param string $key 待查询的key
-     * @param array $array 被查询的数组
+     * @param mixed $data 被查询的数据
      * @param boolean $validate_string 是否验证包含字符串，默认不验证
      * @param boolean $inverse 参数反转，仅在$validate_string为true时生效。
      * 当$inverse参数为true时，即在$key里查询$array里的值。
@@ -37,12 +37,12 @@ class ArrayHelper extends baseArrayHelper
      *
      * @return boolean
      */
-    public static function inArrayCase($key, $array, $validate_string = false, $inverse = false)
+    public static function inArrayCase($key, $data, $validate_string = false, $inverse = false): bool
     {
-        if (!is_array($array)) {
-            $array = explode(',', $array);
+        if (!is_array($data)) {
+            $data = explode(',', $data);
         }
-        foreach ($array as $k) {
+        foreach ($data as $k) {
             if (strcasecmp($key, $k) === 0) {
                 return true;
             }
@@ -59,11 +59,11 @@ class ArrayHelper extends baseArrayHelper
      * 浏览器友好的变量输出
      *
      * @param mixed $var 变量
-     * @param boolean $echo 是否输出 默认为True 如果为false 则返回输出字符串
-     * @param string $label 标签 默认为空
-     * @param boolean $strict 是否严谨 默认为true
+     * @param boolean $echo 是否输出，默认为`true`。如果为`false`，则返回输出字符串
+     * @param string $label 标签，默认为空
+     * @param boolean $strict 是否严谨，默认为`true`
      *
-     * @return void|string
+     * @return string|null
      */
     public static function dump($var, $echo = true, $label = null, $strict = true)
     {
@@ -104,7 +104,7 @@ class ArrayHelper extends baseArrayHelper
      *
      * @return array
      */
-    public static function listToTree($list, $pk = 'id', $pid = 'parent_id', $child = '_child', $root = 0)
+    public static function listToTree($list, $pk = 'id', $pid = 'parent_id', $child = '_child', $root = 0): array
     {
         // 创建Tree
         $tree = [];
@@ -141,7 +141,7 @@ class ArrayHelper extends baseArrayHelper
      *
      * @return array 返回排过序的列表数组
      */
-    public static function treeToList($tree, $child = '_child', $order = null, &$list = [])
+    public static function treeToList($tree, $child = '_child', $order = null, &$list = []): array
     {
         if (is_array($tree)) {
             foreach ($tree as $key => $value) {
@@ -245,7 +245,7 @@ class ArrayHelper extends baseArrayHelper
      *
      * @return array
      */
-    public static function listSortBy($list, $field, $sortBy = 'asc')
+    public static function listSortBy($list, $field, $sortBy = 'asc'): array
     {
         if (is_array($list)) {
             $refer = $resultSet = [];
@@ -275,7 +275,7 @@ class ArrayHelper extends baseArrayHelper
             return $resultSet;
         }
         
-        return false;
+        return [];
     }
     
 }

@@ -60,4 +60,14 @@ trait ExtendModelTrait
         return $this;
     }
     
+    /**
+     * 获取模型所有数据，通常结合缓存使用
+     *
+     * @return array
+     */
+    public function getAll()
+    {
+        return [];
+    }
+    
 }

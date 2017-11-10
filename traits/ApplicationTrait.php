@@ -3,9 +3,9 @@
 namespace wocenter\traits;
 
 use Yii;
-use yii\base\Exception;
-use yii\base\InvalidConfigException;
-use yii\web\Application;
+use yii\{
+    base\Exception, base\InvalidConfigException, web\Application
+};
 
 /**
  * Class ApplicationTrait

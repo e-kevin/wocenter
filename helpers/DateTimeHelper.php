@@ -3,8 +3,9 @@
 namespace wocenter\helpers;
 
 use Yii;
-use yii\base\InvalidConfigException;
-use yii\helpers\FormatConverter;
+use yii\{
+    base\InvalidConfigException, helpers\FormatConverter
+};
 
 /**
  * 日期时间助手类

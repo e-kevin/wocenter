@@ -2,9 +2,9 @@
 
 namespace wocenter\libs;
 
-use yii\base\InvalidConfigException;
-use yii\db\ActiveRecord;
-use yii\web\NotFoundHttpException;
+use yii\{
+    base\InvalidConfigException, db\ActiveRecord, web\NotFoundHttpException
+};
 
 /**
  * 树形列表类

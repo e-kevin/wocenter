@@ -2,13 +2,13 @@
 
 namespace wocenter\behaviors;
 
-use wocenter\helpers\DateTimeHelper;
-use wocenter\widgets\DateControl;
+use wocenter\{
+    helpers\DateTimeHelper, widgets\DateControl
+};
 use Yii;
-use yii\base\InvalidConfigException;
-use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
-use yii\helpers\ArrayHelper;
+use yii\{
+    base\InvalidConfigException, behaviors\TimestampBehavior, db\ActiveRecord, helpers\ArrayHelper
+};
 
 /**
  * 自动填充特定属性值为当前时间戳或自定义日期时间
@@ -48,7 +48,7 @@ class ModifyTimestampBehavior extends TimestampBehavior
      * [[DateControl::FORMAT_DATETIME]], [[DateControl::FORMAT_DATE]], [[DateControl::FORMAT_TIME]]或
      * `date`, `time`, `datetime`。
      *
-     * @see kartik\datecontrol\DateControl
+     * @see \kartik\datecontrol\DateControl
      */
     public $createdAtDisplayType = DateControl::FORMAT_DATETIME;
     
@@ -57,7 +57,7 @@ class ModifyTimestampBehavior extends TimestampBehavior
      * [[DateControl::FORMAT_DATETIME]], [[DateControl::FORMAT_DATE]], [[DateControl::FORMAT_TIME]]或
      * `date`, `time`, `datetime`。
      *
-     * @see kartik\datecontrol\DateControl
+     * @see \kartik\datecontrol\DateControl
      */
     public $updatedAtDisplayType = DateControl::FORMAT_DATETIME;
     
@@ -211,6 +211,7 @@ class ModifyTimestampBehavior extends TimestampBehavior
                     $this->addRules($rules, $row[0]);
                 } // 不允许自定义时间日期则暂不需要添加其他规则，系统会根据配置自动为时间日期字段赋值$this->value
                 else {
+                    continue;
                 }
             }
         }

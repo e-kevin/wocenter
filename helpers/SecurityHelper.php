@@ -17,7 +17,7 @@ class SecurityHelper
      *
      * @return string
      */
-    public static function markEmail($str)
+    public static function markEmail($str): string
     {
         list($first, $second) = explode('@', $str);
         $a = strlen($first) - 3;
@@ -32,7 +32,7 @@ class SecurityHelper
      *
      * @return string
      */
-    public static function markMobile($str)
+    public static function markMobile($str): string
     {
         if (!empty($str)) {
             return preg_replace('|(?<=.{3})(.{4}).*?|', str_pad('', 4, '*'), $str, 1);
@@ -48,7 +48,7 @@ class SecurityHelper
      *
      * @return string
      */
-    public static function markString($str)
+    public static function markString($str): string
     {
         $str_len = strlen($str);
         $start = 6 < $str_len ? intval($str_len / 5) : $str_len - 4;
@@ -57,7 +57,7 @@ class SecurityHelper
         return preg_replace('|(?<=.{' . $start . '})(.{' . $end . '}).*?|', str_pad('', $end, '*'), $str, 1);
     }
     
-    public static function hash($message, $salt = "wocenter")
+    public static function hash($message, $salt = "wocenter"): string
     {
         $s01 = $message . $salt;
         $s02 = md5($s01) . $salt;
@@ -76,7 +76,7 @@ class SecurityHelper
      *
      * @return string
      */
-    public static function decrypt($data = '', $key = '')
+    public static function decrypt($data = '', $key = ''): string
     {
         $key = md5(empty($key) ? \Yii::$app->getRequest()->cookieValidationKey : $key);
         $data = str_replace(['-', '_'], ['+', '/'], $data);
@@ -124,7 +124,7 @@ class SecurityHelper
      *
      * @return string
      */
-    public static function encrypt($data = '', $key = '', $expire = 0)
+    public static function encrypt($data = '', $key = '', $expire = 0): string
     {
         $key = md5(empty($key) ? \Yii::$app->getRequest()->cookieValidationKey : $key);
         $data = base64_encode($data);

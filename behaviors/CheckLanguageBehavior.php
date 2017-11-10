@@ -3,9 +3,9 @@
 namespace wocenter\behaviors;
 
 use Yii;
-use yii\base\Application;
-use yii\base\Behavior;
-use yii\web\Cookie;
+use yii\{
+    base\Application, base\Behavior, web\Cookie
+};
 
 /**
  * 语言检测行为类

@@ -4,8 +4,9 @@ namespace wocenter\core;
 
 use wocenter\interfaces\ServiceInterface;
 use Yii;
-use yii\base\InvalidConfigException;
-use yii\base\Object;
+use yii\base\{
+    InvalidConfigException, Object
+};
 
 /**
  * 系统服务实现类
@@ -82,9 +83,9 @@ abstract class Service extends Object implements ServiceInterface
                 throw new InvalidConfigException("The required sub service component `{$uniqueName}` must return
                     an object extends `\\wocenter\\core\\Service`.");
             }
-    
+            
             Yii::trace('Loading sub service: ' . $uniqueName, __METHOD__);
-    
+            
             return $this->_subService[$serviceName];
         }
     }

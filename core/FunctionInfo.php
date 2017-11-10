@@ -2,13 +2,13 @@
 
 namespace wocenter\core;
 
-use wocenter\helpers\FileHelper;
-use wocenter\helpers\WebConsoleHelper;
-use wocenter\interfaces\FunctionInfoInterface;
-use wocenter\Wc;
+use wocenter\{
+    helpers\FileHelper, helpers\WebConsoleHelper, interfaces\FunctionInfoInterface, Wc
+};
 use Yii;
-use yii\base\InvalidConfigException;
-use yii\base\InvalidParamException;
+use yii\base\{
+    InvalidConfigException, InvalidParamException
+};
 
 /**
  * 基础功能扩展信息类

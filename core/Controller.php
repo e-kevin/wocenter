@@ -3,7 +3,6 @@
 namespace wocenter\core;
 
 use wocenter\traits\DispatchTrait;
-use Yii;
 use yii\web\Controller as baseController;
 
 /**

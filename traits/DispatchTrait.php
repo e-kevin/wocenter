@@ -2,17 +2,16 @@
 
 namespace wocenter\traits;
 
-use wocenter\core\Controller;
-use wocenter\core\Dispatch;
-use wocenter\core\View;
-use wocenter\Wc;
+use wocenter\{
+    core\Controller, core\Dispatch, core\View, Wc
+};
 use Yii;
-use yii\base\Exception;
-use yii\base\InvalidConfigException;
-use yii\base\InvalidRouteException;
-use yii\base\Module;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Inflector;
+use yii\base\{
+    Exception, InvalidConfigException, InvalidRouteException, Module
+};
+use yii\helpers\{
+    ArrayHelper, Inflector
+};
 
 /**
  * Class DispatchTrait
@@ -63,8 +62,10 @@ trait DispatchTrait
         parent::init();
         
         $class = new \ReflectionClass($this);
-        if ($this->dispatchNamespacePrefix == null && ($pos = strrpos($class->getNamespaceName(), '\\')) !== false) {
-            $this->dispatchNamespacePrefix = substr($class->getNamespaceName(), 0, $pos) . '\\themes\\' . $this->getView()->getThemeName() . '\\dispatches';
+        if ($this->dispatchNamespacePrefix == null
+            && ($pos = strrpos($class->getNamespaceName(), '\\')) !== false) {
+            $this->dispatchNamespacePrefix = substr($class->getNamespaceName(), 0, $pos)
+                . '\\themes\\' . $this->getView()->getThemeName() . '\\dispatches';
         }
         
         $this->setViewPath(implode(DIRECTORY_SEPARATOR, [

@@ -2,14 +2,12 @@
 
 namespace wocenter\behaviors;
 
-use wocenter\core\ActiveRecord;
-use wocenter\core\Model;
-use wocenter\helpers\ArrayHelper;
-use wocenter\libs\Tree;
-use yii\base\Behavior;
-use yii\base\InvalidConfigException;
-use yii\base\ModelEvent;
-use yii\web\NotFoundHttpException;
+use wocenter\{
+    core\ActiveRecord, core\Model, helpers\ArrayHelper, libs\Tree
+};
+use yii\{
+    base\Behavior, base\Component, base\InvalidConfigException, base\ModelEvent, web\NotFoundHttpException
+};
 
 /**
  * 树形菜单行为类
@@ -20,6 +18,11 @@ use yii\web\NotFoundHttpException;
  */
 class TreeBehavior extends Behavior
 {
+    
+    /**
+     * @var Model|ActiveRecord|Component|null
+     */
+    public $owner;
     
     /**
      * @var string 下拉选项需要显示的标题字段
@@ -279,8 +282,8 @@ class TreeBehavior extends Behavior
      * @param integer $rootId 顶级ID，默认为`0`，返回的父级ID数据获取到此顶级ID后则停止获取
      *
      * @return array
-     * @throws \yii\web\NotFoundHttpException
-     * @throws \yii\base\InvalidConfigException
+     * @throws NotFoundHttpException
+     * @throws InvalidConfigException
      */
     public function getParentIds($rootId = 0)
     {
@@ -370,20 +373,22 @@ class TreeBehavior extends Behavior
         }
         
         $_childrenIds = [];
-        $all = $this->owner->getAll();
-        if ($all) {
-            $children = ArrayHelper::listSearch($all, [
-                $this->parentField => $this->owner->{$this->pkField},
-            ]);
-            while (count($children) > 0) {
-                $first = array_shift($children);
-                $_childrenIds[] = (int)$first[$this->pkField];
-                
-                $next = ArrayHelper::listSearch($all, [
-                    $this->parentField => $first[$this->pkField],
+        if (method_exists($this, 'getAll')) {
+            $all = $this->owner->getAll();
+            if ($all) {
+                $children = ArrayHelper::listSearch($all, [
+                    $this->parentField => $this->owner->{$this->pkField},
                 ]);
-                if (count($next) > 0) {
-                    $children = array_merge($children, $next);
+                while (count($children) > 0) {
+                    $first = array_shift($children);
+                    $_childrenIds[] = (int)$first[$this->pkField];
+                    
+                    $next = ArrayHelper::listSearch($all, [
+                        $this->parentField => $first[$this->pkField],
+                    ]);
+                    if (count($next) > 0) {
+                        $children = array_merge($children, $next);
+                    }
                 }
             }
         }

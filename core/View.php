@@ -3,8 +3,10 @@
 namespace wocenter\core;
 
 use wocenter\Wc;
-use yii\base\Theme;
-use yii\web\View as baseView;
+use Yii;
+use yii\{
+    base\Theme, web\View as baseView
+};
 
 /**
  * 基础View类
@@ -77,7 +79,7 @@ class View extends baseView
     public function getThemeName()
     {
         if ($this->_themeName == null) {
-            if (\Yii::$app->id == 'backend') {
+            if (Yii::$app->id == 'backend') {
                 $this->_themeName = Wc::$service->getSystem()->getConfig()->get('BACKEND_THEME', 'basic');
             } else {
                 $this->_themeName = 'basic';

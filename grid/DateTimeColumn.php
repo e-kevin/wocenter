@@ -2,8 +2,9 @@
 
 namespace wocenter\grid;
 
-use yii\grid\DataColumn;
-use yii\helpers\ArrayHelper;
+use yii\{
+    grid\DataColumn, helpers\ArrayHelper
+};
 
 class DateTimeColumn extends DataColumn
 {

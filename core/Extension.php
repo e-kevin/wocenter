@@ -3,8 +3,9 @@
 namespace wocenter\core;
 
 use wocenter\interfaces\ExtensionInterface;
-use yii\base\InvalidConfigException;
-use yii\base\Object;
+use yii\base\{
+    InvalidConfigException, Object
+};
 
 /**
  * 基础扩展实现类

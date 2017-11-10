@@ -2,12 +2,13 @@
 
 namespace wocenter\core;
 
-use wocenter\interfaces\DispatchInterface;
-use wocenter\Wc;
+use wocenter\{
+    interfaces\DispatchInterface, Wc
+};
 use Yii;
-use yii\base\Action;
-use yii\base\InvalidConfigException;
-use yii\helpers\ArrayHelper;
+use yii\{
+    base\Action, base\InvalidConfigException, helpers\ArrayHelper
+};
 
 /**
  * 系统调度器的基础实现类

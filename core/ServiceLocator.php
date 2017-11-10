@@ -3,8 +3,9 @@
 namespace wocenter\core;
 
 use Yii;
-use yii\base\InvalidConfigException;
-use yii\base\Object;
+use yii\base\{
+    InvalidConfigException, Object
+};
 
 /**
  * 系统服务定位器，主要作用有：

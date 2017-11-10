@@ -2,8 +2,9 @@
 
 namespace wocenter\interfaces;
 
-use yii\web\Request;
-use yii\web\Response;
+use yii\{
+    web\Response, web\Request
+};
 
 /**
  * 系统调度接口类
