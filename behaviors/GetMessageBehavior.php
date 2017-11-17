@@ -18,7 +18,7 @@ use yii\base\Behavior;
  * @property Model|ActiveRecord $owner
  * @author E-Kevin <e-kevin@qq.com>
  */
-class getMessageBehavior extends Behavior
+class GetMessageBehavior extends Behavior
 {
     
     /**

@@ -2,7 +2,7 @@
 
 namespace wocenter\traits;
 
-use wocenter\behaviors\getMessageBehavior;
+use wocenter\behaviors\GetMessageBehavior;
 
 /**
  * Class ExtendModelTrait
@@ -32,7 +32,7 @@ trait ExtendModelTrait
     public function behaviors()
     {
         return [
-            getMessageBehavior::className(),
+            GetMessageBehavior::className(),
         ];
     }
     
