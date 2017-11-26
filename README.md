@@ -27,7 +27,7 @@ WoCenter Github地址: https://github.com/Wonail/wocenter.git
 WoCenter 文档
 -------------
 
-**权威指南：** [WoCenter 权威指南](http://www.wonail.com/doc/guide)
+**权威指南：** [WoCenter 权威指南](http://www.wonail.com/doc/wocenter/guide/zh-CN/guide-index.html)
 
 架构特色
 -----------
