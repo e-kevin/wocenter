@@ -5,7 +5,7 @@ namespace wocenter\core;
 use wocenter\interfaces\ServiceInterface;
 use Yii;
 use yii\base\{
-    InvalidConfigException, Object
+    InvalidConfigException, BaseObject
 };
 
 /**
@@ -17,7 +17,7 @@ use yii\base\{
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
-abstract class Service extends Object implements ServiceInterface
+abstract class Service extends BaseObject implements ServiceInterface
 {
     
     /**
@@ -65,7 +65,7 @@ abstract class Service extends Object implements ServiceInterface
      *
      * @param string $serviceName 子服务名，不带后缀`Service`
      *
-     * @return Service|Object|null
+     * @return Service|BaseObject|null
      * @throws InvalidConfigException
      */
     protected function getSubService($serviceName)

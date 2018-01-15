@@ -4,7 +4,7 @@ namespace wocenter\core;
 
 use Yii;
 use yii\base\{
-    InvalidConfigException, Object
+    InvalidConfigException, BaseObject
 };
 
 /**
@@ -15,7 +15,7 @@ use yii\base\{
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
-class ServiceLocator extends Object
+class ServiceLocator extends BaseObject
 {
     
     /**
@@ -36,8 +36,7 @@ class ServiceLocator extends Object
                 throw new InvalidConfigException("The required service component `{$service}` must return an object
                     extends `\\wocenter\\core\\Service`.");
             } elseif ($component->getId() != $serviceName) {
-                throw new InvalidConfigException("{$component->className()}::getId() method must
-                    return the '{$serviceName}' value.");
+                throw new InvalidConfigException("{$component->className()}::getId() method must return the '{$serviceName}' value.");
             }
             
             Yii::trace('Loading service: ' . $serviceName, __METHOD__);

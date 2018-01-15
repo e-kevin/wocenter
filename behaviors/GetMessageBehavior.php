@@ -4,7 +4,7 @@ namespace wocenter\behaviors;
 
 use Exception;
 use wocenter\{
-    core\Model, core\ActiveRecord, helpers\ArrayHelper, Wc
+    core\Model, db\ActiveRecord, helpers\ArrayHelper, Wc
 };
 use Yii;
 use yii\base\Behavior;

@@ -3,14 +3,17 @@
 namespace wocenter\core;
 
 use wocenter\interfaces\ModularityInfoInterface;
+use wocenter\traits\ExtensionTrait;
 
 /**
  * 基础模块信息实现类
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
-class ModularityInfo extends Extension implements ModularityInfoInterface
+abstract class ModularityInfo extends Extension implements ModularityInfoInterface
 {
+    
+    use ExtensionTrait;
     
     /**
      * @var boolean 是否启用bootstrap
@@ -21,6 +24,11 @@ class ModularityInfo extends Extension implements ModularityInfoInterface
      * @var string 数据库迁移路径
      */
     private $_migrationPath;
+    
+    /**
+     * @var array 模块配置信息允许的键名
+     */
+    private $_configKey = ['components', 'params'];
     
     /**
      * 模块菜单信息，系统模块菜单是一个多维数组。
@@ -38,18 +46,10 @@ class ModularityInfo extends Extension implements ModularityInfoInterface
      *  - `description`: 菜单描述
      *  - `items`: 子类菜单配置数组
      *
-     * @see \wocenter\backend\modules\account\Info::getMenus()
+     * @see \wocenter\backend\modules\extension\Info::getMenus()
      * @return array
      */
     public function getMenus()
-    {
-        return [];
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public function getUrlRules()
     {
         return [];
     }
@@ -69,4 +69,47 @@ class ModularityInfo extends Extension implements ModularityInfoInterface
     {
         $this->_migrationPath = $migrationPath;
     }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getConfigKey()
+    {
+        return $this->_configKey;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getConfig()
+    {
+        return [];
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function install()
+    {
+        if (parent::install() == false) {
+            return false;
+        }
+        $this->runMigrate('up');
+        
+        return true;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function uninstall()
+    {
+        if (parent::uninstall() == false) {
+            return false;
+        }
+        $this->runMigrate('down');
+        
+        return true;
+    }
+    
 }

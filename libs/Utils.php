@@ -16,22 +16,6 @@ class Utils
 {
     
     /**
-     * 是否超级管理员
-     *
-     * @param integer $uid 用户ID
-     *
-     * @return boolean
-     */
-    public static function isAdministrator($uid = 0)
-    {
-        if (empty($uid)) {
-            $uid = Yii::$app->getUser()->getIdentity()->getId();
-        }
-        
-        return in_array($uid, (array)Yii::$app->params['superAdmin']);
-    }
-    
-    /**
      * 获取客户端IP地址
      *
      * @param integer $type 返回类型 0 返回IP地址 1 返回IPV4地址数字

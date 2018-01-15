@@ -13,8 +13,6 @@ use yii\{
 /**
  * 系统调度器的基础实现类
  *
- * @method run() 执行调度
- *
  * @author E-Kevin <e-kevin@qq.com>
  */
 class Dispatch extends Action implements DispatchInterface

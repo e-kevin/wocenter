@@ -2,14 +2,14 @@
 
 namespace wocenter\helpers;
 
-use yii\base\Object;
+use yii\base\BaseObject;
 
 /**
  * Web控制台助手类
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
-class WebConsoleHelper extends Object
+class WebConsoleHelper extends BaseObject
 {
     
     /**
@@ -36,15 +36,16 @@ class WebConsoleHelper extends Object
      * 执行控制台命令
      *
      * @param string $cmd
+     * @param bool $show 是否显示输出信息，默认显示
      */
-    public static function run($cmd)
+    public static function run($cmd, $show = true)
     {
         if (self::isWin()) {
             $cmd = str_replace("\\", "\\\\", $cmd);
         }
         $handler = popen($cmd, 'r');
         while (!feof($handler)) {
-            self::writeInfoMessage(fgets($handler), 1);
+            $show ? self::writeInfoMessage(fgets($handler), 1) : fgets($handler);
         }
         pclose($handler);
     }

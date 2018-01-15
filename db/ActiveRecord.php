@@ -1,6 +1,6 @@
 <?php
 
-namespace wocenter\core;
+namespace wocenter\db;
 
 use wocenter\traits\ExtendModelTrait;
 use yii\db\ActiveRecord as baseActiveRecord;
@@ -38,7 +38,6 @@ class ActiveRecord extends baseActiveRecord
      */
     public function clearCache()
     {
-    
     }
     
 }

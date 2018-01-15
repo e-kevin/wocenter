@@ -6,7 +6,7 @@ use Closure;
 use wocenter\helpers\ArrayHelper;
 use Yii;
 use yii\{
-    base\Object, caching\Dependency, helpers\VarDumper
+    base\BaseObject, caching\Dependency, helpers\VarDumper
 };
 
 /**
@@ -14,7 +14,7 @@ use yii\{
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
-class BaseWc extends Object
+class BaseWc extends BaseObject
 {
     
     /**
@@ -220,6 +220,16 @@ class BaseWc extends Object
     public static function cache()
     {
         return Yii::$app->get('commonCache');
+    }
+    
+    /**
+     * WoCenter 当前版本
+     *
+     * @return string
+     */
+    public static function getVersion()
+    {
+        return '0.3';
     }
     
 }

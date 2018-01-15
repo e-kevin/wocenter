@@ -17,7 +17,7 @@ use yii\{
  */
 class View extends baseView
 {
-
+    
     /**
      * @var string 主题名称
      */
@@ -70,33 +70,19 @@ class View extends baseView
         
         $this->theme = new Theme($config);
     }
-
+    
     /**
      * 获取主题名称
      *
-     * @return string
+     * @return string 如：adminlte、basic等
      */
     public function getThemeName()
     {
         if ($this->_themeName == null) {
-            if (Yii::$app->id == 'backend') {
-                $this->_themeName = Wc::$service->getSystem()->getConfig()->get('BACKEND_THEME', 'basic');
-            } else {
-                $this->_themeName = 'basic';
-            }
+            $this->_themeName = Wc::$service->getExtension()->getTheme()->getCurrentTheme()->id;
         }
-
+        
         return $this->_themeName;
-    }
-
-    /**
-     * 设置主题名称
-     *
-     * @param string $themeName 主题名称
-     */
-    public function setThemeName($themeName)
-    {
-        $this->_themeName = $themeName;
     }
     
 }

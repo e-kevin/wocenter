@@ -34,7 +34,7 @@ trait DispatchShortcutTrait
      */
     public function error($message = '', $jumpUrl = '', $data = [])
     {
-        $this->getDispatch()->error($message, $jumpUrl, $data);
+        return $this->getDispatch()->error($message, $jumpUrl, $data);
     }
     
     /**
@@ -50,7 +50,7 @@ trait DispatchShortcutTrait
      */
     public function success($message = '', $jumpUrl = '', $data = [])
     {
-        $this->getDispatch()->success($message, $jumpUrl, $data);
+        return $this->getDispatch()->success($message, $jumpUrl, $data);
     }
     
     /**

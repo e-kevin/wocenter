@@ -6,6 +6,9 @@ namespace wocenter\interfaces;
  * 扩展接口类
  *
  * @property string $uniqueId 扩展唯一ID，只读属性
+ * @property string $uniqueName 扩展唯一名称，不可重复
+ * @property string $version 版本
+ * @property array $depends 扩展所需依赖
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
@@ -17,6 +20,13 @@ interface ExtensionInterface
      * @return string
      */
     public function getUniqueId();
+    
+    /**
+     * 获取扩展唯一名称，不可重复
+     *
+     * @return string
+     */
+    public function getUniqueName();
     
     /**
      * 安装
@@ -38,5 +48,19 @@ interface ExtensionInterface
      * @return boolean
      */
     public function upgrade();
+    
+    /**
+     * 版本
+     *
+     * @return string
+     */
+    public function getVersion();
+    
+    /**
+     * 获取扩展所需依赖
+     *
+     * @return array
+     */
+    public function getDepends();
     
 }

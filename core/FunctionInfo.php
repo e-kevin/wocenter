@@ -3,11 +3,7 @@
 namespace wocenter\core;
 
 use wocenter\{
-    helpers\FileHelper, helpers\WebConsoleHelper, interfaces\FunctionInfoInterface, Wc
-};
-use Yii;
-use yii\base\{
-    InvalidConfigException, InvalidParamException
+    interfaces\FunctionInfoInterface, traits\ExtensionTrait
 };
 
 /**
@@ -15,13 +11,15 @@ use yii\base\{
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
-class FunctionInfo extends Extension implements FunctionInfoInterface
+abstract class FunctionInfo extends Extension implements FunctionInfoInterface
 {
+    
+    use ExtensionTrait;
     
     /**
      * @var string 扩展所属模块ID
      */
-    public $moduleId;
+    protected $moduleId;
     
     /**
      * @var string 数据库迁移路径
@@ -31,13 +29,12 @@ class FunctionInfo extends Extension implements FunctionInfoInterface
     /**
      * @inheritdoc
      */
-    public function init()
-    {
-        if (is_null($this->moduleId)) {
-            throw new InvalidConfigException(get_called_class() . ': The "moduleId" property must be set.');
-        }
-        parent::init();
-    }
+    protected $mustBeSetProps = ['app', 'id', 'moduleId'];
+    
+    /**
+     * @var array 模块配置信息允许的键名
+     */
+    private $_configKey = ['components', 'params'];
     
     /**
      * 获取扩展菜单信息
@@ -46,14 +43,6 @@ class FunctionInfo extends Extension implements FunctionInfoInterface
      * @see \wocenter\core\ModularityInfo::getMenus()
      */
     public function getMenus()
-    {
-        return [];
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public function getUrlRules()
     {
         return [];
     }
@@ -93,55 +82,39 @@ class FunctionInfo extends Extension implements FunctionInfoInterface
     /**
      * @inheritdoc
      */
-    public function beforeInstall()
+    public function getConfigKey()
     {
-        if (parent::beforeInstall()) {
-            
-            $this->runMigrate('up');
-            
-            $this->injectMenus();
-            
-            return true;
-        }
+        return $this->_configKey;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getConfig()
+    {
+        return [];
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function install()
+    {
+        parent::install();
+        $this->runMigrate('up');
         
-        return false;
+        return true;
     }
     
     /**
-     * 执行migrate操作
-     *
-     * @param string $type 操作类型
+     * @inheritdoc
      */
-    protected function runMigrate($type)
+    public function uninstall()
     {
-        if (FileHelper::isDir(Yii::getAlias($this->migrationPath))) {
-            $action = "migrate/";
-            switch ($type) {
-                case 'up':
-                    $action .= 'up';
-                    break;
-                case 'down':
-                    $action .= 'down';
-                    break;
-                default:
-                    throw new InvalidParamException('The "type" property is invalid.');
-            }
-            $cmd = "%s {$action} --migrationPath=%s --interactive=0";
-            //执行
-            WebConsoleHelper::run(sprintf($cmd,
-                Yii::getAlias(WebConsoleHelper::getYiiCommand()),
-                Yii::getAlias($this->migrationPath)
-            ));
-        }
-    }
-    
-    /**
-     * 插入功能扩展菜单
-     */
-    protected function injectMenus()
-    {
-        $menus = Wc::$service->getMenu()->formatMenuConfig($this->getMenus());
-        Wc::$service->getMenu()->syncMenus($menus);
+        parent::uninstall();
+        $this->runMigrate('down');
+        
+        return true;
     }
     
 }

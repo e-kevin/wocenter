@@ -6,7 +6,7 @@ use wocenter\behaviors\GetMessageBehavior;
 
 /**
  * Class ExtendModelTrait
- * 拓展\wocenter\core\Model, \wocenter\core\ActiveRecord类
+ * 拓展\wocenter\core\Model, \wocenter\db\ActiveRecord类
  *
  * @property boolean $throwException
  * @author E-Kevin <e-kevin@qq.com>

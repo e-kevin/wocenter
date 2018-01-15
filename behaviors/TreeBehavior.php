@@ -3,7 +3,7 @@
 namespace wocenter\behaviors;
 
 use wocenter\{
-    core\ActiveRecord, core\Model, helpers\ArrayHelper, libs\Tree
+    db\ActiveRecord, core\Model, helpers\ArrayHelper, libs\Tree
 };
 use yii\{
     base\Behavior, base\Component, base\InvalidConfigException, base\ModelEvent, web\NotFoundHttpException
@@ -86,7 +86,7 @@ class TreeBehavior extends Behavior
     {
         if (!($owner instanceof Model || $owner instanceof ActiveRecord)) {
             throw new InvalidConfigException("The owner of this behavior `{$this->className()}` must be instanceof " .
-                '`\wocenter\core\Model` or `\wocenter\core\ActiveRecord`');
+                '`\wocenter\core\Model` or `\wocenter\db\ActiveRecord`');
         }
         parent::attach($owner);
     }

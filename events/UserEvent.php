@@ -3,7 +3,7 @@
 namespace wocenter\events;
 
 use wocenter\{
-    core\ActiveRecord, core\Model, interfaces\IdentityInterface, backend\modules\account\models\User as BackendUser
+    db\ActiveRecord, core\Model, interfaces\IdentityInterface, backend\modules\account\models\User as BackendUser
 };
 
 /**

@@ -16,13 +16,8 @@ interface MenuInterface
     const CREATE_TYPE_BY_USER = 0;
     
     /**
-     * 菜单创建者为模块
-     */
-    const CREATE_TYPE_BY_MODULE = 1;
-    
-    /**
      * 菜单创建者为扩展
      */
-    const CREATE_TYPE_BY_EXTENSION = 2;
+    const CREATE_TYPE_BY_EXTENSION = 1;
     
 }

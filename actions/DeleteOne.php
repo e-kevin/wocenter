@@ -3,7 +3,7 @@
 namespace wocenter\actions;
 
 use wocenter\{
-    core\ActiveRecord, core\Dispatch, core\Model, traits\LoadModelTrait
+    db\ActiveRecord, core\Dispatch, core\Model, traits\LoadModelTrait
 };
 use yii\base\Action;
 use Yii;

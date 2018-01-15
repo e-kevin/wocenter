@@ -267,11 +267,7 @@ trait DispatchTrait
                         if (isset($config['class'])) {
                             $classConfig = $config;
                         } else {
-                            $dispatchId = $this->id . '/' . $this->normalizeDispatchName(
-                                    isset($dispatchOptions['map'])
-                                        ? $dispatchOptions['map']
-                                        : $id
-                                );
+                            $dispatchId = $this->id . '/' . $this->normalizeDispatchName($dispatchOptions['map'] ?? $id);
                             $classConfig = array_merge(
                                 ['class' => $this->normalizeDispatchNamespace($dispatchId)],
                                 $config // 使用其他属性初始化调度器
