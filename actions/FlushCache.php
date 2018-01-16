@@ -56,7 +56,7 @@ class FlushCache extends Action
         }
         $components = $current->getComponents();
         foreach ($components as $componentName => $component) {
-            if (is_array($component)) {
+            if (is_array($component) && $componentName !== 'user') {
                 $component = $current->get($componentName);
             }
             if ($component instanceof Cache) {
