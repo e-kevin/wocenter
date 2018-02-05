@@ -293,7 +293,7 @@ class StringHelper
      * 4 - 中文
      * 默认 - 混合，默认去掉了容易混淆的字符oOLl和数字01，要添加请使用addChars参数
      *
-     * @return string
+     * @return bool|array
      */
     public static function buildCountRand($number, $length = 4, $type = Constants::UNLIMITED)
     {
@@ -305,11 +305,11 @@ class StringHelper
         for ($i = 0; $i < $number; $i++) {
             $rand[] = self::randString($length, $type);
         }
-        $unqiue = array_unique($rand);
-        if (count($unqiue) == count($rand)) {
+        $unique = array_unique($rand);
+        if (count($unique) == count($rand)) {
             return $rand;
         }
-        $count = count($rand) - count($unqiue);
+        $count = count($rand) - count($unique);
         for ($i = 0; $i < $count * 3; $i++) {
             $rand[] = self::randString($length, $type);
         }
@@ -535,6 +535,20 @@ class StringHelper
     public static function ns2Path($namespace)
     {
         return Yii::getAlias('@' . str_replace('\\', '/', $namespace));
+    }
+    
+    /**
+     * 替换第一个被找到的字符串
+     *
+     * @param string $str
+     * @param string $find
+     * @param string $replace
+     *
+     * @return string
+     */
+    public static function replace(string $str, string $find, $replace = ''): string
+    {
+        return ($position = strpos($str, $find)) !== false ? substr_replace($str, $replace, $position, strlen($find)) : $str;
     }
     
 }

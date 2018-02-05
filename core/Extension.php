@@ -3,7 +3,6 @@
 namespace wocenter\core;
 
 use wocenter\interfaces\ExtensionInterface;
-use wocenter\Wc;
 use yii\base\{
     InvalidConfigException, BaseObject
 };
@@ -109,6 +108,11 @@ class Extension extends BaseObject implements ExtensionInterface
     protected $depends = [];
     
     /**
+     * @var array 扩展所需的composer包
+     */
+    protected $requirePackages = [];
+    
+    /**
      * @inheritdoc
      */
     public function __construct($uniqueId, $uniqueName, $version, array $config = [])
@@ -189,6 +193,14 @@ class Extension extends BaseObject implements ExtensionInterface
     public function getDepends()
     {
         return $this->depends;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getRequirePackages()
+    {
+        return $this->requirePackages;
     }
     
 }

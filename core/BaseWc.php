@@ -229,7 +229,7 @@ class BaseWc extends BaseObject
      */
     public static function getVersion()
     {
-        return '0.3';
+        return '0.3.1';
     }
     
 }

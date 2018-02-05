@@ -12,8 +12,6 @@ use yii\{
 /**
  * Class FlushCache
  *
- * From [DotPlant2](http://dotplant.ru/)
- *
  * @property \wocenter\core\Controller $controller
  */
 class FlushCache extends Action
@@ -56,7 +54,7 @@ class FlushCache extends Action
         }
         $components = $current->getComponents();
         foreach ($components as $componentName => $component) {
-            if (is_array($component) && $componentName !== 'user') {
+            if (is_array($component) && $componentName != 'user') {
                 $component = $current->get($componentName);
             }
             if ($component instanceof Cache) {

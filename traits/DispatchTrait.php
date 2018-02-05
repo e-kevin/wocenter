@@ -3,7 +3,7 @@
 namespace wocenter\traits;
 
 use wocenter\{
-    core\Controller, core\Dispatch, core\View, Wc
+    core\Controller, core\Dispatch, core\View, helpers\StringHelper, interfaces\ExtensionInterface, Wc
 };
 use Yii;
 use yii\base\{
@@ -31,7 +31,13 @@ trait DispatchTrait
      * @var string 调度器命名空间，默认该值在初始化时由系统自动生成
      * @see init()
      */
-    public $dispatchNamespacePrefix;
+    public $dispatchNamespace;
+    
+    /**
+     * @var string 开发者调度器命名空间，默认该值在初始化时由系统自动生成
+     * @see init()
+     */
+    public $developerDispatchNamespace;
     
     /**
      * @var string the ID of this controller.
@@ -55,6 +61,19 @@ trait DispatchTrait
     private $_view;
     
     /**
+     * @var array 当前调度器所属扩展的数据库配置信息
+     */
+    private $_extensionConfig;
+    
+    /**
+     * @var int 运行模式，可选值有：
+     *  - 0: 运行系统扩展
+     *  - 1: 运行开发者扩展
+     * 如果该值被指定，则获取调度器时优先级最高
+     */
+    public $runMode;
+    
+    /**
      * @inheritdoc
      */
     public function init()
@@ -62,19 +81,37 @@ trait DispatchTrait
         parent::init();
         
         $class = new \ReflectionClass($this);
-        if ($this->dispatchNamespacePrefix == null
-            && ($pos = strrpos($class->getNamespaceName(), '\\')) !== false) {
-            $this->dispatchNamespacePrefix = substr($class->getNamespaceName(), 0, $pos)
+        if (
+            $this->dispatchNamespace == null
+            && ($pos = strrpos($class->getNamespaceName(), '\\')) !== false
+        ) {
+            $this->dispatchNamespace = substr($class->getNamespaceName(), 0, $pos)
                 . '\\themes\\' . $this->getView()->getThemeName() . '\\dispatches';
         }
         
-        $this->setViewPath(implode(DIRECTORY_SEPARATOR, [
-            substr(dirname($class->getFileName()), 0, -12),
-            'themes',
-            $this->getView()->getThemeName(),
-            'views',
-            $this->id,
-        ]));
+        $this->developerDispatchNamespace = 'developer\\' . $this->dispatchNamespace;
+        // 获取当前扩展数据库配置，主要是获取扩展当前的运行模式
+        $uniqueName = Wc::$service->getExtension()->getLoad()->getExtensionNameByNamespace($this->dispatchNamespace);
+        $this->_extensionConfig = Wc::$service->getExtension()->getLoad()->getInstalled()[$uniqueName] ?? [];
+        // 开发者运行模式
+        if ($this->_isDeveloperMode()) {
+            // 扩展路径
+            $extensionPath = Wc::$service->getExtension()->getLoad()->getExtensionPathByNamespace($this->dispatchNamespace);
+            // 开发者路径
+            $developerPath = StringHelper::replace($extensionPath, 'extensions', 'developer');
+            Yii::setAlias(str_replace('\\', '/', $this->developerDispatchNamespace), $developerPath);
+            // 设置开发者扩展视图路径
+            $this->setViewPath(str_replace('dispatches', 'views', $developerPath . DIRECTORY_SEPARATOR . $this->id));
+        } else {
+            // 设置系统扩展视图路径
+            $this->setViewPath(implode(DIRECTORY_SEPARATOR, [
+                substr(dirname($class->getFileName()), 0, -12),
+                'themes',
+                $this->getView()->getThemeName(),
+                'views',
+                $this->id,
+            ]));
+        }
     }
     
     /**
@@ -84,7 +121,7 @@ trait DispatchTrait
     {
         $action = parent::createAction($id);
         
-        return $action ?: $this->createDispatch($id);
+        return $action ?: $this->_createDispatch($id);
     }
     
     /**
@@ -161,12 +198,13 @@ trait DispatchTrait
     {
         $route = explode('/', $route);
         foreach ($route as &$part) {
-            if (($pos = strpos($part, '-')) !== false) {
+            if (strpos($part, '-') !== false) {
                 $part = Inflector::variablize($part);
             }
         }
         
-        return $this->dispatchNamespacePrefix . '\\' . str_replace('/', '\\', implode('/', $route));
+        return ($this->_isDeveloperMode() ? $this->developerDispatchNamespace : $this->dispatchNamespace)
+            . '\\' . str_replace('/', '\\', implode('/', $route));
     }
     
     /**
@@ -184,17 +222,23 @@ trait DispatchTrait
     }
     
     /**
-     * 调度器不存在则抛出友好提示信息
+     * 根据路由地址获取调度器，默认获取主题公共调度器
      *
-     * @param string $className 调度器类名
+     * 该方法和[[run()|runAction()]]方法类似，唯一区别是在获取到指定调度器时不默认执行[[run()]]，而是可以自由调用调度器里面的方法，
+     * 这样可以有效实现部分代码重用
      *
-     * @throws Exception
+     * @param null|string $route 调度路由，支持以下格式：'view', 'comment/view', '/admin/comment/view'
+     *
+     * @return null|Dispatch
      */
-    public function generateDispatchFile($className)
+    public function getDispatch($route = null)
     {
-        $file = '@' . str_replace('\\', '/', ltrim($className, '\\')) . '.php';
-        $file = str_replace('\\', DIRECTORY_SEPARATOR, Yii::getAlias($file));
-        throw new Exception("请在该路径下创建调度器文件:\r\n{$file}");
+        // 没有指定调度路由则默认获取主题公共调度器
+        if ($route === null) {
+            return $this->_createDispatchByConfig('common', Wc::$service->getExtension()->getTheme()->getCurrentTheme()->dispatch);
+        } else {
+            return $this->_getDispatchByRoute($route);
+        }
     }
     
     /**
@@ -207,7 +251,7 @@ trait DispatchTrait
      * @throws Exception
      * @throws InvalidConfigException
      */
-    public function createDispatchByConfig($id, $config)
+    private function _createDispatchByConfig($id, $config)
     {
         if (!is_array($config)) {
             $config = ['class' => $config];
@@ -216,22 +260,29 @@ trait DispatchTrait
         $className = ltrim($config['class'], '\\');
         
         $dispatch = null;
-        if (!class_exists($className)) {
-        } elseif (is_subclass_of($className, 'wocenter\core\Dispatch')) {
-            $dispatch = Yii::createObject($config, [
-                $id,
-                Yii::$app->controller ?: $this,
-            ]);
-            
-            if (get_class($dispatch) !== $className) {
-                $dispatch = null;
+        if (class_exists($className)) {
+            if (is_subclass_of($className, 'wocenter\core\Dispatch')) {
+                $dispatch = Yii::createObject($config, [
+                    $id,
+                    Yii::$app->controller ?: $this,
+                ]);
+                
+                if (get_class($dispatch) !== $className) {
+                    $dispatch = null;
+                }
+            } elseif (YII_DEBUG) {
+                throw new InvalidConfigException("Dispatch class must extend from \\wocenter\\core\\Dispatch.");
             }
-        } elseif (YII_DEBUG) {
-            throw new InvalidConfigException("Dispatch class must extend from \\wocenter\\core\\Dispatch.");
+        } // 调度器不存在则调用系统扩展内调度器
+        elseif ($this->_isDeveloperMode()) {
+            $config['class'] = StringHelper::replace($config['class'], 'developer\\');
+            if (class_exists($config['class'])) {
+                $dispatch = $this->_createDispatchByConfig($id, $config);
+            }
         }
         
         if ($dispatch === null) {
-            $this->generateDispatchFile($className);
+            $this->_generateDispatchFile($className);
         }
         
         Yii::trace('Loading dispatch: ' . $className, __METHOD__);
@@ -240,15 +291,15 @@ trait DispatchTrait
     }
     
     /**
-     * 根据调度器配置创建调度器
+     * 根据调度器ID创建调度器
      *
      * @param string $id 调度器ID
-     * @param bool $withConfig 是否使用调度器配置。默认使用，即根据`dispatches()`配置来创建调度器
+     * @param bool $withConfig 是否使用调度器配置。默认使用，即根据`[[dispatches()]]`配置来创建调度器
      *
      * @return null|Dispatch
      * @throws InvalidConfigException
      */
-    public function createDispatch($id, $withConfig = true)
+    private function _createDispatch($id, $withConfig = true)
     {
         if ($id === '') {
             $id = $this->defaultAction;
@@ -258,6 +309,7 @@ trait DispatchTrait
             $dispatchMap = $this->dispatches();
             // 存在调度配置信息则执行自定义调度，否则终止调度行为
             if (in_array($id, $dispatchMap) || isset($dispatchMap[$id])) {
+                // 存在调度配置信息
                 if (isset($dispatchMap[$id]) && !empty($dispatchMap[$id])) {
                     $config = $dispatchMap[$id];
                     // 调度配置为数组
@@ -294,27 +346,7 @@ trait DispatchTrait
             $classConfig = $this->normalizeDispatchNamespace($dispatchId);
         }
         
-        return $this->createDispatchByConfig($id, $classConfig);
-    }
-    
-    /**
-     * 根据路由地址获取调度器，默认获取主题公共调度器
-     *
-     * 该方法和[[run()|runAction()]]方法类似，唯一区别是在获取到指定调度器时不默认执行[[run()]]，而是可以自由调用调度器里面的方法，
-     * 这样可以有效实现部分代码重用
-     *
-     * @param null|string $route 调度路由，支持以下格式：'view', 'comment/view', '/admin/comment/view'
-     *
-     * @return null|Dispatch
-     */
-    public function getDispatch($route = null)
-    {
-        // 没有指定调度路由则默认获取主题公共调度器
-        if ($route === null) {
-            return $this->createDispatchByConfig('common', Wc::$service->getExtension()->getTheme()->getCurrentTheme()->dispatch);
-        } else {
-            return $this->_getDispatchByRoute($route);
-        }
+        return $this->_createDispatchByConfig($id, $classConfig);
     }
     
     /**
@@ -325,7 +357,7 @@ trait DispatchTrait
      * @return null|Dispatch
      * @throws InvalidRouteException
      */
-    protected function _getDispatchByRoute($route)
+    private function _getDispatchByRoute($route)
     {
         $pos = strpos($route, '/');
         if ($pos === false) {
@@ -344,13 +376,39 @@ trait DispatchTrait
             throw new InvalidRouteException('Unable to resolve the dispatch request: ' . $route);
         }
         
-        $dispatch = $controller->createDispatch($actionID, false);
+        $dispatch = $controller->_createDispatch($actionID, false);
         
         if ($oldController !== null) {
             Yii::$app->controller = $oldController;
         }
         
         return $dispatch;
+    }
+    
+    /**
+     * 调度器不存在则抛出友好提示信息
+     *
+     * @param string $className 调度器类名
+     *
+     * @throws Exception
+     */
+    private function _generateDispatchFile($className)
+    {
+        $file = '@' . str_replace('\\', '/', ltrim($className, '\\')) . '.php';
+        $file = str_replace('\\', DIRECTORY_SEPARATOR, Yii::getAlias($file));
+        throw new Exception("请在该路径下创建调度器文件:\r\n{$file}");
+    }
+    
+    /**
+     * @return bool 是否开发者运行模式
+     */
+    private function _isDeveloperMode()
+    {
+        return $this->runMode == ExtensionInterface::RUN_MODULE_DEVELOPER
+            || (
+                $this->runMode !== ExtensionInterface::RUN_MODULE_EXTENSION
+                && $this->_extensionConfig['run'] == ExtensionInterface::RUN_MODULE_DEVELOPER
+            );
     }
     
 }
