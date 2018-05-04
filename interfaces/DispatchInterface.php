@@ -2,9 +2,7 @@
 
 namespace wocenter\interfaces;
 
-use yii\{
-    web\Response, web\Request
-};
+use yii\web\Response;
 
 /**
  * 系统调度接口类
@@ -73,14 +71,5 @@ interface DispatchInterface
      * @return $this
      */
     public function assign($key, $value = null);
-    
-    /**
-     * 是否全页面加载
-     *
-     * @param Request $request
-     *
-     * @return boolean
-     */
-    public function isFullPageLoad($request = null);
     
 }

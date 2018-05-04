@@ -2,9 +2,8 @@
 
 namespace wocenter\actions;
 
-use wocenter\core\{
-    ActiveRecord, Dispatch
-};
+use wocenter\core\Dispatch;
+use wocenter\db\ActiveRecord;
 use yii\base\{
     Action, InvalidConfigException
 };

@@ -7,7 +7,7 @@ use wocenter\{
 };
 use Yii;
 use yii\{
-    base\Action, base\InvalidConfigException, helpers\ArrayHelper
+    base\Action, base\InvalidConfigException, helpers\ArrayHelper, web\Controller
 };
 
 /**
@@ -72,18 +72,6 @@ class Dispatch extends Action implements DispatchInterface
         }
         
         return $this;
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public function isFullPageLoad($request = null)
-    {
-        if ($request == null) {
-            $request = Yii::$app->getRequest();
-        }
-        
-        return $request->getIsPjax() || (!$request->getIsAjax() && $request->getIsGet());
     }
     
     /**

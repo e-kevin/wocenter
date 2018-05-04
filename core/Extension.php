@@ -113,6 +113,11 @@ class Extension extends BaseObject implements ExtensionInterface
     protected $requirePackages = [];
     
     /**
+     * @var string|null 获取扩展所属类型
+     */
+    protected $category;
+    
+    /**
      * @inheritdoc
      */
     public function __construct($uniqueId, $uniqueName, $version, array $config = [])
@@ -201,6 +206,14 @@ class Extension extends BaseObject implements ExtensionInterface
     public function getRequirePackages()
     {
         return $this->requirePackages;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getCategory()
+    {
+        return $this->category;
     }
     
 }

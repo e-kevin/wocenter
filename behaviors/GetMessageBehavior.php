@@ -52,8 +52,8 @@ class GetMessageBehavior extends Behavior
              * 此时可通过模型内`$message`属性获取相关反馈信息
              */
             if (Yii::$app->getDb()->getIsActive() && (
-                    $this->owner->throwException === true
-                    || (Wc::getThrowException() && $this->owner->throwException !== false)
+                    $this->owner->getThrowException() === true
+                    || (Wc::getThrowException() && $this->owner->getThrowException() !== false)
                 )
             ) {
                 throw new Exception(ArrayHelper::arrayToString($errors, ''));

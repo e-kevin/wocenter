@@ -2,40 +2,49 @@
 
 namespace wocenter\traits;
 
-use wocenter\{
-    core\Controller, core\Dispatch, core\View, helpers\StringHelper, interfaces\ExtensionInterface, Wc
-};
+use wocenter\core\Dispatch;
+use wocenter\helpers\StringHelper;
+use wocenter\interfaces\ExtensionInterface;
 use Yii;
-use yii\base\{
-    Exception, InvalidConfigException, InvalidRouteException, Module
-};
-use yii\helpers\{
-    ArrayHelper, Inflector
-};
+use yii\base\Exception;
+use yii\base\InvalidConfigException;
+use yii\base\InvalidRouteException;
+use yii\base\Module;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Inflector;
 
 /**
  * Class DispatchTrait
  * 主要为Controller控制器增加系统调度功能
  *
- * @method string getUniqueId()
- * @method void setViewPath($path)
+ * @method null|Dispatch getCommonDispatch($route = null) 控制器必须继承\wocenter\interfaces\CommonDispatchInterface()接口类
+ * @method void initDispatchEnvironment() 初始化调度器运行环境
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
 trait DispatchTrait
 {
     
-    use DispatchShortcutTrait;
+    /**
+     * @var int 运行模式，可选值有：
+     *  - 0: 运行系统扩展
+     * @see ExtensionInterface::RUN_MODULE_EXTENSION
+     *  - 1: 运行开发者扩展
+     * @see ExtensionInterface::RUN_MODULE_DEVELOPER
+     *
+     * 如果该值被指定，则获取调度器时该值优先级最高
+     */
+    public $runMode;
     
     /**
      * @var string 调度器命名空间，默认该值在初始化时由系统自动生成
-     * @see init()
+     * @see Controller::init()
      */
     public $dispatchNamespace;
     
     /**
      * @var string 开发者调度器命名空间，默认该值在初始化时由系统自动生成
-     * @see init()
+     * @see Controller::init()
      */
     public $developerDispatchNamespace;
     
@@ -56,22 +65,9 @@ trait DispatchTrait
     public $defaultAction = 'index';
     
     /**
-     * @var View 系统调度需要使用的View组件
-     */
-    private $_view;
-    
-    /**
      * @var array 当前调度器所属扩展的数据库配置信息
      */
     private $_extensionConfig;
-    
-    /**
-     * @var int 运行模式，可选值有：
-     *  - 0: 运行系统扩展
-     *  - 1: 运行开发者扩展
-     * 如果该值被指定，则获取调度器时优先级最高
-     */
-    public $runMode;
     
     /**
      * @inheritdoc
@@ -80,38 +76,7 @@ trait DispatchTrait
     {
         parent::init();
         
-        $class = new \ReflectionClass($this);
-        if (
-            $this->dispatchNamespace == null
-            && ($pos = strrpos($class->getNamespaceName(), '\\')) !== false
-        ) {
-            $this->dispatchNamespace = substr($class->getNamespaceName(), 0, $pos)
-                . '\\themes\\' . $this->getView()->getThemeName() . '\\dispatches';
-        }
-        
-        $this->developerDispatchNamespace = 'developer\\' . $this->dispatchNamespace;
-        // 获取当前扩展数据库配置，主要是获取扩展当前的运行模式
-        $uniqueName = Wc::$service->getExtension()->getLoad()->getExtensionNameByNamespace($this->dispatchNamespace);
-        $this->_extensionConfig = Wc::$service->getExtension()->getLoad()->getInstalled()[$uniqueName] ?? [];
-        // 开发者运行模式
-        if ($this->_isDeveloperMode()) {
-            // 扩展路径
-            $extensionPath = Wc::$service->getExtension()->getLoad()->getExtensionPathByNamespace($this->dispatchNamespace);
-            // 开发者路径
-            $developerPath = StringHelper::replace($extensionPath, 'extensions', 'developer');
-            Yii::setAlias(str_replace('\\', '/', $this->developerDispatchNamespace), $developerPath);
-            // 设置开发者扩展视图路径
-            $this->setViewPath(str_replace('dispatches', 'views', $developerPath . DIRECTORY_SEPARATOR . $this->id));
-        } else {
-            // 设置系统扩展视图路径
-            $this->setViewPath(implode(DIRECTORY_SEPARATOR, [
-                substr(dirname($class->getFileName()), 0, -12),
-                'themes',
-                $this->getView()->getThemeName(),
-                'views',
-                $this->id,
-            ]));
-        }
+        $this->initDispatchEnvironment();
     }
     
     /**
@@ -119,9 +84,79 @@ trait DispatchTrait
      */
     public function createAction($id)
     {
-        $action = parent::createAction($id);
-        
-        return $action ?: $this->_createDispatch($id);
+        return parent::createAction($id) ?: $this->_createDispatch($id);
+    }
+    
+    /**
+     * 操作失败后返回结果至客户端
+     *
+     * @param string|array $message 提示信息
+     * @param string|array $jumpUrl 页面跳转地址
+     * @param mixed $data
+     *  - 为整数，则代表页面跳转停留时间，默认为3妙，时间结束后自动跳转至指定的`$jumpUrl`页面
+     *  - 为数组，则代表返回给客户端的数据
+     *
+     * @return mixed
+     */
+    public function error($message = '', $jumpUrl = '', $data = [])
+    {
+        return $this->getDispatch()->error($message, $jumpUrl, $data);
+    }
+    
+    /**
+     * 操作成功后返回结果至客户端
+     *
+     * @param string|array $message 提示信息
+     * @param string|array $jumpUrl 页面跳转地址
+     * @param mixed $data
+     *  - 为整数，则代表页面跳转停留时间，默认为1妙，时间结束后自动跳转至指定的`$jumpUrl`页面
+     *  - 为数组，则代表返回给客户端的数据
+     *
+     * @return mixed
+     */
+    public function success($message = '', $jumpUrl = '', $data = [])
+    {
+        return $this->getDispatch()->success($message, $jumpUrl, $data);
+    }
+    
+    /**
+     * 显示页面
+     *
+     * @param string $view
+     * @param array $assign
+     *
+     * @return string|\yii\web\Response
+     */
+    public function display($view = null, $assign = [])
+    {
+        return $this->getDispatch()->display($view, $assign);
+    }
+    
+    /**
+     * 保存视图模板文件赋值数据
+     *
+     * 示例：
+     * ```php
+     *  $this->assign('name1', 'apple');
+     *  $this->assign('name2', 'orange');
+     *  等于
+     *  $this->assign([
+     *      'name1' => 'apple',
+     *      'name2' => 'orange'
+     *  ]);
+     *
+     * ```
+     *
+     * 使用该方法可向当前控制器的调度器内传入公共模板数据
+     *
+     * @param string|array $key
+     * @param string|array $value
+     *
+     * @return Dispatch
+     */
+    public function assign($key = '', $value = '')
+    {
+        return $this->getDispatch()->assign($key, $value);
     }
     
     /**
@@ -152,37 +187,6 @@ trait DispatchTrait
     public function dispatches()
     {
         return [];
-    }
-    
-    /**
-     * 获取Dispatch需要使用的view组件
-     *
-     * @return View
-     */
-    public function getView()
-    {
-        if ($this->_view == null) {
-            /** @var View $view */
-            $view = Yii::$app->getView();
-            $this->setView($view);
-        }
-        
-        return $this->_view;
-    }
-    
-    /**
-     * 设置Dispatch需要使用的view组件
-     *
-     * @param View $view
-     *
-     * @throws InvalidConfigException
-     */
-    public function setView($view)
-    {
-        if (!$view instanceof View) {
-            throw new InvalidConfigException('The Dispatch Service needs to be used by the view component to inherit `\wocenter\core\View`');
-        }
-        $this->_view = $view;
     }
     
     /**
@@ -234,11 +238,7 @@ trait DispatchTrait
     public function getDispatch($route = null)
     {
         // 没有指定调度路由则默认获取主题公共调度器
-        if ($route === null) {
-            return $this->_createDispatchByConfig('common', Wc::$service->getExtension()->getTheme()->getCurrentTheme()->dispatch);
-        } else {
-            return $this->_getDispatchByRoute($route);
-        }
+        return $route === null ? $this->getCommonDispatch() : $this->_getDispatchByRoute($route);
     }
     
     /**
@@ -257,6 +257,7 @@ trait DispatchTrait
             $config = ['class' => $config];
         }
         
+        internal:
         $className = ltrim($config['class'], '\\');
         
         $dispatch = null;
@@ -277,7 +278,7 @@ trait DispatchTrait
         elseif ($this->_isDeveloperMode()) {
             $config['class'] = StringHelper::replace($config['class'], 'developer\\');
             if (class_exists($config['class'])) {
-                $dispatch = $this->_createDispatchByConfig($id, $config);
+                goto internal;
             }
         }
         
@@ -368,7 +369,7 @@ trait DispatchTrait
             $parts = Yii::$app->createController($route);
         }
         if (is_array($parts)) {
-            /* @var $controller Controller */
+            /* @var $controller self */
             list($controller, $actionID) = $parts;
             $oldController = Yii::$app->controller;
             Yii::$app->controller = $controller;

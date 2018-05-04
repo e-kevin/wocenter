@@ -40,12 +40,12 @@ class BaseWc extends BaseObject
     /**
      * 输出调试信息
      *
-     * @param $var
+     * @param string|array $var
      * @param string $category
      */
-    public static function traceInfo($var, $category = 'application')
+    public static function traceInfo($var, $category = 'Wc::traceInfo')
     {
-        Yii::info(VarDumper::dumpAsString($var), $category);
+        Yii::trace(VarDumper::dumpAsString($var), $category);
     }
     
     /**
@@ -229,7 +229,7 @@ class BaseWc extends BaseObject
      */
     public static function getVersion()
     {
-        return '0.3.1';
+        return '0.3.2';
     }
     
 }

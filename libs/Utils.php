@@ -131,23 +131,4 @@ class Utils
         return ['pages' => $pagination, 'result' => $result];
     }
     
-    /**
-     * 根据场景动态显示验证码
-     *
-     * @param string $scenario 场景 ['signup', 'login', 'find-password', 'reset-password']
-     *
-     * @return boolean
-     */
-    public static function showVerify($scenario = '')
-    {
-        $openVerifyType = Wc::$service->getSystem()->getConfig()->get('VERIFY_OPEN');
-        if (empty($openVerifyType)) {
-            return false;
-        } else {
-            $openVerifyType = explode(',', $openVerifyType);
-        }
-        
-        return in_array($scenario ?: Yii::$app->controller->action->id, $openVerifyType);
-    }
-    
 }

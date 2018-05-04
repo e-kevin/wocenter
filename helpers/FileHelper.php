@@ -71,7 +71,7 @@ class FileHelper extends BaseFileHelper
         return $res;
     }
     
-    public static function createFile($filePath, $content, $mode = 0777)
+    public static function createFile($filePath, $content, $mode = 0777): bool
     {
         if (@file_put_contents($filePath, $content, LOCK_EX) !== false) {
             if ($mode !== null) {
@@ -89,7 +89,7 @@ class FileHelper extends BaseFileHelper
     
     public static function removeFile($filePath)
     {
-        
+        @unlink($filePath);
     }
     
     public static function readFile($filePath)
