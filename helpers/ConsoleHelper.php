@@ -2,50 +2,55 @@
 
 namespace wocenter\helpers;
 
+use Yii;
 use yii\base\BaseObject;
+use yii\helpers\Console;
+use yii\web\Application;
 
 /**
- * Web控制台助手类
+ * 控制台助手类
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
-class WebConsoleHelper extends BaseObject
+class ConsoleHelper extends BaseObject
 {
     
     /**
-     * 是否 Win 系统
+     * 是否 Windows 系统
      *
      * @return bool
      */
-    public static function isWin()
+    public static function isRunningOnWindows()
     {
-        return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+        return DIRECTORY_SEPARATOR === '\\';
     }
     
     /**
-     * 获取 Yii 控制台脚本
+     * 获取指定的控制台脚本
+     *
+     * @param string $cmd
      *
      * @return string
      */
-    public static function getYiiCommand()
+    public static function getCommander($cmd = 'yii')
     {
-        return self::isWin() ? '@root/yii.bat' : '@root/yii';
+        return self::isRunningOnWindows() ? "@root/{$cmd}.bat" : "@root/{$cmd}";
     }
     
     /**
      * 执行控制台命令
      *
-     * @param string $cmd
+     * @param string $cmd 需要执行的命令
      * @param bool $show 是否显示输出信息，默认显示
      */
     public static function run($cmd, $show = true)
     {
-        if (self::isWin()) {
+        if (self::isRunningOnWindows()) {
             $cmd = str_replace("\\", "\\\\", $cmd);
         }
         $handler = popen($cmd, 'r');
         while (!feof($handler)) {
-            $show ? self::writeInfoMessage(fgets($handler), 1) : fgets($handler);
+            $show ? self::info(fgets($handler), 1) : fgets($handler);
         }
         pclose($handler);
     }
@@ -56,9 +61,13 @@ class WebConsoleHelper extends BaseObject
      * @param string $message 需要显示的信息
      * @param int $rnCount 换行总数
      */
-    public static function writeSuccessMessage($message, $rnCount = 0)
+    public static function success($message, $rnCount = 0)
     {
-        self::writeColorMessage($message, 'green', $rnCount);
+        if (Yii::$app instanceof Application) {
+            self::writeColorMessage($message, 'green', $rnCount);
+        } else {
+            Console::stdout($message);
+        }
     }
     
     /**
@@ -67,9 +76,13 @@ class WebConsoleHelper extends BaseObject
      * @param string $message 需要显示的信息
      * @param int $rnCount 换行总数
      */
-    public static function writeErrorMessage($message, $rnCount = 0)
+    public static function error($message, $rnCount = 0)
     {
-        self::writeColorMessage($message, 'red', $rnCount);
+        if (Yii::$app instanceof Application) {
+            self::writeColorMessage($message, 'red', $rnCount);
+        } else {
+            Console::stderr($message);
+        }
     }
     
     /**
@@ -78,9 +91,13 @@ class WebConsoleHelper extends BaseObject
      * @param string $message 需要显示的信息
      * @param int $rnCount 换行总数
      */
-    public static function writeInfoMessage($message, $rnCount = 0)
+    public static function info($message, $rnCount = 0)
     {
-        self::writeColorMessage($message, 'orange', $rnCount);
+        if (Yii::$app instanceof Application) {
+            self::writeColorMessage($message, 'orange', $rnCount);
+        } else {
+            Console::stdout($message);
+        }
     }
     
     /**
@@ -113,7 +130,7 @@ class WebConsoleHelper extends BaseObject
      *
      * @param string $js
      */
-    public static function writeScript($js)
+    private static function writeScript($js)
     {
         echo "<script>$js</script>";
         ob_flush();

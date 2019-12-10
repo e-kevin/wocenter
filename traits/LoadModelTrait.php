@@ -15,7 +15,7 @@ trait LoadModelTrait
 {
     
     /**
-     * 根据模型主键获取相关数据，如果数据不存在，则抛出400异常
+     * 根据模型主键获取相关数据，如果数据不存在，则抛出404异常
      *
      * @param \yii\db\ActiveRecord|string $modelClass 模型对象
      * @param integer $id 主键ID
@@ -34,7 +34,7 @@ trait LoadModelTrait
         $model = $modelClass::findOne($id);
         if (!is_object($model)) {
             if ($throwException) {
-                throw new NotFoundHttpException(Yii::t('wocenter/app', 'Not found.'));
+                throw new NotFoundHttpException('The requested page does not exist.');
             } else {
                 return null;
             }

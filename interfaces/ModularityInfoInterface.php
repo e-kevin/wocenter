@@ -2,6 +2,8 @@
 
 namespace wocenter\interfaces;
 
+use wocenter\core\MenuProvider;
+
 /**
  * 模块详情接口类
  *
@@ -18,6 +20,8 @@ interface ModularityInfoInterface
     
     /**
      * 获取模块菜单信息
+     *
+     * @see MenuProvider::defaultMenuConfig()
      *
      * @return array
      */
@@ -36,24 +40,5 @@ interface ModularityInfoInterface
      * @param string $migrationPath 数据库迁移路径
      */
     public function setMigrationPath($migrationPath);
-    
-    /**
-     * 获取模块扩展配置信息允许的键名
-     *
-     * @return array
-     */
-    public function getConfigKey();
-    
-    /**
-     * 获取模块扩展配置信息
-     * 可能包含的键名如下：
-     * - `components`
-     * - `params`
-     * 详情请插看[[getConfigKey()]]
-     * @see getConfigKey()
-     *
-     * @return array
-     */
-    public function getConfig();
     
 }

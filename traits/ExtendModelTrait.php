@@ -2,25 +2,20 @@
 
 namespace wocenter\traits;
 
-use wocenter\behaviors\GetMessageBehavior;
+use wocenter\behaviors\CatchMessageBehavior;
 
 /**
  * Class ExtendModelTrait
- * 拓展\wocenter\core\Model, \wocenter\db\ActiveRecord类
  *
- * @see \wocenter\core\Model
- * @see \wocenter\db\ActiveRecord
- *
+ * @property int|false $cacheDuration
  * @property boolean $throwException
+ * @property array $all
+ * @property string $_message
+ *
  * @author E-Kevin <e-kevin@qq.com>
  */
 trait ExtendModelTrait
 {
-    
-    /**
-     * @var string $message 反馈消息
-     */
-    public $message = '';
     
     /**
      * 抛出异常
@@ -34,9 +29,9 @@ trait ExtendModelTrait
      */
     public function behaviors()
     {
-        return [
-            GetMessageBehavior::className(),
-        ];
+        return array_merge(parent::behaviors(), [
+            CatchMessageBehavior::class,
+        ]);
     }
     
     /**
@@ -71,6 +66,46 @@ trait ExtendModelTrait
     public function getAll()
     {
         return [];
+    }
+    
+    /**
+     * 清除缓存
+     */
+    public function clearCache()
+    {
+    }
+    
+    /**
+     * @var integer|false 缓存时间间隔
+     */
+    private $_cacheDuration;
+    
+    /**
+     * 获取缓存时间间隔
+     *
+     * @return false|int
+     */
+    public function getCacheDuration()
+    {
+        if (null === $this->_cacheDuration) {
+            $this->setCacheDuration();
+        }
+        
+        return $this->_cacheDuration;
+    }
+    
+    /**
+     * 设置缓存时间间隔
+     *
+     * @param false|int $cacheDuration 当为`false`时，则删除缓存数据，默认缓存`一天`
+     *
+     * @return $this
+     */
+    public function setCacheDuration($cacheDuration = 86400)
+    {
+        $this->_cacheDuration = $cacheDuration;
+        
+        return $this;
     }
     
 }

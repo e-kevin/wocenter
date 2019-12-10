@@ -57,7 +57,15 @@ class SecurityHelper
         return preg_replace('|(?<=.{' . $start . '})(.{' . $end . '}).*?|', str_pad('', $end, '*'), $str, 1);
     }
     
-    public static function hash($message, $salt = "wocenter"): string
+    /**
+     * 获取哈希值
+     *
+     * @param string $message
+     * @param string $salt
+     *
+     * @return string
+     */
+    public static function hash(string $message, $salt = "wocenter"): string
     {
         $s01 = $message . $salt;
         $s02 = md5($s01) . $salt;

@@ -2,25 +2,19 @@
 
 namespace wocenter\core;
 
-use wocenter\interfaces\ExtensionInterface;
+use wocenter\interfaces\ExtensionInfoInterface;
+use Yii;
 use yii\base\{
     InvalidConfigException, BaseObject
 };
-use yii\db\Connection;
-use yii\di\Instance;
 
 /**
- * 基础扩展实现类
+ * 基础扩展信息实现类
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
-class Extension extends BaseObject implements ExtensionInterface
+class ExtensionInfo extends BaseObject implements ExtensionInfoInterface
 {
-    
-    /**
-     * @var Connection|array|string DB连接对象或DB连接的应用程序组件ID，主要是为扩展提供操作数据库功能
-     */
-    public $db = 'db';
     
     /**
      * @var string 扩展唯一ID，不可重复
@@ -68,7 +62,12 @@ class Extension extends BaseObject implements ExtensionInterface
     public $url;
     
     /**
-     * @var string 开发者
+     * @var string 扩展的仓库网址，例如：https://github.com/Wonail/wocenter
+     */
+    public $repositoryUrl;
+    
+    /**
+     * @var string|array 开发者
      */
     public $developer = 'WoCenter';
     
@@ -104,11 +103,17 @@ class Extension extends BaseObject implements ExtensionInterface
     
     /**
      * @var array 扩展所需依赖
+     * [
+     *      'wocenter/yii2-module-system' => 'dev-master',
+     * ]
      */
     protected $depends = [];
     
     /**
      * @var array 扩展所需的composer包
+     * [
+     *      'wonail/wocenter' => '~0.3',
+     * ]
      */
     protected $requirePackages = [];
     
@@ -136,12 +141,9 @@ class Extension extends BaseObject implements ExtensionInterface
         parent::init();
         foreach ($this->mustBeSetProps as $prop) {
             if ($this->{$prop} === null) {
-                throw new InvalidConfigException(get_called_class() . ": The {$prop} property must be set.");
+                throw new InvalidConfigException(get_called_class() . ': The `$' . $prop . '` property must be set.');
             }
         }
-        $this->db = Instance::ensure($this->db, Connection::className());
-        $this->db->getSchema()->refresh();
-        $this->db->enableSlaves = false;
     }
     
     /**
@@ -214,6 +216,60 @@ class Extension extends BaseObject implements ExtensionInterface
     public function getCategory()
     {
         return $this->category;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getConfigKey()
+    {
+        return ['components', 'params'];
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getConfig()
+    {
+        return [];
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getCommonConfigKey()
+    {
+        return ['components', 'params'];
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getCommonConfig()
+    {
+        return [];
+    }
+    
+    /**
+     * Returns url to repository for creation of new issue.
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    final public function getIssueUrl($path = '/issues/new')
+    {
+        return self::getRepoUrl() ? (self::getRepoUrl() . $path) : '';
+    }
+    
+    /**
+     * Returns url of official repository.
+     *
+     * @return string
+     */
+    final public function getRepoUrl()
+    {
+        return $this->repositoryUrl;
     }
     
 }

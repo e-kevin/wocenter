@@ -4,13 +4,18 @@ namespace wocenter\core;
 
 use Closure;
 use wocenter\helpers\ArrayHelper;
+use wocenter\interfaces\DispatchManagerInterface;
+use wocenter\interfaces\RunningExtensionInterface;
+use wocenter\traits\DispatchTrait;
 use Yii;
 use yii\{
-    base\BaseObject, caching\Dependency, helpers\VarDumper
+    base\BaseObject, base\Controller, base\ViewContextInterface, caching\Dependency, helpers\VarDumper
 };
 
 /**
  * Class BaseWc
+ *
+ * @property RunningExtensionInterface $runningExtension
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
@@ -38,6 +43,16 @@ class BaseWc extends BaseObject
     }
     
     /**
+     * WoCenter 当前版本
+     *
+     * @return string
+     */
+    public static function getVersion()
+    {
+        return '0.4';
+    }
+    
+    /**
      * 输出调试信息
      *
      * @param string|array $var
@@ -45,7 +60,7 @@ class BaseWc extends BaseObject
      */
     public static function traceInfo($var, $category = 'Wc::traceInfo')
     {
-        Yii::trace(VarDumper::dumpAsString($var), $category);
+        Yii::debug(VarDumper::dumpAsString($var), $category);
     }
     
     /**
@@ -64,78 +79,6 @@ class BaseWc extends BaseObject
     }
     
     /**
-     * 设置警告闪存信息
-     *
-     * @param $message
-     */
-    public static function setWarningMessage($message)
-    {
-        Yii::$app->getSession()->setFlash('warning', $message);
-    }
-    
-    /**
-     * 设置成功闪存信息
-     *
-     * @param $message
-     */
-    public static function setSuccessMessage($message)
-    {
-        Yii::$app->getSession()->setFlash('success', $message);
-    }
-    
-    /**
-     * 设置错误闪存信息
-     *
-     * @param $message
-     */
-    public static function setErrorMessage($message)
-    {
-        Yii::$app->getSession()->setFlash('error', $message);
-    }
-    
-    /**
-     * 设置提示闪存信息
-     *
-     * @param $message
-     */
-    public static function setInfoMessage($message)
-    {
-        Yii::$app->getSession()->setFlash('info', $message);
-    }
-    
-    /**
-     * 获取警告闪存信息
-     */
-    public static function getWarningMessage()
-    {
-        return Yii::$app->getSession()->remove('warning');
-    }
-    
-    /**
-     * 获取成功闪存信息
-     */
-    public static function getSuccessMessage()
-    {
-        return Yii::$app->getSession()->remove('success');
-    }
-    
-    /**
-     * 获取失败闪存信息
-     */
-    public static function getErrorMessage()
-    {
-        return Yii::$app->getSession()->remove('error');
-    }
-    
-    /**
-     * 获取提示闪存信息
-     */
-    public static function getInfoMessage()
-    {
-        return Yii::$app->getSession()->remove('info');
-    }
-    
-    /**
      * 扩展[[Yii::$app->getCache()->getOrSet()]]该方法，当`$duration`为`false`时先删除缓存再缓存执行数据结果
      *
      * @param mixed $key a key identifying the value to be cached. This can be a simple string or
@@ -144,12 +87,12 @@ class BaseWc extends BaseObject
      * In case $callable returns `false`, the value will not be cached.
      * @param int $duration default duration in seconds before the cache will expire. If not set,
      * [[defaultDuration]] value will be used.
-     * @param Dependency $dependency dependency of the cached item. If the dependency changes,
+     * @param Dependency|null $dependency dependency of the cached item. If the dependency changes,
      * the corresponding value in the cache will be invalidated when it is fetched via [[get()]].
      * This parameter is ignored if [[serializer]] is `false`.
-     *
      * @param string $cache cache component
      *
+     * @see \yii\caching\Cache::getOrSet()
      * @return mixed result of $callable execution
      */
     public static function getOrSet($key, $callable, $duration = null, $dependency = null, $cache = 'cache')
@@ -223,13 +166,60 @@ class BaseWc extends BaseObject
     }
     
     /**
-     * WoCenter 当前版本
+     * 获取调度管理器
      *
-     * @return string
+     * @param Controller|DispatchTrait $controller
+     * @param array $defaultDispatches
+     *
+     * @return object|DispatchManagerInterface
      */
-    public static function getVersion()
+    public static function getDispatchManager($controller, array $defaultDispatches)
     {
-        return '0.3.2';
+        return Yii::$container->get(
+            Yii::$container->has('wocenter\interfaces\DispatchManagerInterface') ?
+                'wocenter\interfaces\DispatchManagerInterface' :
+                'wocenter\core\DispatchManager',
+            [
+                $controller,
+                $defaultDispatches,
+            ]
+        );
+    }
+    
+    /**
+     * 当前控制器所属的扩展信息
+     *
+     * @param Controller|DispatchTrait|ViewContextInterface $controller
+     *
+     * @return object|RunningExtensionInterface
+     */
+    public static function getRunningExtension(Controller $controller)
+    {
+        if (Yii::$container->has(RunningExtensionInterface::class)) {
+            $runningExtensionClass = RunningExtensionInterface::class;
+        } else {
+            $runningExtensionClass = WoCenterExtension::class;
+        }
+        
+        return Yii::$container->get($runningExtensionClass, [$controller]);
+    }
+    
+    /**
+     * 获取当前主题的参数配置
+     *
+     * @param Controller $controller
+     *
+     * @see \wocenter\core\Theme::getThemeConfig()
+     * @return array
+     */
+    public static function getThemeConfig(Controller $controller): array
+    {
+        /** @var Theme $theme */
+        $theme = $controller->getView()->theme instanceof Theme ?
+            $controller->getView()->theme :
+            Yii::createObject(Theme::class);
+        
+        return $theme->getThemeConfig();
     }
     
 }

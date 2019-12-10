@@ -3,15 +3,15 @@
 namespace wocenter\core;
 
 use wocenter\{
-    interfaces\FunctionInfoInterface, traits\ExtensionTrait
+    interfaces\ControllerInfoInterface, traits\ExtensionTrait
 };
 
 /**
- * 基础功能扩展信息类
+ * 基础控制器扩展信息类
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
-abstract class FunctionInfo extends Extension implements FunctionInfoInterface
+class ControllerInfo extends ExtensionInfo implements ControllerInfoInterface
 {
     
     use ExtensionTrait;
@@ -19,7 +19,7 @@ abstract class FunctionInfo extends Extension implements FunctionInfoInterface
     /**
      * @var string 扩展所属模块ID
      */
-    protected $moduleId;
+    protected $_moduleId;
     
     /**
      * @var string 数据库迁移路径
@@ -29,18 +29,17 @@ abstract class FunctionInfo extends Extension implements FunctionInfoInterface
     /**
      * @inheritdoc
      */
-    protected $mustBeSetProps = ['app', 'id', 'moduleId'];
+    public function init()
+    {
+        parent::init();
+        // 如果没有指定扩展所属模块，则默认为扩展所属的应用
+        if (empty($this->getModuleId())) {
+            $this->setModuleId($this->app);
+        }
+    }
     
     /**
-     * @var array 模块配置信息允许的键名
-     */
-    private $_configKey = ['components', 'params'];
-    
-    /**
-     * 获取扩展菜单信息
-     *
-     * @return array
-     * @see \wocenter\core\ModularityInfo::getMenus()
+     * @inheritdoc
      */
     public function getMenus()
     {
@@ -52,15 +51,15 @@ abstract class FunctionInfo extends Extension implements FunctionInfoInterface
      */
     public function getModuleId()
     {
-        return $this->moduleId;
+        return $this->_moduleId;
     }
     
     /**
      * @inheritdoc
      */
-    public function setModuleId($moduleId)
+    public function setModuleId($_moduleId)
     {
-        $this->moduleId = $moduleId;
+        $this->_moduleId = $_moduleId;
     }
     
     /**
@@ -80,6 +79,11 @@ abstract class FunctionInfo extends Extension implements FunctionInfoInterface
     }
     
     /**
+     * @var array 模块配置信息允许的键名
+     */
+    private $_configKey = ['components', 'params'];
+    
+    /**
      * @inheritdoc
      */
     public function getConfigKey()
@@ -90,17 +94,11 @@ abstract class FunctionInfo extends Extension implements FunctionInfoInterface
     /**
      * @inheritdoc
      */
-    public function getConfig()
-    {
-        return [];
-    }
-    
-    /**
-     * @inheritdoc
-     */
     public function install()
     {
-        parent::install();
+        if (false == parent::install()) {
+            return false;
+        }
         $this->runMigrate('up');
         
         return true;
@@ -111,7 +109,9 @@ abstract class FunctionInfo extends Extension implements FunctionInfoInterface
      */
     public function uninstall()
     {
-        parent::uninstall();
+        if (false == parent::uninstall()) {
+            return false;
+        }
         $this->runMigrate('down');
         
         return true;

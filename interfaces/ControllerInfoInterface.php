@@ -2,18 +2,20 @@
 
 namespace wocenter\interfaces;
 
+use wocenter\core\MenuProvider;
+
 /**
- * 功能扩展详情接口类
+ * 控制器扩展详情接口类
  *
  * @property string $moduleId 扩展所属模块ID
  * @property string $migrationPath 数据库迁移路径
  * @property array $menus 扩展菜单信息，只读属性
- * @property array $config 功能扩展配置信息
- * @property array $configKey 功能扩展配置信息允许的键名
+ * @property array $config 控制器扩展配置信息
+ * @property array $configKey 控制器扩展配置信息允许的键名
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
-interface FunctionInfoInterface
+interface ControllerInfoInterface
 {
     
     /**
@@ -47,27 +49,10 @@ interface FunctionInfoInterface
     /**
      * 获取扩展菜单信息
      *
+     * @see MenuProvider::defaultMenuConfig()
+     *
      * @return array
      */
     public function getMenus();
-    
-    /**
-     * 获取功能扩展配置信息允许的键名
-     *
-     * @return array
-     */
-    public function getConfigKey();
-    
-    /**
-     * 获取功能扩展配置信息
-     * 可能包含的键名如下：
-     * - `components`
-     * - `params`
-     * 详情请插看[[getConfigKey()]]
-     * @see getConfigKey()
-     *
-     * @return array
-     */
-    public function getConfig();
     
 }

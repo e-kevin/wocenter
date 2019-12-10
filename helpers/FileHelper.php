@@ -89,7 +89,7 @@ class FileHelper extends BaseFileHelper
     
     public static function removeFile($filePath)
     {
-        @unlink($filePath);
+        return \yii\helpers\FileHelper::unlink($filePath);
     }
     
     public static function readFile($filePath)
@@ -114,12 +114,12 @@ class FileHelper extends BaseFileHelper
     
     public static function createDir($dirPath)
     {
-        
+        \yii\helpers\FileHelper::createDirectory($dirPath);
     }
     
     public static function removeDir($dirPath)
     {
-        
+        \yii\helpers\FileHelper::removeDirectory($dirPath);
     }
     
 }

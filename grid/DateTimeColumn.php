@@ -6,6 +6,11 @@ use yii\{
     grid\DataColumn, helpers\ArrayHelper
 };
 
+/**
+ * 主要是修复一个显示问题
+ *
+ * @author E-Kevin <e-kevin@qq.com>
+ */
 class DateTimeColumn extends DataColumn
 {
     

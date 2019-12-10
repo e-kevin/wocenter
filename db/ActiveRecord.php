@@ -33,11 +33,4 @@ class ActiveRecord extends baseActiveRecord
         $this->clearCache();
     }
     
-    /**
-     * 清除缓存
-     */
-    public function clearCache()
-    {
-    }
-    
 }

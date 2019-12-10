@@ -2,7 +2,7 @@
 
 namespace wocenter\helpers;
 
-use wocenter\libs\Constants;
+use wocenter\enums\Enums;
 use Yii;
 use yii\helpers\Html;
 
@@ -43,7 +43,7 @@ class StringHelper
         // 转换数字ID和字符串形式ID串为数组
         if (is_numeric($ids)) {
             $ids = [$ids];
-        } else if (is_string($ids)) {
+        } elseif (is_string($ids)) {
             $ids = self::stringToArray($ids);
         }
         
@@ -55,11 +55,11 @@ class StringHelper
     /**
      * 解析[下拉框,单选框,多选框]类型额外配置值
      * 格式:
-     *  1. 以英文逗号分隔。a:名称1,b:名称2
-     *  2. 以英文分号分隔。a:名称1;b:名称2;
+     *  1. 以英文逗号分隔。key1:value1,key2:value2,
+     *  2. 以英文分号分隔。key1:value1;key2:value2;
      *  3. 以回车换行分隔。
-     *      a:名称1
-     *      b:名称2
+     *      key1:value1
+     *      key2:value2
      *
      * @param string $string 要解析的字符串
      *
@@ -240,7 +240,7 @@ class StringHelper
      *
      * @return string
      */
-    public static function randString($len = 6, $type = Constants::UNLIMITED, $addChars = '')
+    public static function randString($len = 6, $type = Enums::UNLIMITED, $addChars = '')
     {
         $str = '';
         switch ($type) {
@@ -295,7 +295,7 @@ class StringHelper
      *
      * @return bool|array
      */
-    public static function buildCountRand($number, $length = 4, $type = Constants::UNLIMITED)
+    public static function buildCountRand($number, $length = 4, $type = Enums::UNLIMITED)
     {
         if ($type == 1 && $length < strlen($number)) {
             //不足以生成一定数量的不重复数字
@@ -372,7 +372,6 @@ class StringHelper
         return sprintf("%0" . strlen($max) . "d", mt_rand($min, $max));
     }
     
-    
     /**
      * 自动转换字符集 支持数组转换
      *
@@ -421,7 +420,7 @@ class StringHelper
      * @param string $anchor 截取锚点，如果截取过程中遇到这个标记锚点就截至该锚点处
      *
      * @return string $result 返回值
-     * @demo  $res = cut_html_str($str, 256, '...'); //截取256个长度，其余部分用'...'替换
+     * @demo  $res = htmlSubString($str, 256, '...'); //截取256个长度，其余部分用'...'替换
      *
      * @author Wang Jian. <wj@yurendu.com>    Date: 2014/03/16
      */
@@ -526,15 +525,16 @@ class StringHelper
     }
     
     /**
-     * 命名空间转换为绝对路径
+     * 命名空间转换为实际路径
      *
      * @param string $namespace
+     * @param bool $throwException
      *
      * @return bool|string
      */
-    public static function ns2Path($namespace)
+    public static function ns2Path($namespace, $throwException = true)
     {
-        return Yii::getAlias('@' . str_replace('\\', '/', $namespace));
+        return Yii::getAlias('@' . str_replace('\\', '/', $namespace), $throwException);
     }
     
     /**

@@ -11,10 +11,11 @@ namespace wocenter\interfaces;
  * @property array $depends 扩展所需依赖
  * @property array $requirePackages 扩展所需的composer包
  * @property array $category 获取扩展所属类型
+ * @property string $app 所属应用
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
-interface ExtensionInterface
+interface ExtensionInfoInterface
 {
     
     /**
@@ -30,42 +31,42 @@ interface ExtensionInterface
     /**
      * @var integer 默认扩展不属于任何分类
      */
-    const CATEGORY_NONE = 0;
+    const CATEGORY_NONE = 'category_none';
     
     /**
      * @var integer 首页控制器分类
      */
-    const CATEGORY_SITE = 1;
+    const CATEGORY_SITE = 'category_site';
     
     /**
      * @var integer 系统模块分类
      */
-    const CATEGORY_SYSTEM = 2;
+    const CATEGORY_SYSTEM = 'category_system';
     
     /**
      * @var integer 扩展模块分类
      */
-    const CATEGORY_EXTENSION = 3;
+    const CATEGORY_EXTENSION = 'category_extension';
     
     /**
      * @var integer 菜单模块分类
      */
-    const CATEGORY_MENU = 4;
+    const CATEGORY_MENU = 'category_menu';
     
     /**
      * @var integer 用户模块分类
      */
-    const CATEGORY_ACCOUNT = 5;
+    const CATEGORY_ACCOUNT = 'category_account';
     
     /**
      * @var integer 通行证模块分类
      */
-    const CATEGORY_PASSPORT = 6;
+    const CATEGORY_PASSPORT = 'category_passport';
     
     /**
      * @var integer 安全模块分类
      */
-    const CATEGORY_SECURITY = 7;
+    const CATEGORY_SECURITY = 'category_security';
     
     /**
      * 获取扩展唯一ID，不可重复
@@ -129,5 +130,47 @@ interface ExtensionInterface
      * @return string|null
      */
     public function getCategory();
+    
+    /**
+     * 获取扩展配置信息允许的键名，用于过滤非法的配置数据
+     *
+     * @return array
+     */
+    public function getConfigKey();
+    
+    /**
+     * 获取扩展配置信息
+     * 可能包含的键名如下：
+     * - `components`
+     * - `params`
+     * - `modules`
+     * - `controllerMap`
+     * 详情请查看[[getConfigKey()]]
+     * @see getConfigKey()
+     *
+     * @return array
+     */
+    public function getConfig();
+    
+    /**
+     * 获取扩展公共配置信息允许的键名，用于过滤非法的配置数据
+     *
+     * @return array
+     */
+    public function getCommonConfigKey();
+    
+    /**
+     * 获取扩展公共配置信息
+     * 可能包含的键名如下：
+     * - `components`
+     * - `params`
+     * - `modules`
+     * - `controllerMap`
+     * 详情请查看[[getCommonConfigKey()]]
+     * @see getCommonConfigKey()
+     *
+     * @return array
+     */
+    public function getCommonConfig();
     
 }

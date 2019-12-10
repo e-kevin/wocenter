@@ -29,7 +29,7 @@ class CacheManagerHelper
             $cachesInfo[] = [
                 'name' => $name,
                 'class' => $class,
-                'is_flushed' => self::canBeFlushed($class) ? Yii::$app->get($name)->flush() : false,
+                'is_flushed' => self::_canBeFlushed($class) ? Yii::$app->get($name)->flush() : false,
             ];
         }
         
@@ -56,15 +56,14 @@ class CacheManagerHelper
             
             if ($component instanceof CacheInterface) {
                 $caches[$name] = get_class($component);
-            } elseif (is_array($component) && isset($component['class']) && self::isCacheClass($component['class'])) {
+            } elseif (is_array($component) && isset($component['class']) && self::_isCacheClass($component['class'])) {
                 $caches[$name] = $component['class'];
-            } elseif (is_string($component) && self::isCacheClass($component)) {
+            } elseif (is_string($component) && self::_isCacheClass($component)) {
                 $caches[$name] = $component;
             } elseif ($component instanceof \Closure) {
                 $cache = Yii::$app->get($name);
-                if (self::isCacheClass($cache)) {
-                    $cacheClass = get_class($cache);
-                    $caches[$name] = $cacheClass;
+                if (self::_isCacheClass($cache)) {
+                    $caches[$name] = get_class($cache);
                 }
             }
         }
@@ -79,7 +78,7 @@ class CacheManagerHelper
      *
      * @return bool
      */
-    private static function isCacheClass($className)
+    private static function _isCacheClass($className)
     {
         return is_subclass_of($className, 'yii\caching\CacheInterface');
     }
@@ -91,9 +90,9 @@ class CacheManagerHelper
      *
      * @return bool
      */
-    private static function canBeFlushed($className)
+    private static function _canBeFlushed($className)
     {
-        return !is_a($className, ApcCache::className(), true) || php_sapi_name() !== 'cli';
+        return !is_a($className, ApcCache::class, true) || php_sapi_name() !== 'cli';
     }
     
 }

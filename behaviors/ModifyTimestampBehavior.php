@@ -22,7 +22,7 @@ use yii\{
  * @property string $saveTimeZone
  *
  * 具体使用方法可参考以下文件
- * @see \wocenter\backend\modules\account\models\Identity
+ * @see \extensions\wocenter\backend\modules\account\models\Identity
  *
  * @author E-Kevin <e-kevin@qq.com>
  */

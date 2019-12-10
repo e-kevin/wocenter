@@ -104,8 +104,11 @@ class ArrayHelper extends baseArrayHelper
      *
      * @return array
      */
-    public static function listToTree($list, $pk = 'id', $pid = 'parent_id', $child = '_child', $root = 0): array
+    public static function listToTree($list, $pk = 'id', $pid = 'parent_id', $child = 'items', $root = 0): array
     {
+        if (empty($list)) {
+            return [];
+        }
         // 创建Tree
         $tree = [];
         if (is_array($list)) {
@@ -135,13 +138,13 @@ class ArrayHelper extends baseArrayHelper
      * 将listToTree的树还原成列表
      *
      * @param array $tree 原来的树
-     * @param string $child 孩子节点的键
+     * @param string $child 子类节点的键
      * @param string|null $order 排序显示的键，一般是主键 升序排列，默认为`null`，表示不排序
      * @param array $list 过渡用的中间数组，
      *
      * @return array 返回排过序的列表数组
      */
-    public static function treeToList($tree, $child = '_child', $order = null, &$list = []): array
+    public static function treeToList($tree, $child = 'items', $order = null, &$list = []): array
     {
         if (is_array($tree)) {
             foreach ($tree as $key => $value) {
@@ -161,22 +164,20 @@ class ArrayHelper extends baseArrayHelper
     }
     
     /**
-     * 在数据列表中搜索
+     * 在数组列表中搜索
      *
      * @param array $list 数据列表
-     * @param mixed $condition 查询条件，支持数组、操作符 ['neq', 'eq', 'not in', 'in']、正则、字符串
+     * @param mixed $condition 查询条件，支持数组、操作符 ['neq', 'eq', 'not in', 'in']、字符串、todo 正则
      * 1: ['name'=>$value]
-     * 2: 'name = value'
-     * 3: '/w+/'正则
-     * 4: ['name' => ['not in' => ['value1', 'value2']]]
-     * @param boolean $isUrl 是否是url地址，默认否。URL格式是'/account'时使用
+     * 2: 'name=value&name1=value1'
+     * 3: ['name' => ['not in' => ['value1', 'value2']]]
      *
-     * @return array|boolean
+     * @return array
      */
-    public static function listSearch($list = [], $condition = '', $isUrl = false)
+    public static function listSearch($list = [], $condition = '')
     {
-        if (empty($list)) {
-            return false;
+        if (empty($list) || empty($condition)) {
+            return [];
         }
         if (is_string($condition)) {
             parse_str($condition, $condition);
@@ -213,22 +214,24 @@ class ArrayHelper extends baseArrayHelper
                         case 'gt':
                             $find = $data[$field] > $value[1];
                             break;
+                        // 小于
+                        case 'lt':
+                            $find = $data[$field] < $value[1];
+                            break;
                     }
-                } elseif (0 === strpos($value, '/') && $isUrl === false) {
-                    $find = preg_match($value, $data[$field]);
                 } elseif ($data[$field] == $value) {
                     $find = true;
                 } else {
                     $find = false;
                 }
-                // fixme 2012-9-4修正：多条件查询时，只要有一个条件不满足，则标记为false，并跳过此次循环
+                // 多条件查询时，只要有一个条件不满足，则标记为false，并跳过此次循环
                 // todo 是否根据第三个参数$filter来判断查询条件是OR或AND
                 if ($find == false) {
                     break;
                 }
             }
             if ($find) {
-                $resultSet[] = &$list[$key];
+                $resultSet[] = $list[$key];
             }
         }
         

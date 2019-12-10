@@ -26,7 +26,7 @@ class LogActionTime extends ActionFilter
     {
         $time = microtime(true) - $this->_startTime;
         $time = number_format($time, 4);
-        Yii::trace("Action '{$action->uniqueId}' spent $time second.");
+        Yii::debug("Action '{$action->uniqueId}' spent $time second.");
         
         return parent::afterAction($action, $result);
     }

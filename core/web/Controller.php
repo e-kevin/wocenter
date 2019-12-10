@@ -1,12 +1,12 @@
 <?php
 
-namespace wocenter\core;
+namespace wocenter\core\web;
 
 use wocenter\traits\DispatchTrait;
 use yii\web\Controller as baseController;
 
 /**
- * 基础Controller类
+ * 支持系统调度功能（Dispatch）的基础Controller类
  *
  * @author E-Kevin <e-kevin@qq.com>
  */
